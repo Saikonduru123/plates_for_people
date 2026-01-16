@@ -1,0 +1,7 @@
+{
+  "name": "plates-for-people",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}

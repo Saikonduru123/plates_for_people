@@ -1,0 +1,117 @@
+.register-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 24px;
+  background: linear-gradient(135deg, var(--ion-color-primary-tint) 0%, var(--ion-color-light) 100%);
+}
+
+.register-card {
+  width: 100%;
+  max-width: 520px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  border-radius: 16px;
+  margin: 20px 0;
+  animation: slideUp 0.5s ease-out;
+}
+
+.register-card ion-card-header {
+  padding: 24px 24px 16px 24px;
+}
+
+.register-card ion-card-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.register-card ion-card-content {
+  padding: 24px;
+}
+
+.register-card ion-item {
+  --padding-start: 16px;
+  --inner-padding-end: 16px;
+  --border-radius: 12px;
+  --background: var(--ion-color-light);
+  margin-bottom: 16px;
+  border-radius: 12px;
+}
+
+.register-card ion-input,
+.register-card ion-textarea {
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  font-size: 1rem;
+}
+
+.register-card ion-segment {
+  margin-bottom: 24px;
+  --background: var(--ion-color-light);
+  border-radius: 12px;
+  padding: 4px;
+}
+
+.register-card ion-segment-button {
+  --indicator-color: var(--ion-color-primary);
+  --color-checked: white;
+  font-weight: 600;
+  text-transform: none;
+  min-height: 40px;
+}
+
+.register-card ion-button {
+  --border-radius: 12px;
+  height: 48px;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 8px;
+  text-transform: none;
+  letter-spacing: 0.3px;
+}
+
+.register-footer {
+  text-align: center;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--ion-color-light-shade);
+}
+
+.register-footer p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 576px) {
+  .register-container {
+    padding: 16px;
+  }
+
+  .register-card {
+    max-width: 100%;
+    margin: 10px 0;
+  }
+
+  .register-card ion-card-header,
+  .register-card ion-card-content {
+    padding: 20px;
+  }
+
+  .register-card ion-item {
+    margin-bottom: 12px;
+  }
+}
