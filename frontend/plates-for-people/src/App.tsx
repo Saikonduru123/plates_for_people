@@ -5,6 +5,19 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import DonorDashboard from './pages/donor/DonorDashboard';
+import SearchNGOs from './pages/donor/SearchNGOs';
+import NGODetails from './pages/donor/NGODetails';
+import CreateDonation from './pages/donor/CreateDonation';
+import DonationDetails from './pages/donor/DonationDetails';
+import DonationHistory from './pages/donor/DonationHistory';
+import RateNGO from './pages/donor/RateNGO';
+import NGODashboard from './pages/ngo/NGODashboard';
+import ManageDonations from './pages/ngo/ManageDonations';
+import ManageLocations from './pages/ngo/ManageLocations';
+import AddEditLocation from './pages/ngo/AddEditLocation';
+import ManageCapacity from './pages/ngo/ManageCapacity';
+import ViewRatings from './pages/ngo/ViewRatings';
+import ProfileSettings from './pages/ngo/ProfileSettings';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -85,6 +98,119 @@ const AppRoutes: React.FC = () => {
       <Route exact path="/donor/dashboard">
         {isAuthenticated && user?.role === 'donor' ? (
           <DonorDashboard />
+        ) : (
+          <Redirect to="/login" />
+        )}
+      </Route>
+
+      <Route exact path="/donor/search-ngos">
+        {isAuthenticated && user?.role === 'donor' ? (
+          <SearchNGOs />
+        ) : (
+          <Redirect to="/login" />
+        )}
+      </Route>
+
+      <Route exact path="/donor/ngo/:id">
+        {isAuthenticated && user?.role === 'donor' ? (
+          <NGODetails />
+        ) : (
+          <Redirect to="/login" />
+        )}
+      </Route>
+
+      <Route exact path="/donor/create-donation">
+        {isAuthenticated && user?.role === 'donor' ? (
+          <CreateDonation />
+        ) : (
+          <Redirect to="/login" />
+        )}
+      </Route>
+
+      <Route exact path="/donor/donation/:id">
+        {isAuthenticated && user?.role === 'donor' ? (
+          <DonationDetails />
+        ) : (
+          <Redirect to="/login" />
+        )}
+      </Route>
+
+      <Route exact path="/donor/donations">
+        {isAuthenticated && user?.role === 'donor' ? (
+          <DonationHistory />
+        ) : (
+          <Redirect to="/login" />
+        )}
+      </Route>
+
+      <Route exact path="/donor/rate/:donation_id">
+        {isAuthenticated && user?.role === 'donor' ? (
+          <RateNGO />
+        ) : (
+          <Redirect to="/login" />
+        )}
+      </Route>
+
+      {/* NGO Routes */}
+      <Route exact path="/ngo/dashboard">
+        {isAuthenticated && user?.role === 'ngo' ? (
+          <NGODashboard />
+        ) : (
+          <Redirect to="/login" />
+        )}
+      </Route>
+
+      <Route exact path="/ngo/donations">
+        {isAuthenticated && user?.role === 'ngo' ? (
+          <ManageDonations />
+        ) : (
+          <Redirect to="/login" />
+        )}
+      </Route>
+
+      <Route exact path="/ngo/locations">
+        {isAuthenticated && user?.role === 'ngo' ? (
+          <ManageLocations />
+        ) : (
+          <Redirect to="/login" />
+        )}
+      </Route>
+
+      <Route exact path="/ngo/locations/add">
+        {isAuthenticated && user?.role === 'ngo' ? (
+          <AddEditLocation />
+        ) : (
+          <Redirect to="/login" />
+        )}
+      </Route>
+
+      <Route exact path="/ngo/locations/edit/:id">
+        {isAuthenticated && user?.role === 'ngo' ? (
+          <AddEditLocation />
+        ) : (
+          <Redirect to="/login" />
+        )}
+      </Route>
+
+      <Route exact path="/ngo/capacity">
+        {isAuthenticated && user?.role === 'ngo' ? (
+          <ManageCapacity />
+        ) : (
+          <Redirect to="/login" />
+        )}
+      </Route>
+
+      <Route exact path="/ngo/ratings">
+        {isAuthenticated && user?.role === 'ngo' ? (
+          <ViewRatings />
+        ) : (
+          <Redirect to="/login" />
+        )}
+      </Route>
+
+      <Route exact path="/ngo/profile">
+        {isAuthenticated && user?.role === 'ngo' ? (
+          <ProfileSettings />
         ) : (
           <Redirect to="/login" />
         )}

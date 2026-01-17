@@ -224,7 +224,7 @@ const DonorDashboardPage: React.FC = () => {
                     <IonCol size="6">
                       <IonButton
                         expand="block"
-                        onClick={() => history.push('/donor/search')}
+                        onClick={() => history.push('/donor/search-ngos')}
                       >
                         <IonIcon icon={searchOutline} slot="start" />
                         Find NGOs
@@ -250,7 +250,16 @@ const DonorDashboardPage: React.FC = () => {
           <div className="ion-padding-horizontal ion-padding-bottom">
             <IonCard>
               <IonCardHeader>
-                <IonCardTitle>Recent Donations</IonCardTitle>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <IonCardTitle>Recent Donations</IonCardTitle>
+                  <IonButton
+                    fill="clear"
+                    size="small"
+                    onClick={() => history.push('/donor/donations')}
+                  >
+                    View All
+                  </IonButton>
+                </div>
               </IonCardHeader>
               <IonCardContent>
                 {recentDonations.length === 0 ? (

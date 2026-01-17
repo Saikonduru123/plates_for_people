@@ -147,8 +147,10 @@ export interface UpdateDonationStatusRequest {
 export interface SearchNGOsRequest {
   latitude: number;
   longitude: number;
+  radius?: number;
   radius_km?: number;
   meal_type?: MealType;
+  donation_date?: string;
   pickup_date?: string;
   min_capacity?: number;
 }
@@ -158,17 +160,39 @@ export interface NGOSearchResult {
   ngo_name: string;
   location_id: number;
   location_name: string;
-  address: string;
-  city: string;
-  latitude: number;
-  longitude: number;
+  address: {
+    line1: string;
+    line2: string | null;
+    city: string;
+    state: string;
+    zip_code: string;
+    country: string;
+  };
+  coordinates: {
+    latitude: number;
+    longitude: number;
+  };
   distance_km: number;
-  contact_person: string;
-  contact_phone: string;
-  operating_hours: string | null;
   available_capacity: number | null;
   average_rating: number | null;
   total_ratings: number;
+  contact: {
+    person: string;
+    phone: string;
+  };
+}
+
+export interface NGOSearchResponse {
+  total: number;
+  search_params: {
+    latitude: number;
+    longitude: number;
+    radius_km: number;
+    date: string | null;
+    meal_type: string | null;
+    min_capacity: number | null;
+  };
+  ngos: NGOSearchResult[];
 }
 
 // Rating Types
@@ -197,6 +221,7 @@ export interface NGORatingSummary {
   rating_distribution: {
     [key: string]: number;
   };
+  recent_ratings?: Rating[];
 }
 
 // Notification Types

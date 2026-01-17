@@ -1,0 +1,498 @@
+.manage-capacity-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  gap: 16px;
+}
+
+.loading-container p {
+  color: var(--ion-text-color, #666);
+  font-size: 14px;
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  text-align: center;
+  min-height: 60vh;
+}
+
+.empty-icon {
+  font-size: 80px;
+  color: var(--ion-color-medium, #999);
+  opacity: 0.5;
+  margin-bottom: 24px;
+}
+
+.empty-state h3 {
+  margin: 0 0 12px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ion-text-color, #333);
+}
+
+.empty-state p {
+  margin: 0 0 24px 0;
+  font-size: 14px;
+  color: var(--ion-color-medium, #666);
+  line-height: 1.6;
+}
+
+/* Location Selector */
+.location-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.selector-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ion-text-color, #333);
+}
+
+/* Calendar Header */
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.month-title {
+  flex: 1;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.calendar-actions {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+/* Capacity Legend */
+.capacity-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 12px;
+  background-color: var(--ion-color-light, #f4f5f8);
+  border-radius: 8px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--ion-text-color, #555);
+}
+
+.legend-indicator {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 1px solid var(--ion-color-medium, #ccc);
+}
+
+.legend-indicator.not-set {
+  background-color: var(--ion-color-light, #f4f5f8);
+}
+
+.legend-indicator.low {
+  background-color: #4caf50;
+}
+
+.legend-indicator.medium {
+  background-color: #ff9800;
+}
+
+.legend-indicator.high {
+  background-color: #ff5722;
+}
+
+.legend-indicator.full {
+  background-color: #f44336;
+}
+
+/* Calendar Grid */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.calendar-day-header {
+  padding: 8px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ion-color-medium, #666);
+  background-color: var(--ion-color-light, #f4f5f8);
+  border-radius: 4px;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  padding: 8px;
+  border: 1px solid var(--ion-color-light-shade, #e0e0e0);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  background-color: var(--ion-color-light, #f4f5f8);
+}
+
+.calendar-day:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-day.other-month {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.calendar-day.other-month:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.calendar-day.today {
+  border: 2px solid var(--ion-color-primary, #3880ff);
+  font-weight: 600;
+}
+
+.calendar-day.today .day-number {
+  color: var(--ion-color-primary, #3880ff);
+}
+
+.day-number {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ion-text-color, #333);
+}
+
+/* Capacity Status Colors */
+.calendar-day.not-set {
+  background-color: var(--ion-color-light, #f4f5f8);
+}
+
+.calendar-day.low {
+  background-color: rgba(76, 175, 80, 0.15);
+  border-color: #4caf50;
+}
+
+.calendar-day.medium {
+  background-color: rgba(255, 152, 0, 0.15);
+  border-color: #ff9800;
+}
+
+.calendar-day.high {
+  background-color: rgba(255, 87, 34, 0.15);
+  border-color: #ff5722;
+}
+
+.calendar-day.full {
+  background-color: rgba(244, 67, 54, 0.15);
+  border-color: #f44336;
+  cursor: not-allowed;
+}
+
+/* Capacity Indicator */
+.capacity-indicator {
+  margin-top: 4px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  color: white;
+  text-align: center;
+  width: 100%;
+}
+
+.capacity-indicator.low {
+  background-color: #4caf50;
+}
+
+.capacity-indicator.medium {
+  background-color: #ff9800;
+}
+
+.capacity-indicator.high {
+  background-color: #ff5722;
+}
+
+.capacity-indicator.full {
+  background-color: #f44336;
+}
+
+.capacity-text {
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+/* Info Card */
+.info-card {
+  margin-top: 16px;
+}
+
+.info-content {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.info-icon {
+  font-size: 24px;
+  color: var(--ion-color-primary, #3880ff);
+  flex-shrink: 0;
+}
+
+.info-text {
+  flex: 1;
+  font-size: 13px;
+  color: var(--ion-text-color, #555);
+  line-height: 1.6;
+}
+
+.info-text strong {
+  font-weight: 600;
+  color: var(--ion-color-primary, #3880ff);
+}
+
+/* Modal Content */
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modal-date {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background-color: var(--ion-color-light, #f4f5f8);
+  border-radius: 8px;
+  border-left: 4px solid var(--ion-color-primary, #3880ff);
+}
+
+.modal-date ion-icon {
+  font-size: 24px;
+  color: var(--ion-color-primary, #3880ff);
+}
+
+.modal-date span {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ion-text-color, #333);
+}
+
+.current-bookings {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background-color: rgba(var(--ion-color-primary-rgb, 56, 128, 255), 0.1);
+  border-radius: 8px;
+}
+
+.current-bookings ion-icon {
+  font-size: 20px;
+  color: var(--ion-color-primary, #3880ff);
+}
+
+.current-bookings span {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ion-text-color, #555);
+}
+
+/* Form Groups */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ion-text-color, #333);
+}
+
+.form-label.required::after {
+  content: ' *';
+  color: var(--ion-color-danger, #eb445a);
+}
+
+.helper-text {
+  margin: 0;
+  font-size: 12px;
+  color: var(--ion-color-medium, #666);
+  line-height: 1.4;
+}
+
+.save-button {
+  margin-top: 8px;
+  font-weight: 600;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .selector-label,
+  .form-label {
+    color: var(--ion-text-color, #ffffff);
+  }
+
+  .empty-state h3 {
+    color: var(--ion-text-color, #ffffff);
+  }
+
+  .calendar-day-header {
+    background-color: var(--ion-color-dark-tint, #2a2a2a);
+  }
+
+  .calendar-day {
+    background-color: var(--ion-color-dark-tint, #2a2a2a);
+    border-color: var(--ion-color-dark-shade, #1e1e1e);
+  }
+
+  .calendar-day.not-set {
+    background-color: var(--ion-color-dark-tint, #2a2a2a);
+  }
+
+  .day-number {
+    color: var(--ion-text-color, #ffffff);
+  }
+
+  .capacity-legend,
+  .modal-date,
+  .info-content {
+    background-color: var(--ion-color-dark-tint, #2a2a2a);
+  }
+
+  .modal-date span {
+    color: var(--ion-text-color, #ffffff);
+  }
+
+  .info-text {
+    color: var(--ion-text-color, #e0e0e0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .manage-capacity-container {
+    padding: 12px;
+  }
+
+  .calendar-day {
+    padding: 4px;
+  }
+
+  .day-number {
+    font-size: 12px;
+  }
+
+  .capacity-text {
+    font-size: 8px;
+  }
+
+  .capacity-legend {
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .legend-item {
+    font-size: 11px;
+  }
+
+  .legend-indicator {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@media (max-width: 576px) {
+  .calendar-header {
+    margin-bottom: 8px;
+  }
+
+  .month-title {
+    font-size: 16px;
+  }
+
+  .calendar-day-header {
+    padding: 6px;
+    font-size: 10px;
+  }
+
+  .calendar-grid {
+    gap: 2px;
+  }
+
+  .capacity-legend {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .modal-date {
+    padding: 12px;
+  }
+
+  .modal-date span {
+    font-size: 13px;
+  }
+}
+
+/* Tablets in portrait */
+@media (min-width: 577px) and (max-width: 768px) {
+  .calendar-day {
+    padding: 6px;
+  }
+
+  .day-number {
+    font-size: 13px;
+  }
+}
+
+/* Larger screens */
+@media (min-width: 1200px) {
+  .manage-capacity-container {
+    max-width: 1200px;
+  }
+
+  .calendar-day {
+    padding: 12px;
+  }
+
+  .day-number {
+    font-size: 16px;
+  }
+
+  .capacity-text {
+    font-size: 10px;
+  }
+}

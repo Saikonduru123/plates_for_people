@@ -1,0 +1,57 @@
+.ratings-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.stars-container {
+  display: flex;
+  gap: 4px;
+}
+
+.stars-container.small .star-icon {
+  font-size: 14px;
+}
+
+.stars-container.medium .star-icon {
+  font-size: 18px;
+}
+
+.stars-container.large .star-icon {
+  font-size: 24px;
+}
+
+.star-icon.filled {
+  color: #ffc409;
+}
+
+.star-icon.half {
+  color: #ffc409;
+}
+
+.star-icon.empty {
+  color: #d0d0d0;
+}
+
+.rating-text {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.rating-value {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--ion-color-dark);
+}
+
+.rating-count {
+  color: var(--ion-color-medium);
+  font-size: 13px;
+}
+
+.no-ratings {
+  color: var(--ion-color-medium);
+  font-size: 13px;
+}

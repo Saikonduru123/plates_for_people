@@ -1,0 +1,349 @@
+.profile-settings-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  gap: 16px;
+}
+
+.loading-container p {
+  color: var(--ion-text-color, #666);
+  font-size: 14px;
+}
+
+/* Verification Card */
+.verification-card {
+  margin-bottom: 16px;
+  border-left: 4px solid var(--ion-color-primary, #3880ff);
+}
+
+.verification-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.shield-icon {
+  font-size: 40px;
+  color: var(--ion-color-primary, #3880ff);
+  flex-shrink: 0;
+}
+
+.verification-info {
+  flex: 1;
+}
+
+.verification-info h3 {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ion-text-color, #333);
+}
+
+.verification-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.verification-status ion-icon {
+  font-size: 18px;
+}
+
+.verification-status.pending {
+  background-color: rgba(255, 193, 7, 0.15);
+  color: #ff9800;
+  border: 1px solid #ff9800;
+}
+
+.verification-status.verified {
+  background-color: rgba(76, 175, 80, 0.15);
+  color: #4caf50;
+  border: 1px solid #4caf50;
+}
+
+.verification-status.rejected {
+  background-color: rgba(244, 67, 54, 0.15);
+  color: #f44336;
+  border: 1px solid #f44336;
+}
+
+.verification-message {
+  margin: 12px 0 0 0;
+  font-size: 14px;
+  color: var(--ion-color-medium, #666);
+  line-height: 1.6;
+}
+
+.rejection-info {
+  margin-top: 16px;
+  padding: 12px;
+  background-color: rgba(244, 67, 54, 0.1);
+  border-radius: 8px;
+  border-left: 3px solid #f44336;
+}
+
+.rejection-label {
+  margin: 0 0 8px 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #f44336;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.rejection-reason {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  color: var(--ion-text-color, #555);
+  line-height: 1.6;
+  font-style: italic;
+}
+
+.rejection-help {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ion-color-medium, #666);
+}
+
+/* Section Icons */
+.section-icon {
+  margin-right: 8px;
+  font-size: 20px;
+  vertical-align: middle;
+}
+
+/* Form Groups */
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ion-text-color, #333);
+}
+
+.form-label ion-icon {
+  font-size: 18px;
+  color: var(--ion-color-primary, #3880ff);
+}
+
+.form-label.required::after {
+  content: ' *';
+  color: var(--ion-color-danger, #eb445a);
+}
+
+/* Input Styling */
+ion-input {
+  --background: var(--ion-color-light, #f4f5f8);
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+ion-input.input-error {
+  --background: rgba(var(--ion-color-danger-rgb, 235, 68, 90), 0.05);
+  --border-color: var(--ion-color-danger, #eb445a);
+}
+
+ion-input.readonly-input {
+  --background: var(--ion-color-light-shade, #e8e9eb);
+  opacity: 0.7;
+}
+
+.error-text {
+  margin: 6px 0 0 0;
+  font-size: 12px;
+  color: var(--ion-color-danger, #eb445a);
+  font-weight: 500;
+}
+
+.helper-text {
+  margin: 6px 0 0 0;
+  font-size: 12px;
+  color: var(--ion-color-medium, #666);
+  line-height: 1.4;
+  font-style: italic;
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.form-actions ion-button {
+  flex: 1;
+  margin: 0;
+  font-weight: 600;
+}
+
+.no-changes-text {
+  margin: 12px 0 0 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--ion-color-medium, #999);
+  font-style: italic;
+}
+
+/* Info Card */
+.info-card {
+  margin-top: 16px;
+}
+
+.info-content {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.info-icon {
+  font-size: 24px;
+  color: var(--ion-color-primary, #3880ff);
+  flex-shrink: 0;
+}
+
+.info-text {
+  flex: 1;
+  font-size: 13px;
+  color: var(--ion-text-color, #555);
+  line-height: 1.6;
+}
+
+.info-text strong {
+  font-weight: 600;
+  color: var(--ion-color-primary, #3880ff);
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .verification-info h3,
+  .form-label {
+    color: var(--ion-text-color, #ffffff);
+  }
+
+  .verification-message {
+    color: var(--ion-text-color, #e0e0e0);
+  }
+
+  .rejection-info {
+    background-color: rgba(244, 67, 54, 0.2);
+  }
+
+  .rejection-reason {
+    color: var(--ion-text-color, #e0e0e0);
+  }
+
+  .info-text {
+    color: var(--ion-text-color, #e0e0e0);
+  }
+
+  ion-input {
+    --background: var(--ion-color-dark-tint, #2a2a2a);
+  }
+
+  ion-input.readonly-input {
+    --background: var(--ion-color-dark-shade, #1e1e1e);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .profile-settings-container {
+    padding: 0;
+  }
+
+  .verification-header {
+    gap: 12px;
+  }
+
+  .shield-icon {
+    font-size: 32px;
+  }
+
+  .verification-info h3 {
+    font-size: 16px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-actions ion-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-label {
+    font-size: 13px;
+  }
+
+  .form-label ion-icon {
+    font-size: 16px;
+  }
+
+  ion-input {
+    font-size: 13px;
+  }
+
+  .verification-status {
+    font-size: 12px;
+  }
+
+  .verification-status ion-icon {
+    font-size: 16px;
+  }
+}
+
+/* Animation for cards */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+ion-card {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Disabled state */
+ion-button[disabled] {
+  opacity: 0.5;
+}
+
+/* Focus states */
+ion-input:focus-within {
+  --background: var(--ion-color-light-tint, #fafbfc);
+  box-shadow: 0 0 0 2px rgba(var(--ion-color-primary-rgb, 56, 128, 255), 0.2);
+}

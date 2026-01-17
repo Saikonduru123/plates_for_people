@@ -62,7 +62,7 @@ async def health():
 
 
 # Include routers
-from app.routers import auth, donors, ngos, ngo_locations, admin, donations, notifications, search, ratings
+from app.routers import auth, donors, ngos, ngo_locations, admin, donations, notifications, search, ratings, geocoding
 app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(donors.router, prefix="/api/donors", tags=["Donors"])
 app.include_router(ngos.router, prefix="/api/ngos", tags=["NGOs"])
@@ -72,5 +72,6 @@ app.include_router(donations.router, prefix="/api/donations", tags=["Donations"]
 app.include_router(notifications.router, prefix="/api/notifications", tags=["Notifications"])
 app.include_router(search.router, prefix="/api/search", tags=["Search"])
 app.include_router(ratings.router, prefix="/api/ratings", tags=["Ratings"])
+app.include_router(geocoding.router, prefix="/api", tags=["Geocoding"])
 
 # All routers included! Backend complete! 🎉

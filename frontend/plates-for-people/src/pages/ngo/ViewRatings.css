@@ -1,0 +1,421 @@
+.view-ratings-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  gap: 16px;
+}
+
+.loading-container p {
+  color: var(--ion-text-color, #666);
+  font-size: 14px;
+}
+
+/* Summary Card */
+.summary-card {
+  margin-bottom: 16px;
+}
+
+.summary-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.trophy-icon {
+  font-size: 32px;
+  color: var(--ion-color-warning, #ffc409);
+}
+
+.summary-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ion-text-color, #333);
+}
+
+.average-rating-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 0;
+}
+
+.rating-number {
+  font-size: 56px;
+  font-weight: 700;
+  color: var(--ion-color-primary, #3880ff);
+  line-height: 1;
+}
+
+.rating-stars-large {
+  display: flex;
+  gap: 4px;
+}
+
+.total-ratings-text {
+  font-size: 14px;
+  color: var(--ion-color-medium, #666);
+  margin-top: 4px;
+}
+
+/* Section Icons */
+.section-icon {
+  margin-right: 8px;
+  font-size: 20px;
+  vertical-align: middle;
+}
+
+/* Rating Distribution */
+.rating-distribution {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.distribution-row {
+  display: grid;
+  grid-template-columns: 60px 1fr 100px;
+  align-items: center;
+  gap: 12px;
+}
+
+.distribution-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ion-text-color, #555);
+}
+
+.distribution-label ion-icon {
+  font-size: 14px;
+  color: #ffc409;
+}
+
+.distribution-bar-container {
+  height: 24px;
+  background-color: var(--ion-color-light, #f4f5f8);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+.distribution-bar {
+  height: 100%;
+  border-radius: 12px;
+  transition: width 0.3s ease;
+}
+
+.distribution-count {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ion-text-color, #555);
+  text-align: right;
+}
+
+/* Filter */
+.filter-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.filter-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ion-text-color, #333);
+}
+
+.filter-results {
+  font-size: 13px;
+  color: var(--ion-color-medium, #666);
+  font-weight: 500;
+}
+
+/* Ratings List */
+.ratings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rating-card {
+  margin: 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.rating-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.rating-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  gap: 16px;
+}
+
+.rating-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.donor-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.donor-icon {
+  font-size: 18px;
+  color: var(--ion-color-primary, #3880ff);
+}
+
+.donor-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ion-text-color, #333);
+}
+
+.rating-date {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--ion-color-medium, #666);
+}
+
+.rating-date ion-icon {
+  font-size: 14px;
+}
+
+.rating-stars {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.stars-container {
+  display: flex;
+  gap: 2px;
+}
+
+/* Rating Feedback */
+.rating-feedback {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-top: 12px;
+  padding: 12px;
+  background-color: var(--ion-color-light, #f4f5f8);
+  border-radius: 8px;
+  border-left: 3px solid var(--ion-color-primary, #3880ff);
+}
+
+.feedback-icon {
+  font-size: 20px;
+  color: var(--ion-color-primary, #3880ff);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.feedback-text {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ion-text-color, #555);
+  line-height: 1.6;
+  font-style: italic;
+}
+
+/* Donation Info */
+.donation-info {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.donation-badge {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.meal-chip {
+  height: 24px;
+  font-size: 11px;
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  text-align: center;
+  min-height: 60vh;
+}
+
+.empty-icon {
+  font-size: 80px;
+  color: var(--ion-color-medium, #999);
+  opacity: 0.5;
+  margin-bottom: 24px;
+}
+
+.empty-state h3 {
+  margin: 0 0 12px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ion-text-color, #333);
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ion-color-medium, #666);
+  line-height: 1.6;
+}
+
+/* No Results */
+.no-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 32px 16px;
+  text-align: center;
+}
+
+.no-results-icon {
+  font-size: 48px;
+  color: var(--ion-color-medium, #999);
+  opacity: 0.5;
+}
+
+.no-results p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ion-color-medium, #666);
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .summary-header h2,
+  .donor-name,
+  .filter-label {
+    color: var(--ion-text-color, #ffffff);
+  }
+
+  .empty-state h3 {
+    color: var(--ion-text-color, #ffffff);
+  }
+
+  .distribution-bar-container {
+    background-color: var(--ion-color-dark-tint, #2a2a2a);
+  }
+
+  .rating-feedback {
+    background-color: var(--ion-color-dark-tint, #2a2a2a);
+  }
+
+  .feedback-text {
+    color: var(--ion-text-color, #e0e0e0);
+  }
+
+  .rating-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .view-ratings-container {
+    padding: 12px;
+  }
+
+  .rating-number {
+    font-size: 48px;
+  }
+
+  .distribution-row {
+    grid-template-columns: 50px 1fr 80px;
+    gap: 8px;
+  }
+
+  .distribution-label {
+    font-size: 13px;
+  }
+
+  .distribution-count {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 576px) {
+  .rating-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .rating-stars {
+    align-self: flex-start;
+  }
+
+  .rating-number {
+    font-size: 40px;
+  }
+
+  .trophy-icon {
+    font-size: 28px;
+  }
+
+  .summary-header h2 {
+    font-size: 18px;
+  }
+
+  .distribution-row {
+    grid-template-columns: 40px 1fr 70px;
+  }
+
+  .rating-feedback {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .donation-info {
+    margin-top: 8px;
+  }
+}
+
+/* Animation for rating cards */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rating-card {
+  animation: fadeIn 0.3s ease-out;
+}

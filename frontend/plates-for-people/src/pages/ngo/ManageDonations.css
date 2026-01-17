@@ -1,0 +1,266 @@
+.manage-donations-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  gap: 16px;
+}
+
+.loading-container p {
+  color: var(--ion-text-color, #666);
+  font-size: 14px;
+}
+
+/* Segment Badges */
+ion-segment-button ion-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+ion-segment-button ion-badge {
+  margin-left: 4px;
+  font-size: 11px;
+  padding: 2px 6px;
+}
+
+/* Donation Request Cards */
+.donations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.donation-request-card {
+  margin: 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.donation-request-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+
+.card-title-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.card-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ion-text-color, #333);
+}
+
+.card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 16px 0;
+  border-top: 1px solid var(--ion-color-light-shade, #e0e0e0);
+  border-bottom: 1px solid var(--ion-color-light-shade, #e0e0e0);
+}
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--ion-text-color, #555);
+}
+
+.detail-row ion-icon {
+  font-size: 20px;
+  color: var(--ion-color-medium, #999);
+  flex-shrink: 0;
+}
+
+.detail-row.description {
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 12px;
+  background: var(--ion-color-light, #f8f9fa);
+  border-radius: 8px;
+}
+
+.detail-row.description p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ion-color-medium, #666);
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-top: 8px;
+}
+
+.card-actions ion-button {
+  --padding-start: 12px;
+  --padding-end: 12px;
+  font-size: 13px;
+  height: 36px;
+}
+
+.card-actions ion-button ion-icon {
+  font-size: 18px;
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  text-align: center;
+  min-height: 60vh;
+}
+
+.empty-icon {
+  font-size: 80px;
+  color: var(--ion-color-medium, #999);
+  opacity: 0.5;
+  margin-bottom: 24px;
+}
+
+.empty-state h3 {
+  margin: 0 0 12px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ion-text-color, #333);
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ion-color-medium, #666);
+  line-height: 1.6;
+}
+
+/* Reject Modal */
+.modal-description {
+  margin: 0 0 24px 0;
+  font-size: 14px;
+  color: var(--ion-color-medium, #666);
+  line-height: 1.6;
+}
+
+.rejection-textarea {
+  margin-bottom: 24px;
+  --background: var(--ion-item-background, white);
+  --border-radius: 8px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  border: 1px solid var(--ion-color-light-shade, #d7d8da);
+  border-radius: 8px;
+  min-height: 120px;
+}
+
+.rejection-textarea::part(native) {
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* Alert Customization */
+ion-alert .alert-message {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .card-title {
+    color: var(--ion-text-color, #ffffff);
+  }
+
+  .detail-row {
+    color: var(--ion-text-color, #e0e0e0);
+  }
+
+  .detail-row.description {
+    background: var(--ion-color-dark, #1a1a1a);
+  }
+
+  .empty-state h3 {
+    color: var(--ion-text-color, #ffffff);
+  }
+
+  .rejection-textarea {
+    border-color: var(--ion-color-dark-shade, #2a2a2a);
+  }
+
+  .card-details {
+    border-color: var(--ion-color-dark-shade, #2a2a2a);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .manage-donations-container {
+    padding: 12px;
+  }
+
+  .card-title {
+    font-size: 16px;
+  }
+
+  .card-header {
+    flex-direction: column;
+  }
+
+  .card-actions {
+    width: 100%;
+  }
+
+  .card-actions ion-button {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .empty-icon {
+    font-size: 64px;
+  }
+}
+
+@media (max-width: 576px) {
+  .card-actions {
+    flex-direction: column;
+  }
+
+  .card-actions ion-button {
+    width: 100%;
+  }
+
+  ion-segment-button ion-label {
+    font-size: 12px;
+  }
+
+  ion-segment-button ion-badge {
+    font-size: 10px;
+  }
+}

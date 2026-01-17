@@ -6,6 +6,8 @@ import type {
   NGOLocationCapacity,
   CreateLocationFormData,
   SetCapacityFormData,
+  Rating,
+  NGORatingSummary,
 } from '../types';
 
 export const ngoService = {
@@ -18,9 +20,8 @@ export const ngoService = {
   // Update NGO profile
   async updateProfile(data: {
     organization_name?: string;
-    phone_number?: string;
-    address?: string;
-    description?: string;
+    contact_person?: string;
+    phone?: string;
   }): Promise<NGOProfile> {
     const response = await api.put<NGOProfile>('/ngos/profile', data);
     return response.data;
@@ -94,6 +95,20 @@ export const ngoService = {
       `/ngo-locations/${locationId}/capacity/${date}`,
       data
     );
+    return response.data;
+  },
+
+  // Ratings
+  async getMyRatings(): Promise<Rating[]> {
+    // First get NGO profile to get id
+    const profile = await this.getProfile();
+    const response = await api.get<NGORatingSummary>(`/ratings/ngo/${profile.id}`);
+    return response.data.recent_ratings || [];
+  },
+
+  async getRatingSummary(): Promise<NGORatingSummary> {
+    const profile = await this.getProfile();
+    const response = await api.get<NGORatingSummary>(`/ratings/ngo/${profile.id}`);
     return response.data;
   },
 };

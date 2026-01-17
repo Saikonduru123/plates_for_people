@@ -1,0 +1,271 @@
+.create-donation-content {
+  --background: var(--ion-color-light);
+}
+
+.step-indicator {
+  padding: 24px 20px 16px;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.step-dots {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.step-dot {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 16px;
+  background: var(--ion-color-light);
+  color: var(--ion-color-medium);
+  border: 2px solid var(--ion-color-light-shade);
+  transition: all 0.3s ease;
+}
+
+.step-dot.active {
+  background: var(--ion-color-primary);
+  color: white;
+  border-color: var(--ion-color-primary);
+}
+
+.step-dot.current {
+  transform: scale(1.15);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.step-label {
+  text-align: center;
+  font-size: 14px;
+  color: var(--ion-color-medium);
+  font-weight: 500;
+  margin: 0;
+}
+
+.form-container {
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.form-step {
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.form-step h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  color: var(--ion-color-dark);
+}
+
+.step-description {
+  font-size: 15px;
+  color: var(--ion-color-medium);
+  margin: 0 0 24px 0;
+}
+
+.ngo-selection-card {
+  margin: 0 0 16px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+}
+
+.ngo-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ngo-info ion-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.ngo-info h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: var(--ion-color-dark);
+}
+
+.location-text {
+  font-size: 14px;
+  color: var(--ion-color-medium);
+  margin: 0;
+}
+
+.error-note {
+  display: block;
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(255, 59, 48, 0.1);
+  border-radius: 8px;
+}
+
+ion-item {
+  --background: white;
+  --border-radius: 12px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --inner-padding-end: 0;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+ion-label[position="stacked"] {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ion-color-dark);
+  margin-bottom: 8px;
+}
+
+ion-input,
+ion-select,
+ion-textarea {
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+}
+
+ion-textarea {
+  min-height: 80px;
+}
+
+.review-card {
+  margin: 0 0 100px 0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+}
+
+.review-section {
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--ion-color-light);
+}
+
+.review-section:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.review-section h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ion-color-primary);
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.review-section p {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ion-color-dark);
+  margin: 8px 0;
+}
+
+.review-section strong {
+  color: var(--ion-color-medium);
+  font-weight: 600;
+  display: inline-block;
+  min-width: 120px;
+}
+
+.button-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px;
+  background: white;
+  border-top: 1px solid var(--ion-color-light);
+  display: flex;
+  gap: 12px;
+  z-index: 10;
+}
+
+.button-container ion-button {
+  flex: 1;
+  height: 48px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0.3px;
+}
+
+.button-container ion-button[fill="outline"] {
+  --border-width: 2px;
+}
+
+/* Modal styling */
+ion-modal {
+  --height: auto;
+  --border-radius: 16px;
+}
+
+ion-datetime {
+  --background: white;
+}
+
+/* Tablet and Desktop */
+@media (min-width: 768px) {
+  .form-container {
+    padding: 32px;
+  }
+
+  .step-indicator {
+    padding: 32px 20px 20px;
+  }
+
+  .step-dots {
+    gap: 24px;
+  }
+
+  .step-dot {
+    width: 48px;
+    height: 48px;
+    font-size: 18px;
+  }
+
+  .form-step h2 {
+    font-size: 28px;
+  }
+
+  .button-container {
+    position: static;
+    border-top: none;
+    background: transparent;
+    padding: 0;
+    max-width: 600px;
+    margin: 32px auto 24px;
+  }
+
+  .review-card {
+    margin-bottom: 32px;
+  }
+}
+
+/* Mobile optimizations */
+@media (max-width: 767px) {
+  .form-container {
+    padding-bottom: 100px;
+  }
+}

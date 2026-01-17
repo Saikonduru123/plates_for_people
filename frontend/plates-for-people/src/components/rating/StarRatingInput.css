@@ -1,0 +1,84 @@
+.star-rating-input {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.star-button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.2s, opacity 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.star-button:hover:not(:disabled) {
+  transform: scale(1.2);
+}
+
+.star-button:active:not(:disabled) {
+  transform: scale(1.1);
+}
+
+.star-button:disabled {
+  cursor: default;
+}
+
+.star-icon {
+  color: var(--ion-color-warning);
+  transition: color 0.2s;
+}
+
+.star-button:not(.filled) .star-icon {
+  color: var(--ion-color-medium-shade);
+}
+
+.star-button.filled .star-icon {
+  color: var(--ion-color-warning);
+}
+
+/* Size variants */
+.star-rating-small .star-icon {
+  font-size: 24px;
+}
+
+.star-rating-medium .star-icon {
+  font-size: 32px;
+}
+
+.star-rating-large .star-icon {
+  font-size: 48px;
+}
+
+.star-rating-small {
+  gap: 4px;
+}
+
+.star-rating-medium {
+  gap: 6px;
+}
+
+.star-rating-large {
+  gap: 8px;
+}
+
+/* Readonly state */
+.star-rating-input.readonly .star-button {
+  cursor: default;
+}
+
+.star-rating-input.readonly .star-button:hover {
+  transform: none;
+}
+
+/* Mobile touch optimization */
+@media (max-width: 767px) {
+  .star-button {
+    padding: 8px;
+    margin: -8px;
+  }
+}

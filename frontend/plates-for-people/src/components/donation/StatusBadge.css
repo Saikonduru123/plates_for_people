@@ -1,0 +1,38 @@
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  border-radius: 12px;
+}
+
+.status-badge ion-icon {
+  flex-shrink: 0;
+}
+
+.status-badge-small {
+  font-size: 11px;
+  padding: 3px 8px;
+}
+
+.status-badge-small ion-icon {
+  font-size: 12px;
+}
+
+.status-badge-medium {
+  font-size: 12px;
+  padding: 4px 10px;
+}
+
+.status-badge-medium ion-icon {
+  font-size: 14px;
+}
+
+.status-badge-large {
+  font-size: 14px;
+  padding: 8px 16px;
+}
+
+.status-badge-large ion-icon {
+  font-size: 18px;
+}
