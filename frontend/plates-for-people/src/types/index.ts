@@ -319,6 +319,20 @@ export interface SetCapacityFormData {
   notes?: string;
 }
 
+// Admin Types
+export interface AdminDashboard {
+  pending_verifications: number;
+  verified_ngos: number;
+  rejected_ngos: number;
+  total_users: number;
+  active_users: number;
+  total_donations: number;
+  completed_donations: number;
+  // Computed properties for frontend
+  total_donors?: number;
+  total_ngos?: number;
+}
+
 // Utility Types
 export interface Coordinates {
   latitude: number;

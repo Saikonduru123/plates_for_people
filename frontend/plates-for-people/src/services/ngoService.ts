@@ -35,33 +35,33 @@ export const ngoService = {
 
   // Location Management
   async getLocations(): Promise<NGOLocation[]> {
-    const response = await api.get<NGOLocation[]>('/ngo-locations/');
+    const response = await api.get<NGOLocation[]>('/ngos/locations');
     return response.data;
   },
 
   async getLocation(id: number): Promise<NGOLocation> {
-    const response = await api.get<NGOLocation>(`/ngo-locations/${id}`);
+    const response = await api.get<NGOLocation>(`/ngos/locations/${id}`);
     return response.data;
   },
 
   async createLocation(data: CreateLocationFormData): Promise<NGOLocation> {
-    const response = await api.post<NGOLocation>('/ngo-locations/', data);
+    const response = await api.post<NGOLocation>('/ngos/locations', data);
     return response.data;
   },
 
   async updateLocation(id: number, data: Partial<CreateLocationFormData>): Promise<NGOLocation> {
-    const response = await api.put<NGOLocation>(`/ngo-locations/${id}`, data);
+    const response = await api.put<NGOLocation>(`/ngos/locations/${id}`, data);
     return response.data;
   },
 
   async deleteLocation(id: number): Promise<void> {
-    await api.delete(`/ngo-locations/${id}`);
+    await api.delete(`/ngos/locations/${id}`);
   },
 
   // Capacity Management
   async getCapacity(locationId: number, date: string): Promise<NGOLocationCapacity> {
     const response = await api.get<NGOLocationCapacity>(
-      `/ngo-locations/${locationId}/capacity/${date}`
+      `/ngos/locations/${locationId}/capacity/${date}`
     );
     return response.data;
   },
@@ -72,7 +72,7 @@ export const ngoService = {
     endDate: string
   ): Promise<NGOLocationCapacity[]> {
     const response = await api.get<NGOLocationCapacity[]>(
-      `/ngo-locations/${locationId}/capacity/range`,
+      `/ngos/locations/${locationId}/capacity/range`,
       { params: { start_date: startDate, end_date: endDate } }
     );
     return response.data;
@@ -80,7 +80,7 @@ export const ngoService = {
 
   async setCapacity(locationId: number, data: SetCapacityFormData): Promise<NGOLocationCapacity> {
     const response = await api.post<NGOLocationCapacity>(
-      `/ngo-locations/${locationId}/capacity`,
+      `/ngos/locations/${locationId}/capacity`,
       data
     );
     return response.data;
@@ -92,7 +92,7 @@ export const ngoService = {
     data: Partial<SetCapacityFormData>
   ): Promise<NGOLocationCapacity> {
     const response = await api.put<NGOLocationCapacity>(
-      `/ngo-locations/${locationId}/capacity/${date}`,
+      `/ngos/locations/${locationId}/capacity/${date}`,
       data
     );
     return response.data;
