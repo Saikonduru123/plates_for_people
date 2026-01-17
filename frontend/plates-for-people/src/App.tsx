@@ -19,6 +19,7 @@ import ManageCapacity from './pages/ngo/ManageCapacity';
 import ViewRatings from './pages/ngo/ViewRatings';
 import ProfileSettings from './pages/ngo/ProfileSettings';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import VerifyNGOs from './pages/admin/VerifyNGOs';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -221,6 +222,14 @@ const AppRoutes: React.FC = () => {
       <Route exact path="/admin/dashboard">
         {isAuthenticated && user?.role === 'admin' ? (
           <AdminDashboard />
+        ) : (
+          <Redirect to="/login" />
+        )}
+      </Route>
+
+      <Route exact path="/admin/verify-ngos">
+        {isAuthenticated && user?.role === 'admin' ? (
+          <VerifyNGOs />
         ) : (
           <Redirect to="/login" />
         )}

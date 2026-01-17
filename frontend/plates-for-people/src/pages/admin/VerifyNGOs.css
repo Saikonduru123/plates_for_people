@@ -1,0 +1,159 @@
+.verify-ngos-container {
+  padding: 16px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.ngo-card {
+  margin-bottom: 16px;
+}
+
+.ngo-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.ngo-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  background: var(--ion-color-primary-tint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ngo-icon ion-icon {
+  font-size: 32px;
+  color: var(--ion-color-primary);
+}
+
+.ngo-title {
+  flex: 1;
+}
+
+.ngo-title h2 {
+  margin: 0 0 8px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ion-text-color);
+}
+
+.ngo-details {
+  margin-bottom: 20px;
+}
+
+.detail-item {
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  margin-bottom: 12px;
+}
+
+.detail-item ion-icon {
+  font-size: 20px;
+  color: var(--ion-color-medium);
+  margin-right: 12px;
+}
+
+.detail-item p {
+  font-size: 12px;
+  color: var(--ion-color-medium);
+  margin: 0 0 4px 0;
+}
+
+.detail-item h3 {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ion-text-color);
+  margin: 0;
+}
+
+.doc-button {
+  margin: 16px 0;
+}
+
+.action-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 80px;
+  color: var(--ion-color-success);
+  margin-bottom: 16px;
+}
+
+.empty-state h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: var(--ion-text-color);
+}
+
+.empty-state p {
+  font-size: 16px;
+  color: var(--ion-color-medium);
+  margin: 0;
+}
+
+.reject-modal-content {
+  padding: 20px;
+}
+
+.reject-modal-content h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: var(--ion-text-color);
+}
+
+.reject-modal-content p {
+  font-size: 14px;
+  color: var(--ion-color-medium);
+  margin: 0 0 20px 0;
+}
+
+.rejection-textarea {
+  border: 1px solid var(--ion-color-light);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 20px;
+}
+
+.confirm-reject-button {
+  margin-top: 20px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  gap: 16px;
+}
+
+.loading-container p {
+  color: var(--ion-color-medium);
+  font-size: 16px;
+}
+
+@media (max-width: 576px) {
+  .action-buttons {
+    grid-template-columns: 1fr;
+  }
+}
