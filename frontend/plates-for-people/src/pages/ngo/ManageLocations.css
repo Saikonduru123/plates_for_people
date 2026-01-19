@@ -42,7 +42,9 @@
 /* Location Card */
 .location-card {
   margin: 0;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .location-card:hover {
@@ -213,7 +215,7 @@ ion-fab-button {
   }
 
   .detail-text p {
-    color: var(--ion-text-color, #e0e0e0);
+    color: #000;
   }
 
   .detail-text strong {

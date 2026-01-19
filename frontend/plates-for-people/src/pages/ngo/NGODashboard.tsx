@@ -35,8 +35,10 @@ import {
   addCircleOutline,
   settingsOutline,
   listOutline,
+  logOutOutline,
 } from 'ionicons/icons';
 import { useHistory } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { ngoService } from '../../services/ngoService';
 import { donationService } from '../../services/donationService';
 import type { NGODashboard, NGOProfile, Donation } from '../../types';
@@ -46,6 +48,7 @@ import './NGODashboard.css';
 const NGODashboard: React.FC = () => {
   const history = useHistory();
   const [present] = useIonToast();
+  const { logout } = useAuth();
 
   const [loading, setLoading] = useState(true);
   const [dashboard, setDashboard] = useState<NGODashboard | null>(null);
@@ -59,19 +62,16 @@ const NGODashboard: React.FC = () => {
   const loadDashboard = async () => {
     try {
       setLoading(true);
-      
+
       // Load dashboard stats and profile in parallel
-      const [dashboardData, profileData] = await Promise.all([
-        ngoService.getDashboard(),
-        ngoService.getProfile(),
-      ]);
-      
+      const [dashboardData, profileData] = await Promise.all([ngoService.getDashboard(), ngoService.getProfile()]);
+
       setDashboard(dashboardData);
       setProfile(profileData);
-      
+
       // Load recent donations if available
-      if (dashboardData.recent_requests && dashboardData.recent_requests.length > 0) {
-        setRecentDonations(dashboardData.recent_requests);
+      if (dashboardData.recent_donations && dashboardData.recent_donations.length > 0) {
+        setRecentDonations(dashboardData.recent_donations);
       }
     } catch (error: any) {
       console.error('Failed to load dashboard:', error);
@@ -88,6 +88,11 @@ const NGODashboard: React.FC = () => {
   const handleRefresh = async (event: CustomEvent<RefresherEventDetail>) => {
     await loadDashboard();
     event.detail.complete();
+  };
+
+  const handleLogout = () => {
+    logout();
+    history.push('/login');
   };
 
   const getVerificationStatusBadge = () => {
@@ -141,6 +146,9 @@ const NGODashboard: React.FC = () => {
           <IonTitle>NGO Dashboard</IonTitle>
           <IonButton slot="end" fill="clear" onClick={() => history.push('/ngo/profile')}>
             <IonIcon icon={settingsOutline} />
+          </IonButton>
+          <IonButton slot="end" fill="clear" onClick={handleLogout}>
+            <IonIcon icon={logOutOutline} />
           </IonButton>
         </IonToolbar>
       </IonHeader>
@@ -198,7 +206,7 @@ const NGODashboard: React.FC = () => {
                     <div className="stat-icon">
                       <IonIcon icon={statsChartOutline} />
                     </div>
-                    <div className="stat-value">{dashboard.total_requests || 0}</div>
+                    <div className="stat-value">{dashboard.total_donations_received || 0}</div>
                     <div className="stat-label">Total Requests</div>
                   </IonCardContent>
                 </IonCard>
@@ -210,7 +218,7 @@ const NGODashboard: React.FC = () => {
                     <div className="stat-icon">
                       <IonIcon icon={timeOutline} />
                     </div>
-                    <div className="stat-value">{dashboard.pending_requests || 0}</div>
+                    <div className="stat-value">{dashboard.pending_donations || 0}</div>
                     <div className="stat-label">Pending</div>
                   </IonCardContent>
                 </IonCard>
@@ -222,7 +230,7 @@ const NGODashboard: React.FC = () => {
                     <div className="stat-icon">
                       <IonIcon icon={checkmarkCircleOutline} />
                     </div>
-                    <div className="stat-value">{dashboard.completed_requests || 0}</div>
+                    <div className="stat-value">{dashboard.completed_donations || 0}</div>
                     <div className="stat-label">Completed</div>
                   </IonCardContent>
                 </IonCard>
@@ -234,7 +242,7 @@ const NGODashboard: React.FC = () => {
                     <div className="stat-icon">
                       <IonIcon icon={restaurantOutline} />
                     </div>
-                    <div className="stat-value">{dashboard.total_plates_received || 0}</div>
+                    <div className="stat-value">{dashboard.total_meals_received || 0}</div>
                     <div className="stat-label">Total Plates</div>
                   </IonCardContent>
                 </IonCard>
@@ -250,9 +258,7 @@ const NGODashboard: React.FC = () => {
                   <IonIcon icon={starOutline} color="warning" />
                 </div>
                 <div className="rating-info">
-                  <div className="rating-value">
-                    {dashboard.average_rating ? dashboard.average_rating.toFixed(1) : 'N/A'}
-                  </div>
+                  <div className="rating-value">{dashboard.average_rating ? dashboard.average_rating.toFixed(1) : 'N/A'}</div>
                   <div className="rating-label">Average Rating</div>
                 </div>
                 <IonButton fill="clear" size="small" onClick={() => history.push('/ngo/ratings')}>
@@ -268,11 +274,7 @@ const NGODashboard: React.FC = () => {
             <IonGrid>
               <IonRow>
                 <IonCol size="6">
-                  <IonCard
-                    className="action-card"
-                    button
-                    onClick={() => history.push('/ngo/donations')}
-                  >
+                  <IonCard className="action-card" button onClick={() => history.push('/ngo/donations')}>
                     <IonCardContent>
                       <IonIcon icon={listOutline} className="action-icon" />
                       <div className="action-label">View All Requests</div>
@@ -286,11 +288,7 @@ const NGODashboard: React.FC = () => {
                 </IonCol>
 
                 <IonCol size="6">
-                  <IonCard
-                    className="action-card"
-                    button
-                    onClick={() => history.push('/ngo/locations')}
-                  >
+                  <IonCard className="action-card" button onClick={() => history.push('/ngo/locations')}>
                     <IonCardContent>
                       <IonIcon icon={locationOutline} className="action-icon" />
                       <div className="action-label">Manage Locations</div>
@@ -299,11 +297,7 @@ const NGODashboard: React.FC = () => {
                 </IonCol>
 
                 <IonCol size="6">
-                  <IonCard
-                    className="action-card"
-                    button
-                    onClick={() => history.push('/ngo/capacity')}
-                  >
+                  <IonCard className="action-card" button onClick={() => history.push('/ngo/capacity')}>
                     <IonCardContent>
                       <IonIcon icon={addCircleOutline} className="action-icon" />
                       <div className="action-label">Set Capacity</div>
@@ -312,11 +306,7 @@ const NGODashboard: React.FC = () => {
                 </IonCol>
 
                 <IonCol size="6">
-                  <IonCard
-                    className="action-card"
-                    button
-                    onClick={() => history.push('/ngo/profile')}
-                  >
+                  <IonCard className="action-card" button onClick={() => history.push('/ngo/profile')}>
                     <IonCardContent>
                       <IonIcon icon={settingsOutline} className="action-icon" />
                       <div className="action-label">Settings</div>
@@ -332,21 +322,14 @@ const NGODashboard: React.FC = () => {
             <div className="recent-section">
               <div className="section-header">
                 <h2 className="section-title">Recent Requests</h2>
-                <IonButton
-                  fill="clear"
-                  size="small"
-                  onClick={() => history.push('/ngo/donations')}
-                >
+                <IonButton fill="clear" size="small" onClick={() => history.push('/ngo/donations')}>
                   View All
                 </IonButton>
               </div>
 
               <div className="donations-list">
                 {recentDonations.slice(0, 5).map((donation) => (
-                  <DonationCard
-                    key={donation.id}
-                    donation={donation}
-                  />
+                  <DonationCard key={donation.id} donation={donation} />
                 ))}
               </div>
             </div>

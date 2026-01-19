@@ -41,7 +41,9 @@ ion-segment-button ion-badge {
 
 .donation-request-card {
   margin: 0;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .donation-request-card:hover {
@@ -199,7 +201,7 @@ ion-alert .alert-message {
   }
 
   .detail-row {
-    color: var(--ion-text-color, #e0e0e0);
+    color: #000;
   }
 
   .detail-row.description {

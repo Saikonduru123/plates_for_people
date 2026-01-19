@@ -150,6 +150,9 @@ class NGOLocationBase(BaseModel):
     zip_code: str = Field(..., max_length=20)
     latitude: float = Field(..., ge=-90, le=90)
     longitude: float = Field(..., ge=-180, le=180)
+    contact_person: Optional[str] = Field(None, max_length=255)
+    contact_phone: Optional[str] = Field(None, max_length=20)
+    operating_hours: Optional[str] = Field(None, max_length=255)
 
 
 class NGOLocationCreate(NGOLocationBase):
@@ -166,6 +169,9 @@ class NGOLocationUpdate(BaseModel):
     zip_code: Optional[str] = Field(None, max_length=20)
     latitude: Optional[float] = Field(None, ge=-90, le=90)
     longitude: Optional[float] = Field(None, ge=-180, le=180)
+    contact_person: Optional[str] = Field(None, max_length=255)
+    contact_phone: Optional[str] = Field(None, max_length=20)
+    operating_hours: Optional[str] = Field(None, max_length=255)
     is_active: Optional[bool] = None
 
 

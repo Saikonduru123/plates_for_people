@@ -106,11 +106,7 @@ const ManageCapacity: React.FC = () => {
       const startDateString = formatDate(startDate);
       const endDateString = formatDate(endDate);
 
-      const capacities = await ngoService.getCapacityRange(
-        selectedLocationId,
-        startDateString,
-        endDateString
-      );
+      const capacities = await ngoService.getCapacityRange(selectedLocationId, startDateString, endDateString);
 
       const capacityMap = new Map<string, NGOLocationCapacity>();
       capacities.forEach((cap) => {
@@ -209,7 +205,7 @@ const ManageCapacity: React.FC = () => {
 
   const handleDayClick = (day: CalendarDay) => {
     if (!day.isCurrentMonth) return;
-    
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     if (day.date < today) {
@@ -257,10 +253,7 @@ const ManageCapacity: React.FC = () => {
       await loadCapacityData();
     } catch (error: any) {
       console.error('Error saving capacity:', error);
-      showToastMessage(
-        error.response?.data?.detail || 'Failed to save capacity',
-        'danger'
-      );
+      showToastMessage(error.response?.data?.detail || 'Failed to save capacity', 'danger');
     } finally {
       setLoading(false);
     }
@@ -373,8 +366,7 @@ const ManageCapacity: React.FC = () => {
                   value={selectedLocationId}
                   onIonChange={(e) => setSelectedLocationId(e.detail.value)}
                   interface="popover"
-                  placeholder="Choose a location"
-                >
+                  placeholder="Choose a location">
                   {locations.map((location) => (
                     <IonSelectOption key={location.id} value={location.id}>
                       {location.location_name}
@@ -445,8 +437,7 @@ const ManageCapacity: React.FC = () => {
                     className={`calendar-day ${!day.isCurrentMonth ? 'other-month' : ''} ${
                       day.isToday ? 'today' : ''
                     } ${getCapacityStatus(day.capacity)}`}
-                    onClick={() => handleDayClick(day)}
-                  >
+                    onClick={() => handleDayClick(day)}>
                     <div className="day-number">{day.date.getDate()}</div>
                     {renderCapacityIndicator(day)}
                   </div>
@@ -461,8 +452,8 @@ const ManageCapacity: React.FC = () => {
               <div className="info-content">
                 <IonIcon icon={alertCircleOutline} className="info-icon" />
                 <div className="info-text">
-                  <strong>Tip:</strong> Click on any future date to set or update capacity.
-                  The color indicates how full each day is based on current bookings.
+                  <strong>Tip:</strong> Click on any future date to set or update capacity. The color indicates how full each day is based on current
+                  bookings.
                 </div>
               </div>
             </IonCardContent>
@@ -471,12 +462,10 @@ const ManageCapacity: React.FC = () => {
       </IonContent>
 
       {/* Set Capacity Modal */}
-      <IonModal isOpen={showModal} onDidDismiss={() => setShowModal(false)}>
+      <IonModal isOpen={showModal} onDidDismiss={() => setShowModal(false)} className="modal-set-capacity">
         <IonHeader>
           <IonToolbar>
-            <IonTitle>
-              {selectedDay?.capacity ? 'Update Capacity' : 'Set Capacity'}
-            </IonTitle>
+            <IonTitle>{selectedDay?.capacity ? 'Update Capacity' : 'Set Capacity'}</IonTitle>
             <IonButtons slot="end">
               <IonButton onClick={() => setShowModal(false)}>Close</IonButton>
             </IonButtons>
@@ -488,20 +477,20 @@ const ManageCapacity: React.FC = () => {
               <>
                 <div className="modal-date">
                   <IonIcon icon={calendarOutline} />
-                  <span>{selectedDay.date.toLocaleDateString('default', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}</span>
+                  <span>
+                    {selectedDay.date.toLocaleDateString('default', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </span>
                 </div>
 
                 {selectedDay.capacity && (
                   <div className="current-bookings">
                     <IonIcon icon={peopleOutline} />
-                    <span>
-                      Current Bookings: {selectedDay.capacity.current_bookings}
-                    </span>
+                    <span>Current Bookings: {selectedDay.capacity.current_bookings}</span>
                   </div>
                 )}
 
@@ -510,6 +499,7 @@ const ManageCapacity: React.FC = () => {
                   <IonInput
                     type="number"
                     value={formData.max_capacity}
+                    style={{ color: '#000' }}
                     onIonInput={(e) =>
                       setFormData((prev) => ({
                         ...prev,
@@ -519,9 +509,7 @@ const ManageCapacity: React.FC = () => {
                     placeholder="Enter maximum capacity"
                     min="1"
                   />
-                  <p className="helper-text">
-                    Maximum number of donations this location can accept on this date
-                  </p>
+                  <p className="helper-text">Maximum number of donations this location can accept on this date</p>
                 </div>
 
                 <div className="form-group">
@@ -539,12 +527,7 @@ const ManageCapacity: React.FC = () => {
                   />
                 </div>
 
-                <IonButton
-                  expand="block"
-                  onClick={handleSaveCapacity}
-                  disabled={loading}
-                  className="save-button"
-                >
+                <IonButton expand="block" onClick={handleSaveCapacity} disabled={loading} className="save-button">
                   {loading ? (
                     <>
                       <IonSpinner name="crescent" />

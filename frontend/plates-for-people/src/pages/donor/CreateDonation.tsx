@@ -27,6 +27,9 @@ import {
 import { checkmarkCircle, arrowBack, arrowForward } from 'ionicons/icons';
 import { useLocation } from 'react-router-dom';
 import { donationService } from '../../services/donationService';
+import { CustomSelect } from '../../components/CustomSelect';
+import { DatePicker } from '../../components/DatePicker';
+import { TimePicker } from '../../components/TimePicker';
 import type { CreateDonationRequest, MealType } from '../../types';
 import './CreateDonation.css';
 
@@ -41,7 +44,7 @@ const CreateDonation: React.FC = () => {
   const location = useLocation<LocationState>();
   const router = useIonRouter();
   const [present] = useIonToast();
-  
+
   // Get NGO details from route state
   const ngoId = location.state?.ngoId;
   const locationId = location.state?.locationId;
@@ -51,67 +54,39 @@ const CreateDonation: React.FC = () => {
   // Form state
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  
+
   // Form data
   const [formData, setFormData] = useState<Partial<CreateDonationRequest>>({
     ngo_location_id: locationId,
     meal_type: undefined,
     quantity_plates: undefined,
-    donation_date: '',
-    pickup_time_start: '',
-    pickup_time_end: '',
+    donation_date: new Date().toISOString().split('T')[0],
+    pickup_time_start: '12:00',
     food_type: '',
     special_instructions: '',
     description: '',
   });
 
-  // Date/time modal state
-  const [showDateModal, setShowDateModal] = useState(false);
-  const [showStartTimeModal, setShowStartTimeModal] = useState(false);
-  const [showEndTimeModal, setShowEndTimeModal] = useState(false);
-
-  // Step 1: NGO Selection (pre-filled)
-  const renderStep1 = () => (
-    <div className="form-step">
-      <h2>NGO Selection</h2>
-      <p className="step-description">Confirm the NGO for your donation</p>
-      
-      <IonCard className="ngo-selection-card">
-        <IonCardContent>
-          <div className="ngo-info">
-            <IonIcon icon={checkmarkCircle} color="success" />
-            <div>
-              <h3>{ngoName}</h3>
-              {locationName && <p className="location-text">{locationName}</p>}
-            </div>
-          </div>
-        </IonCardContent>
-      </IonCard>
-
-      {!locationId && (
-        <IonNote color="danger" className="error-note">
-          No NGO location selected. Please go back and select an NGO.
-        </IonNote>
-      )}
-    </div>
-  );
-
-  // Step 2: Food Details
+  // Step 1: Food Details
   const renderStep2 = () => (
     <div className="form-step">
       <h2>Food Details</h2>
       <p className="step-description">Tell us about your donation</p>
 
-      <IonItem>
-        <IonLabel position="stacked">Meal Type *</IonLabel>
+      <IonItem lines="none" style={{ marginBottom: '16px' }}>
+        <IonLabel position="stacked" style={{ marginBottom: '8px' }}>
+          Meal Type *
+        </IonLabel>
         <IonSelect
           value={formData.meal_type}
           placeholder="Select meal type"
           onIonChange={(e) => setFormData({ ...formData, meal_type: e.detail.value })}
-        >
+          interface="popover"
+          style={{ width: '100%', maxWidth: '100%', border: '1px solid #cecece', height: '42px', borderRadius: '8px' }}>
           <IonSelectOption value="breakfast">Breakfast</IonSelectOption>
           <IonSelectOption value="lunch">Lunch</IonSelectOption>
           <IonSelectOption value="dinner">Dinner</IonSelectOption>
+          <IonSelectOption value="snacks">Snacks</IonSelectOption>
         </IonSelect>
       </IonItem>
 
@@ -149,77 +124,28 @@ const CreateDonation: React.FC = () => {
 
   // Step 3: Schedule & Special Instructions
   const renderStep3 = () => {
-    const formatDate = (dateStr: string) => {
-      if (!dateStr) return 'Select date';
-      const date = new Date(dateStr);
-      return date.toLocaleDateString('en-US', { 
-        weekday: 'short',
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric' 
-      });
-    };
-
-    const formatTime = (timeStr: string) => {
-      if (!timeStr) return 'Select time';
-      return timeStr;
-    };
-
     return (
       <div className="form-step">
         <h2>Schedule & Instructions</h2>
         <p className="step-description">When can the NGO pick up the food?</p>
 
-        <IonItem button onClick={() => setShowDateModal(true)}>
-          <IonLabel position="stacked">Donation Date *</IonLabel>
-          <IonNote slot="end">{formatDate(formData.donation_date || '')}</IonNote>
-        </IonItem>
+        <DatePicker
+          label="Donation Date"
+          value={formData.donation_date || new Date().toISOString().split('T')[0]}
+          onChange={(date) => {
+            const dateStr = date.split('T')[0];
+            setFormData({ ...formData, donation_date: dateStr });
+          }}
+          min={new Date().toISOString()}
+          required
+        />
 
-        <IonModal isOpen={showDateModal} onDidDismiss={() => setShowDateModal(false)}>
-          <IonDatetime
-            presentation="date"
-            value={formData.donation_date}
-            min={new Date().toISOString()}
-            onIonChange={(e) => {
-              setFormData({ ...formData, donation_date: e.detail.value as string });
-              setShowDateModal(false);
-            }}
-          />
-        </IonModal>
-
-        <IonItem button onClick={() => setShowStartTimeModal(true)}>
-          <IonLabel position="stacked">Pickup Start Time *</IonLabel>
-          <IonNote slot="end">{formatTime(formData.pickup_time_start || '')}</IonNote>
-        </IonItem>
-
-        <IonModal isOpen={showStartTimeModal} onDidDismiss={() => setShowStartTimeModal(false)}>
-          <IonDatetime
-            presentation="time"
-            value={formData.pickup_time_start}
-            onIonChange={(e) => {
-              const time = (e.detail.value as string).substring(11, 16); // Extract HH:MM
-              setFormData({ ...formData, pickup_time_start: time });
-              setShowStartTimeModal(false);
-            }}
-          />
-        </IonModal>
-
-        <IonItem button onClick={() => setShowEndTimeModal(true)}>
-          <IonLabel position="stacked">Pickup End Time *</IonLabel>
-          <IonNote slot="end">{formatTime(formData.pickup_time_end || '')}</IonNote>
-        </IonItem>
-
-        <IonModal isOpen={showEndTimeModal} onDidDismiss={() => setShowEndTimeModal(false)}>
-          <IonDatetime
-            presentation="time"
-            value={formData.pickup_time_end}
-            onIonChange={(e) => {
-              const time = (e.detail.value as string).substring(11, 16); // Extract HH:MM
-              setFormData({ ...formData, pickup_time_end: time });
-              setShowEndTimeModal(false);
-            }}
-          />
-        </IonModal>
+        <TimePicker
+          label="Pickup Time"
+          value={formData.pickup_time_start || '12:00'}
+          onChange={(time) => setFormData({ ...formData, pickup_time_start: time })}
+          required
+        />
 
         <IonItem>
           <IonLabel position="stacked">Special Instructions</IonLabel>
@@ -244,24 +170,42 @@ const CreateDonation: React.FC = () => {
         <IonCardContent>
           <div className="review-section">
             <h3>NGO Details</h3>
-            <p><strong>Organization:</strong> {ngoName}</p>
-            {locationName && <p><strong>Location:</strong> {locationName}</p>}
+            <p>
+              <strong>Organization:</strong> {ngoName}
+            </p>
+            {locationName && (
+              <p>
+                <strong>Location:</strong> {locationName}
+              </p>
+            )}
           </div>
 
           <div className="review-section">
             <h3>Food Details</h3>
-            <p><strong>Meal Type:</strong> {formData.meal_type}</p>
-            <p><strong>Food Type:</strong> {formData.food_type}</p>
-            <p><strong>Quantity:</strong> {formData.quantity_plates} plates</p>
+            <p>
+              <strong>Meal Type:</strong> {formData.meal_type}
+            </p>
+            <p>
+              <strong>Food Type:</strong> {formData.food_type}
+            </p>
+            <p>
+              <strong>Quantity:</strong> {formData.quantity_plates} plates
+            </p>
             {formData.description && (
-              <p><strong>Description:</strong> {formData.description}</p>
+              <p>
+                <strong>Description:</strong> {formData.description}
+              </p>
             )}
           </div>
 
           <div className="review-section">
             <h3>Schedule</h3>
-            <p><strong>Date:</strong> {formData.donation_date ? new Date(formData.donation_date).toLocaleDateString() : 'Not set'}</p>
-            <p><strong>Pickup Time:</strong> {formData.pickup_time_start} - {formData.pickup_time_end}</p>
+            <p>
+              <strong>Date:</strong> {formData.donation_date ? new Date(formData.donation_date).toLocaleDateString() : 'Not set'}
+            </p>
+            <p>
+              <strong>Pickup Time:</strong> {formData.pickup_time_start}
+            </p>
           </div>
 
           {formData.special_instructions && (
@@ -279,22 +223,26 @@ const CreateDonation: React.FC = () => {
   const validateStep = (step: number): boolean => {
     switch (step) {
       case 1:
-        return !!locationId;
+        const step1Valid = !!(formData.meal_type && formData.food_type && formData.quantity_plates && formData.quantity_plates > 0);
+        console.log('Step 1 validation:', {
+          meal_type: formData.meal_type,
+          food_type: formData.food_type,
+          quantity: formData.quantity_plates,
+          valid: step1Valid,
+        });
+        return step1Valid;
       case 2:
-        return !!(
-          formData.meal_type &&
-          formData.food_type &&
-          formData.quantity_plates &&
-          formData.quantity_plates > 0
-        );
+        const step2Valid = !!(formData.donation_date && formData.pickup_time_start);
+        console.log('Step 2 validation:', { date: formData.donation_date, time: formData.pickup_time_start, valid: step2Valid });
+        return step2Valid;
       case 3:
-        return !!(
-          formData.donation_date &&
-          formData.pickup_time_start &&
-          formData.pickup_time_end
-        );
-      case 4:
-        return validateStep(1) && validateStep(2) && validateStep(3);
+        // Check ngo_location_id or locationId
+        const hasLocationId = !!(formData.ngo_location_id || locationId);
+        const step1Check = validateStep(1);
+        const step2Check = validateStep(2);
+        const step3Valid = hasLocationId && step1Check && step2Check;
+        console.log('Step 3 validation:', { hasLocationId, step1Check, step2Check, valid: step3Valid });
+        return step3Valid;
       default:
         return false;
     }
@@ -323,7 +271,7 @@ const CreateDonation: React.FC = () => {
 
   // Submit
   const handleSubmit = async () => {
-    if (!validateStep(4)) {
+    if (!validateStep(3)) {
       present({
         message: 'Please fill in all required fields',
         duration: 2000,
@@ -345,7 +293,7 @@ const CreateDonation: React.FC = () => {
         quantity_plates: formData.quantity_plates!,
         donation_date: formattedDate,
         pickup_time_start: formData.pickup_time_start!,
-        pickup_time_end: formData.pickup_time_end!,
+        pickup_time_end: formData.pickup_time_start!,
         description: formData.description || undefined,
         special_instructions: formData.special_instructions || undefined,
       };
@@ -381,66 +329,42 @@ const CreateDonation: React.FC = () => {
           </IonButtons>
           <IonTitle>Create Donation</IonTitle>
         </IonToolbar>
-        <IonProgressBar value={currentStep / 4} />
+        <IonProgressBar value={currentStep / 3} />
       </IonHeader>
 
       <IonContent className="create-donation-content">
         <div className="step-indicator">
           <div className="step-dots">
-            {[1, 2, 3, 4].map((step) => (
-              <div
-                key={step}
-                className={`step-dot ${currentStep >= step ? 'active' : ''} ${
-                  currentStep === step ? 'current' : ''
-                }`}
-              >
+            {[1, 2, 3].map((step) => (
+              <div key={step} className={`step-dot ${currentStep >= step ? 'active' : ''} ${currentStep === step ? 'current' : ''}`}>
                 {step}
               </div>
             ))}
           </div>
           <p className="step-label">
-            Step {currentStep} of 4: {
-              currentStep === 1 ? 'NGO Selection' :
-              currentStep === 2 ? 'Food Details' :
-              currentStep === 3 ? 'Schedule' :
-              'Review'
-            }
+            Step {currentStep} of 3: {currentStep === 1 ? 'Food Details' : currentStep === 2 ? 'Schedule' : 'Review'}
           </p>
         </div>
 
         <div className="form-container">
-          {currentStep === 1 && renderStep1()}
-          {currentStep === 2 && renderStep2()}
-          {currentStep === 3 && renderStep3()}
-          {currentStep === 4 && renderStep4()}
+          {currentStep === 1 && renderStep2()}
+          {currentStep === 2 && renderStep3()}
+          {currentStep === 3 && renderStep4()}
         </div>
 
         <div className="button-container">
-          <IonButton
-            expand="block"
-            fill="outline"
-            onClick={handleBack}
-            disabled={loading}
-          >
+          <IonButton expand="block" fill="outline" onClick={handleBack} disabled={loading}>
             <IonIcon slot="start" icon={arrowBack} />
             {currentStep === 1 ? 'Cancel' : 'Back'}
           </IonButton>
 
-          {currentStep < 4 ? (
-            <IonButton
-              expand="block"
-              onClick={handleNext}
-              disabled={!validateStep(currentStep)}
-            >
+          {currentStep < 3 ? (
+            <IonButton expand="block" onClick={handleNext} disabled={!validateStep(currentStep)}>
               Next
               <IonIcon slot="end" icon={arrowForward} />
             </IonButton>
           ) : (
-            <IonButton
-              expand="block"
-              onClick={handleSubmit}
-              disabled={loading || !validateStep(4)}
-            >
+            <IonButton expand="block" onClick={handleSubmit} disabled={loading || !validateStep(3)}>
               {loading ? 'Creating...' : 'Submit Donation'}
               <IonIcon slot="end" icon={checkmarkCircle} />
             </IonButton>

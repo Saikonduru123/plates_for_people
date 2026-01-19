@@ -21,14 +21,7 @@ import {
   IonBadge,
   useIonToast,
 } from '@ionic/react';
-import {
-  callOutline,
-  personOutline,
-  locationOutline,
-  timeOutline,
-  checkmarkCircle,
-  addOutline,
-} from 'ionicons/icons';
+import { callOutline, personOutline, locationOutline, timeOutline, checkmarkCircle, addOutline } from 'ionicons/icons';
 import { MapComponent } from '../../components/maps/MapComponent';
 import { RatingsSummary } from '../../components/ngo/RatingsSummary';
 import { searchService } from '../../services/searchService';
@@ -74,14 +67,12 @@ const NGODetails: React.FC = () => {
 
       // Use the location from search results
       const searchResults = await searchService.searchNGOs({
-        latitude: 19.0760, // Default coords, will be updated
+        latitude: 19.076, // Default coords, will be updated
         longitude: 72.8777,
         radius: 100, // Maximum allowed radius (100km)
       });
 
-      const foundNGO = searchResults.find(
-        (n) => n.location_id === parseInt(id)
-      );
+      const foundNGO = searchResults.find((n) => n.location_id === parseInt(id));
 
       if (!foundNGO) {
         throw new Error('NGO not found');
@@ -113,10 +104,9 @@ const NGODetails: React.FC = () => {
     history.push({
       pathname: '/donor/create-donation',
       state: {
-        ngoId: ngo?.ngo_id,
-        locationId: ngo?.location_id,
-        ngoName: ngo?.ngo_name,
-        locationName: ngo?.location_name,
+        locationId: ngo.location_id,
+        ngoName: ngo.ngo_name,
+        locationName: ngo.location_name,
       },
     });
   };
@@ -173,11 +163,7 @@ const NGODetails: React.FC = () => {
               </p>
               {ngo.average_rating !== null && (
                 <div className="hero-rating">
-                  <RatingsSummary
-                    averageRating={ngo.average_rating}
-                    totalRatings={ngo.total_ratings}
-                    size="medium"
-                  />
+                  <RatingsSummary averageRating={ngo.average_rating} totalRatings={ngo.total_ratings} size="medium" />
                 </div>
               )}
             </div>
@@ -185,12 +171,7 @@ const NGODetails: React.FC = () => {
 
           {/* Primary Action Button */}
           <div className="primary-action">
-            <IonButton
-              expand="block"
-              size="large"
-              onClick={handleCreateDonation}
-              className="create-donation-btn-top"
-            >
+            <IonButton expand="block" size="large" onClick={handleCreateDonation} className="create-donation-btn-top">
               <IonIcon slot="start" icon={addOutline} />
               Create Donation Request
             </IonButton>
@@ -198,8 +179,9 @@ const NGODetails: React.FC = () => {
 
           {/* Map Section */}
           <IonCard className="map-card">
-            <div className="map-wrapper">
+            <div className="map-wrapper" key={`map-wrapper-${ngo.location_id}`}>
               <MapComponent
+                key={`ngo-detail-map-${ngo.location_id}`}
                 center={[ngo.coordinates.latitude, ngo.coordinates.longitude]}
                 markers={[
                   {
@@ -212,6 +194,7 @@ const NGODetails: React.FC = () => {
                   },
                 ]}
                 zoom={15}
+                singleMarker={true}
               />
             </div>
           </IonCard>
@@ -304,27 +287,17 @@ const NGODetails: React.FC = () => {
                 <div className="rating-stats">
                   <div className="average-rating">
                     <h2>{ratingSummary.average_rating?.toFixed(1) || 'N/A'}</h2>
-                    <RatingsSummary
-                      averageRating={ratingSummary.average_rating}
-                      totalRatings={ratingSummary.total_ratings}
-                      size="medium"
-                    />
+                    <RatingsSummary averageRating={ratingSummary.average_rating} totalRatings={ratingSummary.total_ratings} size="medium" />
                   </div>
                   <div className="rating-bars">
                     {[5, 4, 3, 2, 1].map((stars) => {
                       const count = ratingSummary.rating_distribution[stars] || 0;
-                      const percentage =
-                        ratingSummary.total_ratings > 0
-                          ? (count / ratingSummary.total_ratings) * 100
-                          : 0;
+                      const percentage = ratingSummary.total_ratings > 0 ? (count / ratingSummary.total_ratings) * 100 : 0;
                       return (
                         <div key={stars} className="rating-bar-row">
                           <span className="stars-label">{stars} ⭐</span>
                           <div className="rating-bar">
-                            <div
-                              className="rating-bar-fill"
-                              style={{ width: `${percentage}%` }}
-                            />
+                            <div className="rating-bar-fill" style={{ width: `${percentage}%` }} />
                           </div>
                           <span className="count-label">{count}</span>
                         </div>

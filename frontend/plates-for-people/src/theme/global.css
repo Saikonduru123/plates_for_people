@@ -1,0 +1,409 @@
+/* Global Styles for Plates for People */
+
+/* Clean, Modern Base Styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Ionic Overrides for Clean Look */
+ion-toolbar {
+  --background: #ffffff;
+  --color: #1a202c;
+  --border-color: #e2e8f0;
+  --padding-top: 8px;
+  --padding-bottom: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+ion-title {
+  font-weight: 700;
+  font-size: 1.125rem;
+  letter-spacing: -0.3px;
+}
+
+ion-header {
+  box-shadow: none;
+}
+
+ion-content {
+  --background: #f7fafc;
+}
+
+/* Button Styles */
+ion-button {
+  --border-radius: 8px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0.3px;
+}
+
+ion-button::part(native) {
+  padding: 12px 20px;
+}
+
+/* Card Styles */
+ion-card {
+  --background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
+  margin: 16px;
+}
+
+ion-card-header {
+  padding: 20px;
+}
+
+ion-card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1a202c;
+}
+
+ion-card-content {
+  padding: 20px;
+  color: #4a5568;
+}
+
+/* List Styles */
+ion-list,
+.list-md {
+  background: transparent !important;
+  padding: 0;
+}
+
+ion-item {
+  --background: #ffffff;
+  --border-color: transparent;
+  --color: #1a202c;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --inner-padding-end: 16px;
+  --inner-border-width: 0;
+  --border-width: 0;
+  font-weight: 500;
+}
+
+ion-item:hover {
+  --background: #ffffff;
+}
+
+ion-label {
+  font-weight: 500;
+  color: #1a202c;
+}
+
+ion-label p {
+  color: #718096;
+  font-size: 0.875rem;
+}
+
+/* Badge/Chip Styles */
+ion-badge,
+ion-chip {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  font-size: 0.75rem;
+}
+
+/* Input Styles - Override Ionic defaults */
+ion-input,
+ion-textarea {
+  --background: #ffffff;
+  --color: #1a202c;
+  --placeholder-color: #a0aec0;
+  --placeholder-opacity: 1;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  min-height: 48px;
+  margin: 8px 0;
+}
+
+/* Fix number input spinner background */
+ion-input input[type="number"] {
+  /* background: #ffffff !important; */
+  padding: 12px 16px;
+}
+
+ion-input input[type="number"]::-webkit-inner-spin-button,
+ion-input input[type="number"]::-webkit-outer-spin-button {
+  background: #ffffff !important;
+  opacity: 1;
+}
+
+/* Ensure all input elements have proper padding */
+ion-input input,
+ion-textarea textarea {
+  padding: 12px 16px !important;
+}
+
+/* Select - minimal styling to avoid conflicts */
+ion-select {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  background: #ffffff !important;
+}
+
+ion-input:focus-within,
+ion-textarea:focus-within {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Select Popover - remove black background */
+ion-select-popover,
+ion-select-popover ion-list,
+ion-select-popover .list-md {
+  --background: #ffffff !important;
+  background: #ffffff !important;
+}
+
+ion-select-popover ion-item {
+  font-size: 0.95rem;
+  min-height: 48px;
+  --background: #ffffff !important;
+  background: #ffffff !important;
+}
+
+ion-select-popover ion-item:hover {
+  --background: #f7fafc !important;
+  background: #f7fafc !important;
+}
+
+ion-select-popover ion-radio-group {
+  background: #ffffff !important;
+}
+
+ion-select-popover ion-radio {
+  --color-checked: #667eea !important;
+}
+
+ion-select-popover ion-label {
+  color: #1a202c !important;
+}
+  min-height: 48px;
+  --background: #ffffff;
+}
+
+ion-select-popover ion-item:hover {
+  --background: #f7fafc;
+}
+
+/* Segment Styles */
+ion-segment {
+  --background: #f7fafc;
+  border-radius: 8px;
+  padding: 4px;
+}
+
+ion-segment-button {
+  --indicator-color: #ffffff;
+  --color: #718096;
+  --color-checked: #667eea;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0.3px;
+  min-height: 40px;
+}
+
+/* Modal Styles */
+ion-modal {
+  --border-radius: 16px;
+}
+
+ion-modal ion-header ion-toolbar {
+  --background: #ffffff;
+}
+
+/* Toast Styles */
+ion-toast {
+  --border-radius: 8px;
+  font-weight: 500;
+}
+
+/* Loading Spinner */
+ion-spinner {
+  color: #667eea;
+}
+
+/* Progress Bar */
+ion-progress-bar {
+  --progress-background: #667eea;
+  --background: #e2e8f0;
+  height: 6px;
+  border-radius: 3px;
+}
+
+/* Searchbar */
+ion-searchbar {
+  --background: #ffffff;
+  --border-radius: 8px;
+  --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --color: #1a202c;
+  --placeholder-color: #a0aec0;
+  --icon-color: #718096;
+  padding: 12px 16px;
+}
+
+/* FAB Button */
+ion-fab-button {
+  --background: #667eea;
+  --background-activated: #5a6fce;
+  --box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+/* Refresher */
+ion-refresher-content {
+  color: #667eea;
+}
+
+/* Skeleton Text */
+ion-skeleton-text {
+  --background: #e2e8f0;
+  --background-rgb: 226, 232, 240;
+  border-radius: 4px;
+}
+
+/* Utility Classes */
+.ion-text-center {
+  text-align: center;
+}
+
+.ion-text-left {
+  text-align: left;
+}
+
+.ion-text-right {
+  text-align: right;
+}
+
+/* Custom Utility Classes */
+.text-primary {
+  color: #667eea;
+}
+
+.text-secondary {
+  color: #718096;
+}
+
+.text-success {
+  color: #48bb78;
+}
+
+.text-danger {
+  color: #e53e3e;
+}
+
+.text-warning {
+  color: #ed8936;
+}
+
+.bg-white {
+  background: #ffffff;
+}
+
+.bg-light {
+  background: #f7fafc;
+}
+
+.shadow-sm {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.shadow-md {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.shadow-lg {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+.rounded {
+  border-radius: 8px;
+}
+
+.rounded-lg {
+  border-radius: 12px;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+/* Force white background for searchbar */
+ion-searchbar {
+  --background: #ffffff !important;
+  --color: var(--ion-text-color, #000000);
+  --border-radius: 8px !important;
+  --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  padding: 8px 16px !important;
+}
+
+ion-searchbar .searchbar-input {
+  background: #ffffff !important;
+  color: var(--ion-text-color, #000000) !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+ion-searchbar input::placeholder {
+  color: #94a3b8 !important;
+  opacity: 1 !important;
+  font-size: 14px !important;
+}
+
+/* Map container fix */
+.map-container {
+  height: calc(100vh - 280px);
+  min-height: 400px;
+  width: 100%;
+}
+
+/* Ensure IonDatetime has proper styling */
+ion-datetime {
+  --background: #ffffff;
+  --background-rgb: 255, 255, 255;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+ion-datetime::part(calendar-day) {
+  color:  #000000;
+}
+
+/* Fix IonSelect width and styling */
+ion-select {
+  width: 100% !important;
+  max-width: 100% !important;
+  --padding-start: 16px;
+  --padding-end: 16px;
+}
+
+
+sc-ion-label-md-h md label-stacked sc-ion-label-md-s hydrated {
+margin-bottom: 8px;
+}
+.label-stacked.sc-ion-label-md-h{
+    margin-bottom: 8px;
+}

@@ -272,7 +272,7 @@
 .info-text {
   flex: 1;
   font-size: 13px;
-  color: var(--ion-text-color, #555);
+  color: #000
   line-height: 1.6;
 }
 
@@ -339,7 +339,7 @@
 .form-label {
   font-size: 14px;
   font-weight: 600;
-  color: var(--ion-text-color, #333);
+  color: #000;
 }
 
 .form-label.required::after {
@@ -363,7 +363,7 @@
 @media (prefers-color-scheme: dark) {
   .selector-label,
   .form-label {
-    color: var(--ion-text-color, #ffffff);
+    color: #000;
   }
 
   .empty-state h3 {
@@ -398,7 +398,7 @@
   }
 
   .info-text {
-    color: var(--ion-text-color, #e0e0e0);
+    color:#000
   }
 }
 
@@ -495,4 +495,8 @@
   .capacity-text {
     font-size: 10px;
   }
+}
+
+.modal-set-capacity .ion-page {
+  min-height: 400px;
 }

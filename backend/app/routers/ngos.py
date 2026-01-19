@@ -196,6 +196,46 @@ async def get_ngo_dashboard(
     total_meals = meals_result.scalar()
     total_meals_received = int(total_meals) if total_meals else 0
     
+    # Get recent donations (last 5)
+    from app.models import DonorProfile
+    recent_result = await db.execute(
+        select(DonationRequest)
+        .where(DonationRequest.ngo_location_id.in_(location_ids))
+        .order_by(DonationRequest.created_at.desc())
+        .limit(5)
+    )
+    recent_donations_raw = recent_result.scalars().all()
+    
+    # Format recent donations with donor info
+    recent_donations = []
+    for donation in recent_donations_raw:
+        donor_result = await db.execute(
+            select(DonorProfile)
+            .join(User)
+            .where(DonorProfile.user_id == donation.donor_id)
+        )
+        donor = donor_result.scalar_one_or_none()
+        
+        location_result = await db.execute(
+            select(NGOLocation)
+            .where(NGOLocation.id == donation.ngo_location_id)
+        )
+        location = location_result.scalar_one()
+        
+        recent_donations.append({
+            "id": donation.id,
+            "food_type": donation.food_type,
+            "quantity_plates": donation.quantity_plates,
+            "meal_type": donation.meal_type.value,
+            "donation_date": donation.donation_date.isoformat(),
+            "pickup_time_start": donation.pickup_time_start,
+            "pickup_time_end": donation.pickup_time_end,
+            "status": donation.status.value,
+            "donor_name": donor.organization_name if donor else "Unknown",
+            "location_name": location.location_name,
+            "created_at": donation.created_at.isoformat()
+        })
+    
     return {
         "verification_status": ngo_profile.verification_status.value,
         "total_donations_received": total_donations,
@@ -203,5 +243,6 @@ async def get_ngo_dashboard(
         "pending_donations": pending_donations,
         "rejected_donations": rejected_donations,
         "average_rating": round(average_rating, 2),
-        "total_meals_received": total_meals_received
+        "total_meals_received": total_meals_received,
+        "recent_donations": recent_donations
     }

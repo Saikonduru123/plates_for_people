@@ -1,25 +1,32 @@
 import React from 'react';
 import { IonCard, IonCardContent, IonIcon, IonChip } from '@ionic/react';
-import {
-  locationOutline,
-  calendarOutline,
-  restaurantOutline,
-  timeOutline,
-} from 'ionicons/icons';
+import { locationOutline, calendarOutline, restaurantOutline, timeOutline } from 'ionicons/icons';
 import { useHistory } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import StatusBadge from './StatusBadge';
 import type { Donation } from '../../types';
 import './DonationCard.css';
 
 interface DonationCardProps {
   donation: Donation;
+  onClick?: () => void;
 }
 
-const DonationCard: React.FC<DonationCardProps> = ({ donation }) => {
+const DonationCard: React.FC<DonationCardProps> = ({ donation, onClick }) => {
   const history = useHistory();
+  const { user } = useAuth();
 
   const handleClick = () => {
-    history.push(`/donor/donation/${donation.id}`);
+    if (onClick) {
+      onClick();
+    } else {
+      // Default behavior: navigate to appropriate route based on user role
+      if (user?.role === 'ngo') {
+        history.push(`/ngo/donation/${donation.id}`);
+      } else {
+        history.push(`/donor/donation/${donation.id}`);
+      }
+    }
   };
 
   const formatDate = (dateStr: string) => {
@@ -57,6 +64,19 @@ const DonationCard: React.FC<DonationCardProps> = ({ donation }) => {
         </div>
 
         <div className="card-body">
+          {donation.ngo_name && (
+            <div className="info-row">
+              <IonIcon icon={locationOutline} color="primary" />
+              <div className="info-content">
+                <span className="info-label">NGO</span>
+                <span className="info-value">
+                  {donation.ngo_name}
+                  {donation.location_name && ` - ${donation.location_name}`}
+                </span>
+              </div>
+            </div>
+          )}
+
           <div className="info-row">
             <IonIcon icon={restaurantOutline} color="primary" />
             <div className="info-content">

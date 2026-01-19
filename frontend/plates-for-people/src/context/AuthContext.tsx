@@ -9,12 +9,14 @@ interface AuthContextType {
   login: (data: LoginRequest) => Promise<void>;
   logout: () => void;
   registerDonor: (data: RegisterRequest) => Promise<void>;
-  registerNGO: (data: RegisterRequest & {
-    organization_name: string;
-    registration_number: string;
-    address: string;
-    description?: string;
-  }) => Promise<void>;
+  registerNGO: (
+    data: RegisterRequest & {
+      organization_name: string;
+      registration_number: string;
+      address: string;
+      description?: string;
+    },
+  ) => Promise<void>;
   refreshUser: () => Promise<void>;
 }
 
@@ -52,14 +54,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = async (data: LoginRequest) => {
-    const response = await authService.login(data);
-    localStorage.setItem('accessToken', response.access_token);
-    localStorage.setItem('refreshToken', response.refresh_token);
-    
-    // Fetch user data after successful login
-    const userData = await authService.me();
-    localStorage.setItem('user', JSON.stringify(userData));
-    setUser(userData);
+    try {
+      const response = await authService.login(data);
+      localStorage.setItem('accessToken', response.access_token);
+      localStorage.setItem('refreshToken', response.refresh_token);
+
+      // Fetch user data after successful login
+      const userData = await authService.me();
+      localStorage.setItem('user', JSON.stringify(userData));
+      setUser(userData);
+
+      // Small delay to ensure state is updated before navigation
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      return userData;
+    } catch (error) {
+      // Clean up on error
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user');
+      setUser(null);
+      throw error;
+    }
   };
 
   const logout = () => {
@@ -71,23 +87,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const response = await authService.registerDonor(data);
     localStorage.setItem('accessToken', response.access_token);
     localStorage.setItem('refreshToken', response.refresh_token);
-    
+
     // Fetch user data after successful registration
     const userData = await authService.me();
     localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
   };
 
-  const registerNGO = async (data: RegisterRequest & {
-    organization_name: string;
-    registration_number: string;
-    address: string;
-    description?: string;
-  }) => {
+  const registerNGO = async (
+    data: RegisterRequest & {
+      organization_name: string;
+      registration_number: string;
+      address: string;
+      description?: string;
+    },
+  ) => {
     const response = await authService.registerNGO(data);
     localStorage.setItem('accessToken', response.access_token);
     localStorage.setItem('refreshToken', response.refresh_token);
-    
+
     // Fetch user data after successful registration
     const userData = await authService.me();
     localStorage.setItem('user', JSON.stringify(userData));

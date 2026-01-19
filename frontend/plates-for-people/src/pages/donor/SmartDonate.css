@@ -1,0 +1,203 @@
+.smart-donate-content {
+  --background: var(--ion-color-light);
+}
+
+.step-content {
+  padding: 12px;
+  min-height: calc(100vh - 200px);
+}
+
+/* Button Container */
+.button-container {
+  margin-top: 24px;
+  padding: 0 4px;
+}
+
+/* Summary Card */
+.summary-card {
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-primary-shade) 100%);
+  color: white;
+}
+
+.summary-card ion-card-title {
+  color: rgb(0, 0, 0);
+}
+
+.summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.donation-summary {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.food-type {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+  color: white;
+}
+
+/* Results Header */
+.results-header {
+  padding: 16px 12px 8px;
+}
+
+.results-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 4px;
+  color: var(--ion-color-dark);
+}
+
+.results-header p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* NGO List */
+.ngo-list {
+  padding-bottom: 80px; /* Space for sticky footer */
+}
+
+.ngo-option {
+  margin: 12px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.ngo-option.selected {
+  border-color: var(--ion-color-success);
+  box-shadow: 0 4px 20px rgba(var(--ion-color-success-rgb), 0.3);
+  transform: scale(1.02);
+}
+
+.ngo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.ngo-header div {
+  flex: 1;
+}
+
+.ngo-details {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 12px 0;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.ngo-address {
+  margin-top: 8px;
+}
+
+.ngo-address p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.recommended-chip {
+  margin-top: 8px;
+  font-weight: 700;
+}
+
+/* Sticky Footer */
+.sticky-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  padding: 12px;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
+/* Confirm Card */
+.confirm-card {
+  margin-bottom: 24px;
+}
+
+.confirm-section {
+  margin-bottom: 24px;
+}
+
+.confirm-section:last-child {
+  margin-bottom: 0;
+}
+
+.confirm-section h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 12px;
+  color: var(--ion-color-primary);
+}
+
+.confirm-section ion-list {
+  margin-top: 8px;
+}
+
+.confirm-section ion-item {
+  --padding-start: 0;
+  --inner-padding-end: 0;
+}
+
+.confirm-section ion-label {
+  font-weight: 600;
+  color: var(--ion-color-medium);
+}
+
+.confirm-section ion-text {
+  font-weight: 600;
+  color: var(--ion-color-dark);
+}
+
+/* Form Items */
+ion-item ion-label[position='stacked'] {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+  color: var(--ion-color-dark);
+}
+
+ion-item ion-input,
+ion-item ion-textarea {
+  --padding-start: 12px;
+  --padding-end: 12px;
+  border: 1px solid var(--ion-color-medium-tint);
+  border-radius: 8px;
+  margin-top: 4px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .step-content {
+    padding: 8px;
+  }
+
+  .ngo-option {
+    margin: 8px;
+  }
+
+  .results-header h2 {
+    font-size: 1.25rem;
+  }
+}
