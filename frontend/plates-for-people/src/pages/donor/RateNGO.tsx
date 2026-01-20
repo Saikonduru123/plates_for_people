@@ -58,7 +58,7 @@ const RateNGO: React.FC = () => {
 
     try {
       const data = await donationService.getDonation(donationIdNum);
-      
+
       // Only allow rating for completed donations
       if (data.status.toLowerCase() !== 'completed') {
         present({
@@ -69,15 +69,15 @@ const RateNGO: React.FC = () => {
         router.push('/donor/donations', 'back', 'replace');
         return;
       }
-      
+
       setDonation(data);
-      
+
       // Load NGO location details
       const ngoLocationData = await ngoService.getLocation(data.ngo_location_id);
       setNgoLocation(ngoLocationData);
-      
+
       // Load NGO profile details
-      const ngoProfileData = await searchService.getNGO(ngoLocationData.ngo_profile_id);
+      const ngoProfileData = await searchService.getNGO(ngoLocationData.ngo_id);
       setNgoProfile(ngoProfileData);
     } catch (error: any) {
       console.error('Failed to load donation:', error);
@@ -138,7 +138,7 @@ const RateNGO: React.FC = () => {
       router.push(`/donor/donation/${donationIdNum}`, 'back', 'replace');
     } catch (error: any) {
       console.error('Failed to submit rating:', error);
-      
+
       // Check if already rated
       if (error.response?.status === 400 && error.response?.data?.detail?.includes('already rated')) {
         present({
@@ -216,16 +216,10 @@ const RateNGO: React.FC = () => {
             {/* Rating Section */}
             <div className="rating-section">
               <h3 className="section-title">How was your experience?</h3>
-              <p className="section-description">
-                Your feedback helps us improve and helps others make informed decisions
-              </p>
+              <p className="section-description">Your feedback helps us improve and helps others make informed decisions</p>
 
               <div className="star-rating-container">
-                <StarRatingInput
-                  value={rating}
-                  onChange={setRating}
-                  size="large"
-                />
+                <StarRatingInput value={rating} onChange={setRating} size="large" />
                 <p className="rating-label">{getRatingLabel(rating)}</p>
               </div>
             </div>
@@ -242,9 +236,7 @@ const RateNGO: React.FC = () => {
                 counter
                 className="feedback-textarea"
               />
-              <p className="feedback-hint">
-                💡 Tip: Mention the staff's responsiveness, pickup experience, and overall satisfaction
-              </p>
+              <p className="feedback-hint">💡 Tip: Mention the staff's responsiveness, pickup experience, and overall satisfaction</p>
             </div>
 
             {/* Submit Button */}
@@ -254,8 +246,7 @@ const RateNGO: React.FC = () => {
                 size="large"
                 onClick={handleSubmit}
                 disabled={loading || rating === 0 || !feedback.trim()}
-                className="submit-button"
-              >
+                className="submit-button">
                 {loading ? (
                   <>
                     <IonSpinner name="crescent" slot="start" />
@@ -269,9 +260,7 @@ const RateNGO: React.FC = () => {
                 )}
               </IonButton>
 
-              <p className="submit-note">
-                Your rating will be public and help other donors
-              </p>
+              <p className="submit-note">Your rating will be public and help other donors</p>
             </div>
           </div>
         )}

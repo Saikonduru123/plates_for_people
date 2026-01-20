@@ -102,6 +102,11 @@ export interface NGODashboard {
   average_rating: number | null;
   total_plates_received: number;
   recent_requests: Donation[];
+  total_donations_received?: number;
+  pending_donations?: number;
+  completed_donations?: number;
+  total_meals_received?: number;
+  recent_donations?: Donation[];
 }
 
 // Donation Types

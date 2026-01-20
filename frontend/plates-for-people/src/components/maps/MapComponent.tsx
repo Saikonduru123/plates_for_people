@@ -130,11 +130,11 @@ export const MapComponent: React.FC<MapComponentProps> = ({
       zoom={zoom}
       style={{ height: '100%', width: '100%', minHeight: '400px' }}
       scrollWheelZoom={true}
-      whenReady={(map) => {
+      whenReady={() => {
         // Force map to render properly
-        setTimeout(() => {
-          map.target.invalidateSize();
-        }, 100);
+        // setTimeout(() => {
+        //   mapInstance.target.invalidateSize();
+        // }, 100);
       }}>
       <MapBounds center={center} markers={markers} radius={radius} singleMarker={singleMarker} />
       <CenterMap position={centerOnPosition} />

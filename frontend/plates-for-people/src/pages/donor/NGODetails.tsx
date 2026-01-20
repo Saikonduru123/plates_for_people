@@ -101,6 +101,7 @@ const NGODetails: React.FC = () => {
   };
 
   const handleCreateDonation = () => {
+    if (!ngo) return;
     history.push({
       pathname: '/donor/create-donation',
       state: {
