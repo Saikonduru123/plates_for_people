@@ -70,8 +70,9 @@ const NGODashboard: React.FC = () => {
       setProfile(profileData);
 
       // Load recent donations if available
-      if (dashboardData.recent_donations && dashboardData.recent_donations.length > 0) {
-        setRecentDonations(dashboardData.recent_donations);
+      const donations = dashboardData.recent_donations || dashboardData.recent_requests || [];
+      if (donations.length > 0) {
+        setRecentDonations(donations);
       }
     } catch (error: any) {
       console.error('Failed to load dashboard:', error);
@@ -206,7 +207,7 @@ const NGODashboard: React.FC = () => {
                     <div className="stat-icon">
                       <IonIcon icon={statsChartOutline} />
                     </div>
-                    <div className="stat-value">{dashboard.total_donations_received || 0}</div>
+                    <div className="stat-value">{dashboard.total_donations_received || dashboard.total_requests || 0}</div>
                     <div className="stat-label">Total Requests</div>
                   </IonCardContent>
                 </IonCard>
@@ -218,7 +219,7 @@ const NGODashboard: React.FC = () => {
                     <div className="stat-icon">
                       <IonIcon icon={timeOutline} />
                     </div>
-                    <div className="stat-value">{dashboard.pending_donations || 0}</div>
+                    <div className="stat-value">{dashboard.pending_donations || dashboard.pending_requests || 0}</div>
                     <div className="stat-label">Pending</div>
                   </IonCardContent>
                 </IonCard>
@@ -230,7 +231,7 @@ const NGODashboard: React.FC = () => {
                     <div className="stat-icon">
                       <IonIcon icon={checkmarkCircleOutline} />
                     </div>
-                    <div className="stat-value">{dashboard.completed_donations || 0}</div>
+                    <div className="stat-value">{dashboard.completed_donations || dashboard.completed_requests || 0}</div>
                     <div className="stat-label">Completed</div>
                   </IonCardContent>
                 </IonCard>
@@ -242,7 +243,7 @@ const NGODashboard: React.FC = () => {
                     <div className="stat-icon">
                       <IonIcon icon={restaurantOutline} />
                     </div>
-                    <div className="stat-value">{dashboard.total_meals_received || 0}</div>
+                    <div className="stat-value">{dashboard.total_meals_received || dashboard.total_plates_received || 0}</div>
                     <div className="stat-label">Total Plates</div>
                   </IonCardContent>
                 </IonCard>

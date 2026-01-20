@@ -164,11 +164,7 @@ const ManageLocations: React.FC = () => {
                 {location.is_active ? 'Active' : 'Inactive'}
               </IonBadge>
             </div>
-            <IonToggle
-              checked={location.is_active}
-              onIonChange={() => handleToggleActive(location)}
-              className="active-toggle"
-            />
+            <IonToggle checked={location.is_active} onIonChange={() => handleToggleActive(location)} className="active-toggle" />
           </div>
 
           <div className="location-details">
@@ -187,7 +183,9 @@ const ManageLocations: React.FC = () => {
             <div className="detail-row">
               <IonIcon icon={callOutline} />
               <div className="detail-text">
-                <p><strong>{location.contact_person}</strong></p>
+                <p>
+                  <strong>{location.contact_person}</strong>
+                </p>
                 <a href={`tel:${location.contact_phone}`}>{location.contact_phone}</a>
               </div>
             </div>
@@ -211,37 +209,22 @@ const ManageLocations: React.FC = () => {
             </div>
 
             <div className="detail-row meta">
-              <p className="created-date">Created: {formatDate(location.created_at)}</p>
+              <p className="created-date">Created: {location.created_at ? formatDate(location.created_at) : 'N/A'}</p>
             </div>
           </div>
 
           <div className="location-actions">
-            <IonButton
-              fill="outline"
-              size="small"
-              onClick={() => handleViewOnMap(location)}
-            >
+            <IonButton fill="outline" size="small" onClick={() => handleViewOnMap(location)}>
               <IonIcon slot="start" icon={mapOutline} />
               View on Map
             </IonButton>
 
-            <IonButton
-              fill="solid"
-              size="small"
-              color="primary"
-              onClick={() => handleEditLocation(location)}
-            >
+            <IonButton fill="solid" size="small" color="primary" onClick={() => handleEditLocation(location)}>
               <IonIcon slot="start" icon={createOutline} />
               Edit
             </IonButton>
 
-            <IonButton
-              fill="solid"
-              size="small"
-              color="danger"
-              onClick={() => handleDeleteClick(location)}
-              disabled={deletingId === location.id}
-            >
+            <IonButton fill="solid" size="small" color="danger" onClick={() => handleDeleteClick(location)} disabled={deletingId === location.id}>
               {deletingId === location.id ? (
                 <IonSpinner name="crescent" />
               ) : (
@@ -318,9 +301,7 @@ const ManageLocations: React.FC = () => {
                 </p>
               </div>
 
-              <div className="locations-list">
-                {locations.map((location) => renderLocationCard(location))}
-              </div>
+              <div className="locations-list">{locations.map((location) => renderLocationCard(location))}</div>
             </>
           )}
         </div>
