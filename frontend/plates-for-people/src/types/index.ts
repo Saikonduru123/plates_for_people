@@ -35,6 +35,8 @@ export interface DonorProfile {
   user_id: number;
   phone_number: string | null;
   address: string | null;
+  latitude?: number;
+  longitude?: number;
   user: User;
 }
 
@@ -65,7 +67,7 @@ export interface NGOProfile {
 
 export interface NGOLocation {
   id: number;
-  ngo_profile_id: number;
+  ngo_id: number;
   location_name: string;
   address_line1: string;
   address_line2: string | null;
@@ -75,12 +77,12 @@ export interface NGOLocation {
   zip_code: string;
   latitude: number;
   longitude: number;
-  contact_person: string;
-  contact_phone: string;
-  operating_hours: string | null;
+  contact_person?: string | null;
+  contact_phone?: string | null;
+  operating_hours?: string | null;
   is_active: boolean;
-  created_at: string;
-  updated_at: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface NGOLocationCapacity {
@@ -124,6 +126,8 @@ export interface Donation {
   confirmed_at: string | null;
   completed_at: string | null;
   cancelled_at: string | null;
+  ngo_name?: string | null;
+  location_name?: string | null;
 }
 
 export interface CreateDonationRequest {
@@ -225,7 +229,7 @@ export interface NGORatingSummary {
 }
 
 // Notification Types
-export type NotificationType = 
+export type NotificationType =
   | 'donation_created'
   | 'donation_confirmed'
   | 'donation_rejected'

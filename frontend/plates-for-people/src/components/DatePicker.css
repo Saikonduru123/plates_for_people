@@ -1,0 +1,65 @@
+.custom-picker-container {
+  margin-bottom: 16px;
+  margin-left: 12px;
+}
+
+.custom-picker-label {
+  display: block;
+  color: var(--ion-color-step-600, #1a202c);
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-family: 'sans-serif';
+}
+
+.required-asterisk {
+  color: var(--ion-color-danger, #eb445a);
+  margin-left: 2px;
+}
+
+.custom-picker-button {
+  width: 100%;
+  padding: 16px;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 16px;
+  text-align: left;
+}
+
+.custom-picker-button:active {
+  transform: scale(0.98);
+  border-color: var(--ion-color-primary, #3880ff);
+}
+
+.picker-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.picker-value {
+  flex: 1;
+  color: var(--ion-color-dark, #222428);
+  font-weight: 500;
+}
+
+.date-picker-content {
+  --background: #f8f9fa;
+}
+
+.date-picker-content ion-datetime {
+  --background: white;
+  border-radius: 12px;
+  margin: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: auto;
+}
+
+.date-picker-modal .ion-page {
+  min-height: 400px;
+}

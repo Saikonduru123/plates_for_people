@@ -1,0 +1,133 @@
+.custom-input-wrapper {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.custom-input-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin-bottom: 8px;
+  letter-spacing: 0.3px;
+}
+
+.label-icon {
+  font-size: 1rem;
+  color: #1a202c;
+}
+
+.required-mark {
+  color: #e53e3e;
+  margin-left: 2px;
+}
+
+.custom-input-container {
+  position: relative;
+  width: 100%;
+}
+
+.custom-input-field {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #1a202c;
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  outline: none;
+  font-family: inherit;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.custom-input-field::placeholder {
+  color: #a0aec0;
+  font-weight: 400;
+}
+
+.custom-input-field:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  background: #ffffff;
+}
+
+.custom-input-field:disabled {
+  background: #f7fafc;
+  color: #a0aec0;
+  cursor: not-allowed;
+}
+
+.custom-input-wrapper.has-error .custom-input-field {
+  border-color: #fc8181;
+}
+
+.custom-input-wrapper.has-error .custom-input-field:focus {
+  box-shadow: 0 0 0 3px rgba(252, 129, 129, 0.1);
+}
+
+.input-error-message {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: #e53e3e;
+  font-weight: 500;
+}
+
+/* Number input arrows styling */
+.custom-input-field[type='number']::-webkit-inner-spin-button,
+.custom-input-field[type='number']::-webkit-outer-spin-button {
+  opacity: 1;
+  height: 40px;
+}
+
+/* Date and time inputs */
+.custom-input-field[type='date'],
+.custom-input-field[type='time'] {
+  cursor: pointer;
+}
+
+.custom-input-field[type='date']::-webkit-calendar-picker-indicator,
+.custom-input-field[type='time']::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: opacity(0.6);
+}
+
+.custom-input-field[type='date']::-webkit-calendar-picker-indicator:hover,
+.custom-input-field[type='time']::-webkit-calendar-picker-indicator:hover {
+  filter: opacity(1);
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .custom-input-label {
+    color: #1a202c;
+  }
+
+  .label-icon {
+    color: #1a202c;
+  }
+
+  .custom-input-field {
+    border-color: #e7e7e7;
+    color: #f7fafc;
+  }
+
+  .custom-input-field::placeholder {
+    color: #718096;
+  }
+
+  .custom-input-field:focus {
+    background: #2d3748;
+    border-color: #667eea;
+  }
+
+  .custom-input-field:disabled {
+    background: #1a202c;
+  }
+}

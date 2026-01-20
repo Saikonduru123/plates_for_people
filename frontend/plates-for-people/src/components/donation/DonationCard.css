@@ -4,6 +4,12 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: transform 0.2s, box-shadow 0.2s;
   cursor: pointer;
+  background: #ffffff !important;
+}
+
+.donation-card ion-card-content {
+  background: #ffffff !important;
+  --background: #ffffff !important;
 }
 
 .donation-card:hover {
@@ -69,6 +75,9 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  border-radius: 8px;
+  padding: 4px 12px;
+  background-color: #f4f4f4 !important;
 }
 
 .info-label {
@@ -100,6 +109,7 @@
 
 .meal-chip ion-icon {
   font-size: 16px;
+  margin-right: 4px;
 }
 
 /* Tablet and Desktop */

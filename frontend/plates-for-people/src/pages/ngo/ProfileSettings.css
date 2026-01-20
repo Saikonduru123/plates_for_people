@@ -136,7 +136,7 @@
   margin-bottom: 8px;
   font-size: 14px;
   font-weight: 600;
-  color: var(--ion-text-color, #333);
+  color: #000;
 }
 
 .form-label ion-icon {
@@ -226,7 +226,7 @@ ion-input.readonly-input {
 .info-text {
   flex: 1;
   font-size: 13px;
-  color: var(--ion-text-color, #555);
+  color: #000
   line-height: 1.6;
 }
 
@@ -239,7 +239,7 @@ ion-input.readonly-input {
 @media (prefers-color-scheme: dark) {
   .verification-info h3,
   .form-label {
-    color: var(--ion-text-color, #ffffff);
+    color: #000;
   }
 
   .verification-message {
@@ -255,7 +255,7 @@ ion-input.readonly-input {
   }
 
   .info-text {
-    color: var(--ion-text-color, #e0e0e0);
+    color: #000
   }
 
   ion-input {

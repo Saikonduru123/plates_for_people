@@ -40,25 +40,26 @@ type ViewMode = 'map' | 'list';
 const SearchNGOs: React.FC = () => {
   const history = useHistory();
   const [present] = useIonToast();
-  
+
   // State
   const [viewMode, setViewMode] = useState<ViewMode>('map');
   const [ngos, setNgos] = useState<NGOSearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState('');
-  
+
   // Filters
   const [radius, setRadius] = useState<number>(10);
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [mealType, setMealType] = useState<string>('');
   const [minCapacity, setMinCapacity] = useState<number | undefined>();
-  
+
   // Geolocation
   const { latitude, longitude, error: geoError, loading: geoLoading, getCurrentPosition } = useGeolocation();
-  
+
   // Default location (Mumbai) if geolocation fails
-  const [userLat, setUserLat] = useState<number>(19.0760);
+  const [userLat, setUserLat] = useState<number>(19.076);
   const [userLng, setUserLng] = useState<number>(72.8777);
+  const [centerOnPosition, setCenterOnPosition] = useState<[number, number] | null>(null);
 
   useEffect(() => {
     if (latitude && longitude) {
@@ -75,7 +76,7 @@ const SearchNGOs: React.FC = () => {
   const loadNGOs = async () => {
     try {
       setLoading(true);
-      
+
       const params: any = {
         latitude: userLat,
         longitude: userLng,
@@ -118,14 +119,15 @@ const SearchNGOs: React.FC = () => {
     // Pass the NGO data through route state to avoid extra API call
     history.push({
       pathname: `/donor/ngo/${ngo.location_id}`,
-      state: { ngo }
+      state: { ngo },
     });
   };
 
-  const filteredNGOs = ngos.filter((ngo) =>
-    ngo.ngo_name.toLowerCase().includes(searchText.toLowerCase()) ||
-    ngo.location_name.toLowerCase().includes(searchText.toLowerCase()) ||
-    ngo.address.city.toLowerCase().includes(searchText.toLowerCase())
+  const filteredNGOs = ngos.filter(
+    (ngo) =>
+      ngo.ngo_name.toLowerCase().includes(searchText.toLowerCase()) ||
+      ngo.location_name.toLowerCase().includes(searchText.toLowerCase()) ||
+      ngo.address.city.toLowerCase().includes(searchText.toLowerCase())
   );
 
   const mapMarkers = filteredNGOs.map((ngo) => ({
@@ -176,22 +178,12 @@ const SearchNGOs: React.FC = () => {
 
         <IonToolbar className="filters-toolbar">
           <div className="filters-container">
-            <IonButton
-              size="small"
-              fill="outline"
-              onClick={handleUseMyLocation}
-              disabled={geoLoading}
-            >
+            <IonButton size="small" fill="outline" onClick={handleUseMyLocation} disabled={geoLoading}>
               <IonIcon slot="start" icon={locateOutline} />
               {geoLoading ? 'Locating...' : 'My Location'}
             </IonButton>
 
-            <IonSelect
-              value={radius}
-              onIonChange={(e) => setRadius(e.detail.value)}
-              placeholder="Radius"
-              interface="popover"
-            >
+            <IonSelect value={radius} onIonChange={(e) => setRadius(e.detail.value)} placeholder="Radius" interface="popover">
               <IonSelectOption value={1}>1 km</IonSelectOption>
               <IonSelectOption value={5}>5 km</IonSelectOption>
               <IonSelectOption value={10}>10 km</IonSelectOption>
@@ -199,12 +191,7 @@ const SearchNGOs: React.FC = () => {
               <IonSelectOption value={50}>50 km</IonSelectOption>
             </IonSelect>
 
-            <IonSelect
-              value={mealType}
-              onIonChange={(e) => setMealType(e.detail.value)}
-              placeholder="Meal Type"
-              interface="popover"
-            >
+            <IonSelect value={mealType} onIonChange={(e) => setMealType(e.detail.value)} placeholder="Meal Type" interface="popover">
               <IonSelectOption value="">All</IonSelectOption>
               <IonSelectOption value="breakfast">Breakfast</IonSelectOption>
               <IonSelectOption value="lunch">Lunch</IonSelectOption>
@@ -246,13 +233,20 @@ const SearchNGOs: React.FC = () => {
         {viewMode === 'map' ? (
           <div className="map-container">
             <MapComponent
+              key={`map-${viewMode}-${filteredNGOs.length}-${radius}`}
               center={[userLat, userLng]}
               markers={mapMarkers}
               onMarkerClick={(marker) => {
-                const ngo = filteredNGOs.find(n => n.location_id === marker.id);
+                const ngo = filteredNGOs.find((n) => n.location_id === marker.id);
                 if (ngo) handleNGOClick(ngo);
               }}
-              zoom={12}
+              onMarkerPopupOpen={(position) => {
+                // Center the map on the clicked marker
+                setCenterOnPosition(position);
+                setTimeout(() => setCenterOnPosition(null), 100);
+              }}
+              radius={radius}
+              centerOnPosition={centerOnPosition}
             />
           </div>
         ) : (
@@ -267,27 +261,18 @@ const SearchNGOs: React.FC = () => {
                 <IonIcon icon={mapOutline} className="empty-icon" />
                 <h2>No NGOs Found</h2>
                 <p>Try increasing the search radius or adjusting filters</p>
-                <IonButton onClick={() => setRadius(50)}>
-                  Search within 50km
-                </IonButton>
+                <IonButton onClick={() => setRadius(50)}>Search within 50km</IonButton>
               </div>
             ) : (
               filteredNGOs.map((ngo) => (
-                <IonCard
-                  key={ngo.location_id}
-                  button
-                  onClick={() => handleNGOClick(ngo)}
-                  className="ngo-card"
-                >
+                <IonCard key={ngo.location_id} button onClick={() => handleNGOClick(ngo)} className="ngo-card">
                   <IonCardHeader>
                     <div className="card-header-content">
                       <div>
                         <IonCardTitle>{ngo.ngo_name}</IonCardTitle>
                         <IonCardSubtitle>{ngo.location_name}</IonCardSubtitle>
                       </div>
-                      <IonBadge color="primary">
-                        {ngo.distance_km.toFixed(1)} km
-                      </IonBadge>
+                      <IonBadge color="primary">{ngo.distance_km.toFixed(1)} km</IonBadge>
                     </div>
                   </IonCardHeader>
 
@@ -296,7 +281,7 @@ const SearchNGOs: React.FC = () => {
                       <p className="address">
                         📍 {ngo.address.city}, {ngo.address.state}
                       </p>
-                      
+
                       {ngo.average_rating !== null && (
                         <div className="rating">
                           <IonIcon icon={star} color="warning" />

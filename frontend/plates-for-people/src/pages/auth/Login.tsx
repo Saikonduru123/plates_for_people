@@ -1,30 +1,16 @@
 import React, { useState } from 'react';
-import {
-  IonContent,
-  IonPage,
-  IonInput,
-  IonButton,
-  IonText,
-  IonItem,
-  IonLabel,
-  IonIcon,
-  IonToast,
-  IonSpinner,
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardTitle,
-} from '@ionic/react';
+import { IonContent, IonPage, IonButton, IonText, IonIcon, IonToast, IonSpinner } from '@ionic/react';
 import { mailOutline, lockClosedOutline, restaurantOutline } from 'ionicons/icons';
 import { useHistory } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { getErrorMessage } from '../../utils/errorUtils';
+import { CustomInput } from '../../components/CustomInput';
 import './Login.css';
 
 const Login: React.FC = () => {
   const history = useHistory();
   const { login } = useAuth();
-  
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -33,7 +19,7 @@ const Login: React.FC = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email || !password) {
       setError('Please enter email and password');
       setShowToast(true);
@@ -44,9 +30,15 @@ const Login: React.FC = () => {
     setError('');
 
     try {
-      await login({ email, password });
-      // Redirect will be handled by App.tsx based on user role
-      history.push('/dashboard');
+      const userData = await login({ email, password });
+      // Redirect based on user role
+      if (userData.role === 'ngo') {
+        window.location.href = '/ngo/dashboard';
+      } else if (userData.role === 'admin') {
+        window.location.href = '/admin/dashboard';
+      } else {
+        window.location.href = '/donor/dashboard';
+      }
     } catch (err) {
       const message = getErrorMessage(err);
       setError(message);
@@ -66,68 +58,40 @@ const Login: React.FC = () => {
             <p className="tagline">Share Food, Share Love</p>
           </div>
 
-          <IonCard className="login-card">
-            <IonCardHeader>
-              <IonCardTitle>Login</IonCardTitle>
-            </IonCardHeader>
-            <IonCardContent>
-              <form onSubmit={handleLogin}>
-                <IonItem className="ion-margin-bottom">
-                  <IonIcon icon={mailOutline} slot="start" />
-                  <IonLabel position="floating">Email</IonLabel>
-                  <IonInput
-                    type="email"
-                    value={email}
-                    onIonInput={(e) => setEmail(e.detail.value || '')}
-                    required
-                    autocomplete="email"
-                  />
-                </IonItem>
+          <div className="login-card">
+            <h2 className="login-title">Welcome Back</h2>
+            <p className="login-subtitle">Sign in to continue</p>
 
-                <IonItem className="ion-margin-bottom">
-                  <IonIcon icon={lockClosedOutline} slot="start" />
-                  <IonLabel position="floating">Password</IonLabel>
-                  <IonInput
-                    type="password"
-                    value={password}
-                    onIonInput={(e) => setPassword(e.detail.value || '')}
-                    required
-                    autocomplete="current-password"
-                  />
-                </IonItem>
+            <form onSubmit={handleLogin}>
+              <CustomInput label="Email" type="email" value={email} onChange={setEmail} placeholder="Enter your email" icon={mailOutline} required />
 
-                <IonButton
-                  expand="block"
-                  type="submit"
-                  disabled={loading}
-                  className="ion-margin-top"
-                >
-                  {loading ? <IonSpinner name="crescent" /> : 'Login'}
-                </IonButton>
-              </form>
+              <CustomInput
+                label="Password"
+                type="password"
+                value={password}
+                onChange={setPassword}
+                placeholder="Enter your password"
+                icon={lockClosedOutline}
+                required
+              />
 
-              <div className="login-footer">
-                <IonText color="medium">
-                  <p>
-                    Don't have an account?{' '}
-                    <IonText color="primary" onClick={() => history.push('/register')}>
-                      <strong style={{ cursor: 'pointer' }}>Register</strong>
-                    </IonText>
-                  </p>
-                </IonText>
-              </div>
-            </IonCardContent>
-          </IonCard>
+              <IonButton expand="block" type="submit" disabled={loading} className="login-button">
+                {loading ? <IonSpinner name="crescent" /> : 'Sign In'}
+              </IonButton>
+            </form>
+
+            <div className="login-footer">
+              <p>
+                Don't have an account?{' '}
+                <span className="register-link" onClick={() => history.push('/register')}>
+                  Create Account
+                </span>
+              </p>
+            </div>
+          </div>
         </div>
 
-        <IonToast
-          isOpen={showToast}
-          onDidDismiss={() => setShowToast(false)}
-          message={error}
-          duration={3000}
-          color="danger"
-          position="top"
-        />
+        <IonToast isOpen={showToast} onDidDismiss={() => setShowToast(false)} message={error} duration={3000} color="danger" position="top" />
       </IonContent>
     </IonPage>
   );

@@ -185,9 +185,30 @@ async def get_my_donations(
     result = await db.execute(query.order_by(DonationRequest.created_at.desc()))
     donations = result.scalars().all()
     
-    return [
-        {
+    # Fetch NGO details for each donation
+    donation_list = []
+    for d in donations:
+        # Get NGO location details
+        location_result = await db.execute(
+            select(NGOLocation).where(NGOLocation.id == d.ngo_location_id)
+        )
+        location = location_result.scalar_one_or_none()
+        
+        ngo_name = None
+        location_name = None
+        if location:
+            # Get NGO profile
+            ngo_result = await db.execute(
+                select(NGOProfile).where(NGOProfile.id == location.ngo_id)
+            )
+            ngo = ngo_result.scalar_one_or_none()
+            if ngo:
+                ngo_name = ngo.organization_name
+            location_name = location.location_name
+        
+        donation_list.append({
             "id": d.id,
+            "donor_id": donor_profile.id,
             "ngo_location_id": d.ngo_location_id,
             "food_type": d.food_type,
             "quantity_plates": d.quantity_plates,
@@ -195,11 +216,19 @@ async def get_my_donations(
             "donation_date": d.donation_date.isoformat(),
             "pickup_time_start": d.pickup_time_start,
             "pickup_time_end": d.pickup_time_end,
+            "description": d.description,
+            "special_instructions": d.special_instructions,
             "status": d.status.value,
-            "created_at": d.created_at.isoformat()
-        }
-        for d in donations
-    ]
+            "rejection_reason": d.rejection_reason,
+            "created_at": d.created_at.isoformat(),
+            "confirmed_at": d.confirmed_at.isoformat() if d.confirmed_at else None,
+            "completed_at": d.completed_at.isoformat() if d.completed_at else None,
+            "cancelled_at": d.cancelled_at.isoformat() if d.cancelled_at else None,
+            "ngo_name": ngo_name,
+            "location_name": location_name
+        })
+    
+    return donation_list
 
 
 @router.get("/requests/ngo-requests")
@@ -324,6 +353,24 @@ async def get_donation_request(
                 detail="Access denied"
             )
     
+    # Get NGO location details
+    location_result = await db.execute(
+        select(NGOLocation).where(NGOLocation.id == donation.ngo_location_id)
+    )
+    location = location_result.scalar_one_or_none()
+    
+    ngo_name = None
+    location_name = None
+    if location:
+        # Get NGO profile
+        ngo_result = await db.execute(
+            select(NGOProfile).where(NGOProfile.id == location.ngo_id)
+        )
+        ngo = ngo_result.scalar_one_or_none()
+        if ngo:
+            ngo_name = ngo.organization_name
+        location_name = location.location_name
+    
     return {
         "id": donation.id,
         "donor_id": donation.donor_id,
@@ -343,7 +390,9 @@ async def get_donation_request(
         "completed_at": donation.completed_at.isoformat() if donation.completed_at else None,
         "cancelled_at": donation.cancelled_at.isoformat() if donation.cancelled_at else None,
         "created_at": donation.created_at.isoformat(),
-        "updated_at": donation.updated_at.isoformat() if donation.updated_at else None
+        "updated_at": donation.updated_at.isoformat() if donation.updated_at else None,
+        "ngo_name": ngo_name,
+        "location_name": location_name
     }
 
 

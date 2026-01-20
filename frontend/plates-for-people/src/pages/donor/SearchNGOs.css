@@ -53,6 +53,7 @@
   height: calc(100vh - 280px);
   width: 100%;
   position: relative;
+  padding: 0 16px 16px 16px;
 }
 
 .list-container {

@@ -18,11 +18,7 @@ export const ngoService = {
   },
 
   // Update NGO profile
-  async updateProfile(data: {
-    organization_name?: string;
-    contact_person?: string;
-    phone?: string;
-  }): Promise<NGOProfile> {
+  async updateProfile(data: { organization_name?: string; contact_person?: string; phone?: string }): Promise<NGOProfile> {
     const response = await api.put<NGOProfile>('/ngos/profile', data);
     return response.data;
   },
@@ -60,41 +56,27 @@ export const ngoService = {
 
   // Capacity Management
   async getCapacity(locationId: number, date: string): Promise<NGOLocationCapacity> {
-    const response = await api.get<NGOLocationCapacity>(
-      `/ngos/locations/${locationId}/capacity/${date}`
-    );
+    const response = await api.get<NGOLocationCapacity>(`/ngos/locations/${locationId}/capacity/${date}`);
     return response.data;
   },
 
-  async getCapacityRange(
-    locationId: number,
-    startDate: string,
-    endDate: string
-  ): Promise<NGOLocationCapacity[]> {
-    const response = await api.get<NGOLocationCapacity[]>(
-      `/ngos/locations/${locationId}/capacity/range`,
-      { params: { start_date: startDate, end_date: endDate } }
-    );
-    return response.data;
+  async getCapacityRange(locationId: number, startDate: string, endDate: string): Promise<NGOLocationCapacity[]> {
+    // Just get all capacity and filter on frontend
+    const response = await api.get<NGOLocationCapacity[]>(`/ngos/locations/${locationId}/capacity`);
+    // Filter by date range
+    return response.data.filter((cap) => {
+      const capDate = cap.date;
+      return capDate >= startDate && capDate <= endDate;
+    });
   },
 
   async setCapacity(locationId: number, data: SetCapacityFormData): Promise<NGOLocationCapacity> {
-    const response = await api.post<NGOLocationCapacity>(
-      `/ngos/locations/${locationId}/capacity`,
-      data
-    );
+    const response = await api.post<NGOLocationCapacity>(`/ngos/locations/${locationId}/capacity`, data);
     return response.data;
   },
 
-  async updateCapacity(
-    locationId: number,
-    date: string,
-    data: Partial<SetCapacityFormData>
-  ): Promise<NGOLocationCapacity> {
-    const response = await api.put<NGOLocationCapacity>(
-      `/ngos/locations/${locationId}/capacity/${date}`,
-      data
-    );
+  async updateCapacity(locationId: number, date: string, data: Partial<SetCapacityFormData>): Promise<NGOLocationCapacity> {
+    const response = await api.put<NGOLocationCapacity>(`/ngos/locations/${locationId}/capacity/${date}`, data);
     return response.data;
   },
 
