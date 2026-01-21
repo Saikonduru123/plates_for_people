@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Test Admin Login</title>
+  </head>
+  <body>
+    <h1>Admin Login Test</h1>
+    <button onclick="testLogin()">Test Admin Login</button>
+    <pre id="result"></pre>
+
+    <script>
+      async function testLogin() {
+        const result = document.getElementById('result');
+        result.textContent = 'Testing...';
+
+        try {
+          // Login
+          const loginResponse = await fetch('http://localhost:8000/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: 'admin@platesforpeople.org',
+              password: 'admin123',
+            }),
+          });
+
+          const loginData = await loginResponse.json();
+          result.textContent += '\n\nLogin Response:\n' + JSON.stringify(loginData, null, 2);
+
+          if (loginData.access_token) {
+            // Get user data
+            const meResponse = await fetch('http://localhost:8000/api/auth/me', {
+              headers: { Authorization: `Bearer ${loginData.access_token}` },
+            });
+
+            const userData = await meResponse.json();
+            result.textContent += '\n\nUser Data:\n' + JSON.stringify(userData, null, 2);
+
+            result.textContent += '\n\n✅ SUCCESS! Admin can login.';
+            result.textContent += '\nRole: ' + userData.role;
+            result.textContent += '\nShould redirect to: /admin/dashboard';
+          }
+        } catch (error) {
+          result.textContent += '\n\n❌ ERROR:\n' + error.message;
+        }
+      }
+    </script>
+  </body>
+</html>

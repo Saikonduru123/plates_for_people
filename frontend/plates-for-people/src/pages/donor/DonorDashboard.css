@@ -99,6 +99,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  padding: 0 2px;
 }
 
 .action-buttons .action-btn:first-child {
@@ -114,6 +115,8 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto auto;
+    gap: 12px;
+    padding: 0 2px;
   }
 
   .action-buttons .action-btn:first-child {
@@ -130,6 +133,7 @@
   font-weight: 600;
   text-transform: none;
   letter-spacing: 0.3px;
+  overflow: visible;
 }
 
 .action-btn.secondary {
@@ -137,6 +141,7 @@
   --color: #667eea;
   border: 2px solid #667eea;
   border-radius: 8px;
+  box-sizing: border-box;
 }
 
 .recent-donations {
@@ -222,12 +227,38 @@
 
 .empty-state {
   text-align: center;
-  padding: 40px 20px;
-  color: #a0aec0;
+  padding: 60px 20px;
+  color: #718096;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 2px dashed #e2e8f0;
 }
 
 .empty-state ion-icon {
-  font-size: 64px;
-  margin-bottom: 16px;
-  opacity: 0.5;
+  font-size: 80px;
+  margin-bottom: 20px;
+  opacity: 0.4;
+  color: #cbd5e0;
+}
+
+.empty-state p {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: #4a5568;
+}
+
+.empty-state .empty-subtitle {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #a0aec0;
+  margin-bottom: 24px;
+}
+
+.empty-state .empty-action-btn {
+  margin-top: 16px;
+  --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --background-hover: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+  --border-radius: 8px;
+  font-weight: 600;
 }

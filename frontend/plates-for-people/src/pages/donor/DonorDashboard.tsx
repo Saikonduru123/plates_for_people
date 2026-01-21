@@ -14,14 +14,15 @@ import {
 } from '@ionic/react';
 import {
   logOutOutline,
-  searchOutline,
-  addCircleOutline,
-  restaurantOutline,
   checkmarkCircleOutline,
-  timeOutline,
-  closeCircleOutline,
-  trophyOutline,
   statsChartOutline,
+  settingsOutline,
+  fastFoodOutline,
+  hourglassOutline,
+  starOutline,
+  close,
+  addCircle,
+  search,
 } from 'ionicons/icons';
 import { useHistory } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -80,7 +81,7 @@ const DonorDashboardPage: React.FC = () => {
   };
 
   const handleDonationClick = (donation: Donation) => {
-    history.push(`/donor/donations/${donation.id}`);
+    history.push(`/donor/donation/${donation.id}`);
   };
 
   if (loading) {
@@ -102,8 +103,11 @@ const DonorDashboardPage: React.FC = () => {
         <IonToolbar>
           <IonTitle>Dashboard</IonTitle>
           <IonButtons slot="end">
-            <IonButton onClick={handleLogout}>
-              <IonIcon icon={logOutOutline} slot="icon-only" />
+            <IonButton onClick={() => history.push('/donor/profile')} fill="clear" style={{ '--padding-start': '12px', '--padding-end': '12px' }}>
+              <IonIcon icon={settingsOutline} style={{ fontSize: '28px', color: '#667eea' }} />
+            </IonButton>
+            <IonButton onClick={handleLogout} fill="clear" style={{ '--padding-start': '12px', '--padding-end': '12px' }}>
+              <IonIcon icon={logOutOutline} style={{ fontSize: '28px', color: '#e53e3e' }} />
             </IonButton>
           </IonButtons>
         </IonToolbar>
@@ -117,7 +121,7 @@ const DonorDashboardPage: React.FC = () => {
         <div className="dashboard-container">
           {/* Welcome Section */}
           <div className="dashboard-header">
-            <h1>Welcome back, {user?.full_name}!</h1>
+            <h1>Welcome back!</h1>
             <p>Track your food donations and make a difference</p>
           </div>
 
@@ -125,7 +129,7 @@ const DonorDashboardPage: React.FC = () => {
           {dashboard && (
             <div className="stats-grid">
               <div className="stat-card">
-                <IonIcon icon={restaurantOutline} className="stat-icon" />
+                <IonIcon icon={fastFoodOutline} className="stat-icon" />
                 <div className="stat-value">{dashboard.total_donations}</div>
                 <div className="stat-label">Total Donations</div>
               </div>
@@ -137,13 +141,13 @@ const DonorDashboardPage: React.FC = () => {
               </div>
 
               <div className="stat-card">
-                <IonIcon icon={timeOutline} className="stat-icon" />
+                <IonIcon icon={hourglassOutline} className="stat-icon" />
                 <div className="stat-value">{dashboard.pending_donations}</div>
                 <div className="stat-label">Pending</div>
               </div>
 
               <div className="stat-card">
-                <IonIcon icon={trophyOutline} className="stat-icon" />
+                <IonIcon icon={starOutline} className="stat-icon" />
                 <div className="stat-value">{dashboard.total_meals_donated}</div>
                 <div className="stat-label">Meals Donated</div>
               </div>
@@ -154,7 +158,7 @@ const DonorDashboardPage: React.FC = () => {
           {dashboard && (
             <div className="stats-grid">
               <div className="stat-card">
-                <IonIcon icon={closeCircleOutline} className="stat-icon" style={{ color: '#e53e3e' }} />
+                <IonIcon icon={close} className="stat-icon" style={{ color: '#e53e3e' }} />
                 <div className="stat-value">{dashboard.cancelled_donations}</div>
                 <div className="stat-label">Cancelled</div>
               </div>
@@ -172,15 +176,15 @@ const DonorDashboardPage: React.FC = () => {
             <h2>Quick Actions</h2>
             <div className="action-buttons">
               <IonButton expand="block" className="action-btn" onClick={() => history.push('/donor/donate-now')}>
-                <IonIcon icon={addCircleOutline} slot="start" />
+                <IonIcon icon={addCircle} slot="start" />
                 Donate Now
               </IonButton>
               <IonButton expand="block" className="action-btn secondary" onClick={() => history.push('/donor/search-ngos')}>
-                <IonIcon icon={searchOutline} slot="start" />
+                <IonIcon icon={search} slot="start" />
                 Find NGOs
               </IonButton>
               <IonButton expand="block" className="action-btn secondary" onClick={() => history.push('/donor/donations')}>
-                <IonIcon icon={restaurantOutline} slot="start" />
+                <IonIcon icon={fastFoodOutline} slot="start" />
                 My Donations
               </IonButton>
             </div>
@@ -191,8 +195,13 @@ const DonorDashboardPage: React.FC = () => {
             <h2>Recent Donations</h2>
             {recentDonations.length === 0 ? (
               <div className="empty-state">
-                <IonIcon icon={restaurantOutline} />
+                <IonIcon icon={fastFoodOutline} />
                 <p>No donations yet</p>
+                <p className="empty-subtitle">Start making a difference by donating food!</p>
+                <IonButton onClick={() => history.push('/donor/donate-now')} className="empty-action-btn">
+                  <IonIcon icon={addCircle} slot="start" />
+                  Make Your First Donation
+                </IonButton>
               </div>
             ) : (
               <div>
@@ -204,11 +213,11 @@ const DonorDashboardPage: React.FC = () => {
                     </div>
                     <div className="donation-info">
                       <span>
-                        <IonIcon icon={restaurantOutline} />
+                        <IonIcon icon={fastFoodOutline} />
                         {donation.food_type} • {donation.quantity_plates} plates • {donation.meal_type}
                       </span>
                       <span>
-                        <IonIcon icon={timeOutline} />
+                        <IonIcon icon={hourglassOutline} />
                         {formatDisplayDate(donation.donation_date)}
                       </span>
                     </div>

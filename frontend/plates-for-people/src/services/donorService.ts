@@ -1,8 +1,5 @@
 import api from './api';
-import type {
-  DonorProfile,
-  DonorDashboard,
-} from '../types';
+import type { DonorProfile, DonorDashboard } from '../types';
 
 export const donorService = {
   // Get donor profile
@@ -13,8 +10,15 @@ export const donorService = {
 
   // Update donor profile
   async updateProfile(data: {
-    phone_number?: string;
-    address?: string;
+    organization_name?: string;
+    contact_person?: string;
+    phone?: string;
+    address_line1?: string;
+    address_line2?: string;
+    city?: string;
+    state?: string;
+    zip_code?: string;
+    country?: string;
   }): Promise<DonorProfile> {
     const response = await api.put<DonorProfile>('/donors/profile', data);
     return response.data;

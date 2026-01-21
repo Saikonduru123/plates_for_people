@@ -1,0 +1,166 @@
+.profile-settings-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  gap: 16px;
+}
+
+.loading-container p {
+  color: var(--ion-text-color, #666);
+  font-size: 14px;
+}
+
+/* Section Icons */
+.section-icon {
+  margin-right: 8px;
+  font-size: 20px;
+  vertical-align: middle;
+}
+
+/* Form Groups */
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #000;
+}
+
+.form-label ion-icon {
+  font-size: 18px;
+  color: var(--ion-color-primary, #3880ff);
+}
+
+.form-label.required::after {
+  content: ' *';
+  color: var(--ion-color-danger, #eb445a);
+}
+
+/* Input Styling */
+ion-input {
+  --background: var(--ion-color-light, #f4f5f8);
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+ion-input.input-error {
+  --background: rgba(var(--ion-color-danger-rgb, 235, 68, 90), 0.05);
+  --border-color: var(--ion-color-danger, #eb445a);
+}
+
+ion-input.readonly-input {
+  --background: var(--ion-color-light-shade, #e8e9eb);
+  opacity: 0.7;
+}
+
+.error-text {
+  margin: 6px 0 0 0;
+  font-size: 12px;
+  color: var(--ion-color-danger, #eb445a);
+  font-weight: 500;
+}
+
+.helper-text {
+  margin: 6px 0 0 0;
+  font-size: 12px;
+  color: var(--ion-color-medium, #666);
+  line-height: 1.4;
+  font-style: italic;
+}
+
+/* Form Actions */
+.action-buttons {
+  text-align: center;
+  margin-top: 32px;
+  width: 100%;
+}
+
+.action-buttons ion-button {
+  margin: 0 auto;
+  font-weight: 600;
+}
+
+.save-button {
+  --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --background-hover: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+  --border-radius: 12px;
+  height: 52px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0.5px;
+  font-size: 1rem;
+  min-width: 300px;
+  max-width: 400px;
+}
+
+.save-button[disabled] {
+  --background: #cbd5e0;
+  opacity: 0.6;
+}
+
+/* Card Styling */
+ion-card {
+  margin-bottom: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+ion-card-header {
+  padding: 20px;
+}
+
+ion-card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+ion-card-content {
+  padding: 20px;
+  padding-top: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .profile-settings-container {
+    padding: 0 16px;
+  }
+
+  ion-card-header {
+    padding: 16px;
+  }
+
+  ion-card-content {
+    padding: 16px;
+    padding-top: 0;
+  }
+
+  ion-card-title {
+    font-size: 1.125rem;
+  }
+
+  .save-button {
+    height: 48px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+}

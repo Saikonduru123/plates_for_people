@@ -12,6 +12,7 @@ import CreateDonation from './pages/donor/CreateDonation';
 import DonationDetails from './pages/donor/DonationDetails';
 import DonationHistory from './pages/donor/DonationHistory';
 import RateNGO from './pages/donor/RateNGO';
+import DonorProfileSettings from './pages/donor/DonorProfileSettings';
 import NGODashboard from './pages/ngo/NGODashboard';
 import ManageDonations from './pages/ngo/ManageDonations';
 import ManageLocations from './pages/ngo/ManageLocations';
@@ -124,6 +125,10 @@ const AppRoutes: React.FC = () => {
 
       <Route exact path="/donor/rate/:donation_id">
         {isAuthenticated && user?.role === 'donor' ? <RateNGO /> : <Redirect to="/login" />}
+      </Route>
+
+      <Route exact path="/donor/profile">
+        {isAuthenticated && user?.role === 'donor' ? <DonorProfileSettings /> : <Redirect to="/login" />}
       </Route>
 
       {/* NGO Routes */}

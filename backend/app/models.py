@@ -69,13 +69,16 @@ class DonorProfile(Base):
     organization_name = Column(String(255), nullable=False)
     contact_person = Column(String(255), nullable=False)
     phone = Column(String(20), nullable=False)
-    address = Column(Text, nullable=False)
+    address_line1 = Column(Text, nullable=False)
+    address_line2 = Column(Text, nullable=True)
     city = Column(String(100), nullable=False)
     state = Column(String(100), nullable=False)
     country = Column(String(100), nullable=False)
-    postal_code = Column(String(20), nullable=False)
+    zip_code = Column(String(20), nullable=False)
     latitude = Column(Numeric(10, 8), nullable=False)
     longitude = Column(Numeric(11, 8), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
     # Relationships
     user = relationship("User", back_populates="donor_profile")

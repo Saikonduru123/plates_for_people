@@ -25,12 +25,18 @@ class UserLogin(BaseModel):
 
 class UserResponse(UserBase):
     id: int
-    role: UserRole
+    role: str  # Return as string (lowercase: donor/ngo/admin)
     is_active: bool
     created_at: datetime
     
     class Config:
         from_attributes = True
+        
+    @validator('role', pre=True)
+    def serialize_role(cls, v):
+        if isinstance(v, UserRole):
+            return v.value
+        return v
 
 
 class TokenResponse(BaseModel):
@@ -49,10 +55,11 @@ class DonorProfileBase(BaseModel):
     organization_name: str = Field(..., max_length=255)
     contact_person: str = Field(..., max_length=255)
     phone: str = Field(..., max_length=20)
-    address: str = Field(..., max_length=500)
+    address_line1: str = Field(..., max_length=500)
+    address_line2: Optional[str] = Field(None, max_length=255)
     city: str = Field(..., max_length=100)
     state: str = Field(..., max_length=100)
-    postal_code: str = Field(..., max_length=20)
+    zip_code: str = Field(..., max_length=20)
     country: str = Field(..., max_length=100)
     latitude: float = Field(..., ge=-90, le=90)
     longitude: float = Field(..., ge=-180, le=180)
@@ -66,9 +73,7 @@ class DonorProfileUpdate(BaseModel):
     organization_name: Optional[str] = Field(None, max_length=255)
     contact_person: Optional[str] = Field(None, max_length=255)
     phone: Optional[str] = Field(None, max_length=20)
-    address: Optional[str] = Field(None, max_length=500)
-    city: Optional[str] = Field(None, max_length=100)
-    state: Optional[str] = Field(None, max_length=100)
+    address_line1: Optional[str] = Field(None, max_length=500)
     address_line2: Optional[str] = Field(None, max_length=255)
     city: Optional[str] = Field(None, max_length=100)
     state: Optional[str] = Field(None, max_length=100)

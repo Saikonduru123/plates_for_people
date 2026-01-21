@@ -68,10 +68,10 @@ export const useGeolocation = (enabled: boolean = false) => {
           reject(new Error(errorMessage));
         },
         {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 0,
-        }
+          enableHighAccuracy: false,
+          timeout: 20000,
+          maximumAge: 300000,
+        },
       );
     });
   };

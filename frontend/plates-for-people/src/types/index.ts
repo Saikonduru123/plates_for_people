@@ -4,7 +4,6 @@ export type UserRole = 'donor' | 'ngo' | 'admin';
 export interface User {
   id: number;
   email: string;
-  full_name: string;
   role: UserRole;
   is_active: boolean;
   created_at: string;
@@ -33,11 +32,17 @@ export interface AuthResponse {
 export interface DonorProfile {
   id: number;
   user_id: number;
-  phone_number: string | null;
-  address: string | null;
-  latitude?: number;
-  longitude?: number;
-  user: User;
+  organization_name: string;
+  contact_person: string;
+  phone: string;
+  address_line1: string;
+  address_line2?: string | null;
+  city: string;
+  state: string;
+  zip_code: string;
+  country: string;
+  latitude: number;
+  longitude: number;
 }
 
 export interface DonorDashboard {

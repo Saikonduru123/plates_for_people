@@ -48,7 +48,7 @@ const SearchNGOs: React.FC = () => {
   const [searchText, setSearchText] = useState('');
 
   // Filters
-  const [radius, setRadius] = useState<number>(10);
+  const [radius, setRadius] = useState<number>(25);
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [mealType, setMealType] = useState<string>('');
   const [minCapacity, setMinCapacity] = useState<number | undefined>();
@@ -60,6 +60,22 @@ const SearchNGOs: React.FC = () => {
   const [userLat, setUserLat] = useState<number>(19.076);
   const [userLng, setUserLng] = useState<number>(72.8777);
   const [centerOnPosition, setCenterOnPosition] = useState<[number, number] | null>(null);
+  const [locationFetched, setLocationFetched] = useState(false);
+
+  // Auto-fetch location on mount
+  useEffect(() => {
+    if (!locationFetched) {
+      getCurrentPosition().catch((err) => {
+        console.log('Location fetch failed, using default location:', err);
+        present({
+          message: 'Using default location (Mumbai). Click "My Location" to try again.',
+          duration: 3000,
+          color: 'warning',
+        });
+      });
+      setLocationFetched(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (latitude && longitude) {
@@ -127,7 +143,7 @@ const SearchNGOs: React.FC = () => {
     (ngo) =>
       ngo.ngo_name.toLowerCase().includes(searchText.toLowerCase()) ||
       ngo.location_name.toLowerCase().includes(searchText.toLowerCase()) ||
-      ngo.address.city.toLowerCase().includes(searchText.toLowerCase())
+      ngo.address.city.toLowerCase().includes(searchText.toLowerCase()),
   );
 
   const mapMarkers = filteredNGOs.map((ngo) => ({
