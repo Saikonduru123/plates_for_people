@@ -126,7 +126,7 @@ log_info "=== Step 3: Installing Dependencies ==="
 log_info "Installing Python 3.11..."
 sudo add-apt-repository ppa:deadsnakes/ppa -y
 sudo apt update python3.11-venv python3.11-dev python3-pip
-# sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1
+sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1
 # alias python3=python3.11
 
 # Install Node.js 20
