@@ -289,7 +289,7 @@ EOF
 fi
 
 log_info "Installing npm dependencies..."
-export NODE_OPTIONS="--max-old-space-size=2048"
+export NODE_OPTIONS="--max-old-space-size=1024"
 npm ci --production=false
 
 # Build frontend
