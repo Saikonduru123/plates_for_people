@@ -131,7 +131,7 @@ sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 
 
 # Install Node.js 20
 log_info "Installing Node.js 20..."
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash -
 sudo apt install -y nodejs
 
 # Install PostgreSQL
