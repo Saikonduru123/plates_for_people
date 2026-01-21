@@ -87,7 +87,9 @@
 .action-card {
   margin: 0;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
   position: relative;
 }
 
@@ -111,7 +113,7 @@
 .action-label {
   font-size: 14px;
   font-weight: 500;
-  color: var(--ion-text-color);
+  color: #000;
 }
 
 .action-badge {

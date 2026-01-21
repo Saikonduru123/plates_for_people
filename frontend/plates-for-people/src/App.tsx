@@ -1,11 +1,12 @@
 import { Redirect, Route } from 'react-router-dom';
-import { IonApp, IonRouterOutlet, IonSpinner, setupIonicReact } from '@ionic/react';
+import { IonApp, IonRouterOutlet, IonSpinner, setupIonicReact, IonPage, IonContent } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import DonorDashboard from './pages/donor/DonorDashboard';
 import SearchNGOs from './pages/donor/SearchNGOs';
+import SmartDonate from './pages/donor/SmartDonate';
 import NGODetails from './pages/donor/NGODetails';
 import CreateDonation from './pages/donor/CreateDonation';
 import DonationDetails from './pages/donor/DonationDetails';
@@ -50,32 +51,28 @@ import '@ionic/react/css/palettes/dark.system.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import './theme/global.css';
 
 setupIonicReact();
 
 // Protected Route component
-const ProtectedRoute: React.FC<{ component: React.FC<any>; exact?: boolean; path: string }> = ({
-  component: Component,
-  ...rest
-}) => {
+const ProtectedRoute: React.FC<{ component: React.FC<any>; exact?: boolean; path: string }> = ({ component: Component, ...rest }) => {
   const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <IonSpinner />
-      </div>
+      <IonPage>
+        <IonContent>
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', gap: '1rem' }}>
+            <IonSpinner name="crescent" color="primary" style={{ transform: 'scale(1.5)' }} />
+            <p style={{ color: 'var(--ion-color-medium)', fontSize: '1rem' }}>Loading...</p>
+          </div>
+        </IonContent>
+      </IonPage>
     );
   }
 
-  return (
-    <Route
-      {...rest}
-      render={(props) =>
-        isAuthenticated ? <Component {...props} /> : <Redirect to="/login" />
-      }
-    />
-  );
+  return <Route {...rest} render={(props) => (isAuthenticated ? <Component {...props} /> : <Redirect to="/login" />)} />;
 };
 
 // Main app routing
@@ -98,141 +95,81 @@ const AppRoutes: React.FC = () => {
 
       {/* Protected Routes - Donor */}
       <Route exact path="/donor/dashboard">
-        {isAuthenticated && user?.role === 'donor' ? (
-          <DonorDashboard />
-        ) : (
-          <Redirect to="/login" />
-        )}
+        {isAuthenticated && user?.role === 'donor' ? <DonorDashboard /> : <Redirect to="/login" />}
       </Route>
 
       <Route exact path="/donor/search-ngos">
-        {isAuthenticated && user?.role === 'donor' ? (
-          <SearchNGOs />
-        ) : (
-          <Redirect to="/login" />
-        )}
+        {isAuthenticated && user?.role === 'donor' ? <SearchNGOs /> : <Redirect to="/login" />}
+      </Route>
+
+      <Route exact path="/donor/donate-now">
+        {isAuthenticated && user?.role === 'donor' ? <SmartDonate /> : <Redirect to="/login" />}
       </Route>
 
       <Route exact path="/donor/ngo/:id">
-        {isAuthenticated && user?.role === 'donor' ? (
-          <NGODetails />
-        ) : (
-          <Redirect to="/login" />
-        )}
+        {isAuthenticated && user?.role === 'donor' ? <NGODetails /> : <Redirect to="/login" />}
       </Route>
 
       <Route exact path="/donor/create-donation">
-        {isAuthenticated && user?.role === 'donor' ? (
-          <CreateDonation />
-        ) : (
-          <Redirect to="/login" />
-        )}
+        {isAuthenticated && user?.role === 'donor' ? <CreateDonation /> : <Redirect to="/login" />}
       </Route>
 
       <Route exact path="/donor/donation/:id">
-        {isAuthenticated && user?.role === 'donor' ? (
-          <DonationDetails />
-        ) : (
-          <Redirect to="/login" />
-        )}
+        {isAuthenticated && user?.role === 'donor' ? <DonationDetails /> : <Redirect to="/login" />}
       </Route>
 
       <Route exact path="/donor/donations">
-        {isAuthenticated && user?.role === 'donor' ? (
-          <DonationHistory />
-        ) : (
-          <Redirect to="/login" />
-        )}
+        {isAuthenticated && user?.role === 'donor' ? <DonationHistory /> : <Redirect to="/login" />}
       </Route>
 
       <Route exact path="/donor/rate/:donation_id">
-        {isAuthenticated && user?.role === 'donor' ? (
-          <RateNGO />
-        ) : (
-          <Redirect to="/login" />
-        )}
+        {isAuthenticated && user?.role === 'donor' ? <RateNGO /> : <Redirect to="/login" />}
       </Route>
 
       {/* NGO Routes */}
       <Route exact path="/ngo/dashboard">
-        {isAuthenticated && user?.role === 'ngo' ? (
-          <NGODashboard />
-        ) : (
-          <Redirect to="/login" />
-        )}
+        {isAuthenticated && user?.role === 'ngo' ? <NGODashboard /> : <Redirect to="/login" />}
       </Route>
 
       <Route exact path="/ngo/donations">
-        {isAuthenticated && user?.role === 'ngo' ? (
-          <ManageDonations />
-        ) : (
-          <Redirect to="/login" />
-        )}
+        {isAuthenticated && user?.role === 'ngo' ? <ManageDonations /> : <Redirect to="/login" />}
+      </Route>
+
+      <Route exact path="/ngo/donation/:id">
+        {isAuthenticated && user?.role === 'ngo' ? <DonationDetails /> : <Redirect to="/login" />}
       </Route>
 
       <Route exact path="/ngo/locations">
-        {isAuthenticated && user?.role === 'ngo' ? (
-          <ManageLocations />
-        ) : (
-          <Redirect to="/login" />
-        )}
+        {isAuthenticated && user?.role === 'ngo' ? <ManageLocations /> : <Redirect to="/login" />}
       </Route>
 
       <Route exact path="/ngo/locations/add">
-        {isAuthenticated && user?.role === 'ngo' ? (
-          <AddEditLocation />
-        ) : (
-          <Redirect to="/login" />
-        )}
+        {isAuthenticated && user?.role === 'ngo' ? <AddEditLocation /> : <Redirect to="/login" />}
       </Route>
 
       <Route exact path="/ngo/locations/edit/:id">
-        {isAuthenticated && user?.role === 'ngo' ? (
-          <AddEditLocation />
-        ) : (
-          <Redirect to="/login" />
-        )}
+        {isAuthenticated && user?.role === 'ngo' ? <AddEditLocation /> : <Redirect to="/login" />}
       </Route>
 
       <Route exact path="/ngo/capacity">
-        {isAuthenticated && user?.role === 'ngo' ? (
-          <ManageCapacity />
-        ) : (
-          <Redirect to="/login" />
-        )}
+        {isAuthenticated && user?.role === 'ngo' ? <ManageCapacity /> : <Redirect to="/login" />}
       </Route>
 
       <Route exact path="/ngo/ratings">
-        {isAuthenticated && user?.role === 'ngo' ? (
-          <ViewRatings />
-        ) : (
-          <Redirect to="/login" />
-        )}
+        {isAuthenticated && user?.role === 'ngo' ? <ViewRatings /> : <Redirect to="/login" />}
       </Route>
 
       <Route exact path="/ngo/profile">
-        {isAuthenticated && user?.role === 'ngo' ? (
-          <ProfileSettings />
-        ) : (
-          <Redirect to="/login" />
-        )}
+        {isAuthenticated && user?.role === 'ngo' ? <ProfileSettings /> : <Redirect to="/login" />}
       </Route>
 
       {/* Admin Routes */}
       <Route exact path="/admin/dashboard">
-        {isAuthenticated && user?.role === 'admin' ? (
-          <AdminDashboard />
-        ) : (
-          <Redirect to="/login" />
-        )}
+        {isAuthenticated && user?.role === 'admin' ? <AdminDashboard /> : <Redirect to="/login" />}
       </Route>
 
       <Route exact path="/admin/verify-ngos">
-        {isAuthenticated && user?.role === 'admin' ? (
-          <VerifyNGOs />
-        ) : (
-          <Redirect to="/login" />
-        )}
+        {isAuthenticated && user?.role === 'admin' ? <VerifyNGOs /> : <Redirect to="/login" />}
       </Route>
 
       {/* Dashboard Route - Redirect based on role */}

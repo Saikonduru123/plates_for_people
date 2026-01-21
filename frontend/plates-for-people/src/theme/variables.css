@@ -1,2 +1,101 @@
-/* For information on how to create your own theme, please refer to:
-http://ionicframework.com/docs/theming/ */
+/* Modern Light Theme for Plates for People */
+
+:root {
+  /* Primary Brand Colors - Sophisticated Purple/Indigo */
+  --ion-color-primary: #667eea;
+  --ion-color-primary-rgb: 102, 126, 234;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #5a6fce;
+  --ion-color-primary-tint: #7e92ed;
+
+  /* Secondary Color - Vibrant Teal */
+  --ion-color-secondary: #38b2ac;
+  --ion-color-secondary-rgb: 56, 178, 172;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #319d97;
+  --ion-color-secondary-tint: #4cbbb5;
+
+  /* Tertiary - Fresh Green */
+  --ion-color-tertiary: #48bb78;
+  --ion-color-tertiary-rgb: 72, 187, 120;
+  --ion-color-tertiary-contrast: #ffffff;
+  --ion-color-tertiary-contrast-rgb: 255, 255, 255;
+  --ion-color-tertiary-shade: #3fa568;
+  --ion-color-tertiary-tint: #5ac286;
+
+  /* Success - Green */
+  --ion-color-success: #48bb78;
+  --ion-color-success-rgb: 72, 187, 120;
+  --ion-color-success-contrast: #ffffff;
+  --ion-color-success-contrast-rgb: 255, 255, 255;
+  --ion-color-success-shade: #3fa568;
+  --ion-color-success-tint: #5ac286;
+
+  /* Warning - Warm Orange */
+  --ion-color-warning: #ed8936;
+  --ion-color-warning-rgb: 237, 137, 54;
+  --ion-color-warning-contrast: #ffffff;
+  --ion-color-warning-contrast-rgb: 255, 255, 255;
+  --ion-color-warning-shade: #d17930;
+  --ion-color-warning-tint: #ef944a;
+
+  /* Danger - Red */
+  --ion-color-danger: #e53e3e;
+  --ion-color-danger-rgb: 229, 62, 62;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #ca3737;
+  --ion-color-danger-tint: #e85151;
+
+  /* Light - Very Light Gray */
+  --ion-color-light: #f7fafc;
+  --ion-color-light-rgb: 247, 250, 252;
+  --ion-color-light-contrast: #1a202c;
+  --ion-color-light-contrast-rgb: 26, 32, 44;
+  --ion-color-light-shade: #d9dce0;
+  --ion-color-light-tint: #f8fbfc;
+
+  /* Medium - Cool Gray */
+  --ion-color-medium: #a0aec0;
+  --ion-color-medium-rgb: 160, 174, 192;
+  --ion-color-medium-contrast: #ffffff;
+  --ion-color-medium-contrast-rgb: 255, 255, 255;
+  --ion-color-medium-shade: #8d99a9;
+  --ion-color-medium-tint: #aab6c6;
+
+  /* Dark - Deep Blue Gray */
+  --ion-color-dark: #2d3748;
+  --ion-color-dark-rgb: 45, 55, 72;
+  --ion-color-dark-contrast: #ffffff;
+  --ion-color-dark-contrast-rgb: 255, 255, 255;
+  --ion-color-dark-shade: #28303f;
+  --ion-color-dark-tint: #424b5a;
+
+  /* Background Colors */
+  --ion-background-color: #f7fafc;
+  --ion-background-color-rgb: 247, 250, 252;
+
+  /* Text Colors */
+  --ion-text-color: #1a202c;
+  --ion-text-color-rgb: 26, 32, 44;
+
+  /* Border Colors */
+  --ion-border-color: #e2e8f0;
+
+  /* Toolbar Colors - Clean White */
+  --ion-toolbar-background: #ffffff;
+  --ion-toolbar-border-color: #e2e8f0;
+  --ion-toolbar-color: #1a202c;
+  --ion-toolbar-segment-color: #667eea;
+  --ion-toolbar-segment-color-checked: #667eea;
+
+  /* Card Styling */
+  --ion-card-background: #ffffff;
+  --ion-card-border: #e2e8f0;
+
+  /* Item Colors */
+  --ion-item-background: #ffffff;
+  --ion-item-border-color: #e2e8f0;
+}

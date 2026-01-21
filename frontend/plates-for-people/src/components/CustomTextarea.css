@@ -1,0 +1,109 @@
+.custom-textarea-wrapper {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.custom-textarea-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 8px;
+  letter-spacing: 0.3px;
+}
+
+.custom-textarea-container {
+  position: relative;
+  width: 100%;
+}
+
+.custom-textarea-field {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #1a202c;
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  outline: none;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.custom-textarea-field::placeholder {
+  color: #a0aec0;
+  font-weight: 400;
+}
+
+.custom-textarea-field:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.custom-textarea-field:disabled {
+  background: #f7fafc;
+  color: #a0aec0;
+  cursor: not-allowed;
+  resize: none;
+}
+
+.character-count {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  font-size: 0.75rem;
+  color: #a0aec0;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+.custom-textarea-wrapper.has-error .custom-textarea-field {
+  border-color: #fc8181;
+}
+
+.custom-textarea-wrapper.has-error .custom-textarea-field:focus {
+  box-shadow: 0 0 0 3px rgba(252, 129, 129, 0.1);
+}
+
+.textarea-error-message {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: #e53e3e;
+  font-weight: 500;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .custom-textarea-label {
+    color: #e2e8f0;
+  }
+
+  .custom-textarea-field {
+    background: #2d3748;
+    border-color: #4a5568;
+    color: #f7fafc;
+  }
+
+  .custom-textarea-field::placeholder {
+    color: #718096;
+  }
+
+  .custom-textarea-field:focus {
+    background: #2d3748;
+    border-color: #667eea;
+  }
+
+  .custom-textarea-field:disabled {
+    background: #1a202c;
+  }
+
+  .character-count {
+    color: #718096;
+  }
+}

@@ -1,0 +1,16 @@
+.time-picker-content {
+  --background: #f8f9fa;
+}
+
+.time-picker-content ion-datetime {
+  --background: white;
+  border-radius: 12px;
+  margin: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: auto;
+  height: 75px;
+  justify-content: center;
+}
+.time-picker-modal .ion-page {
+  min-height: 150px;
+}

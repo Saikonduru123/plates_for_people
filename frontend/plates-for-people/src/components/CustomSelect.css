@@ -1,0 +1,122 @@
+.custom-select-wrapper {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.custom-select-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 8px;
+  letter-spacing: 0.3px;
+}
+
+.custom-select-container {
+  position: relative;
+  width: 100%;
+}
+
+.custom-select-field {
+  width: 100%;
+  padding: 12px 40px 12px 16px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #1a202c;
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  outline: none;
+  cursor: pointer;
+  font-family: inherit;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.custom-select-field:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.custom-select-field:disabled {
+  background: #f7fafc;
+  color: #a0aec0;
+  cursor: not-allowed;
+}
+
+.custom-select-field option {
+  padding: 12px;
+  font-weight: 500;
+  background: #ffffff !important;
+  color: #1a202c !important;
+}
+
+.custom-select-field option:hover,
+.custom-select-field option:checked {
+  background: #f7fafc !important;
+  color: #667eea !important;
+}
+
+.select-arrow {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #4a5568;
+  transition: color 0.2s ease;
+}
+
+.custom-select-field:focus ~ .select-arrow {
+  color: #667eea;
+}
+
+.custom-select-wrapper.has-error .custom-select-field {
+  border-color: #fc8181;
+}
+
+.custom-select-wrapper.has-error .custom-select-field:focus {
+  box-shadow: 0 0 0 3px rgba(252, 129, 129, 0.1);
+}
+
+.select-error-message {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: #e53e3e;
+  font-weight: 500;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .custom-select-label {
+    color: #e2e8f0;
+  }
+
+  .custom-select-field {
+    background: #2d3748;
+    border-color: #4a5568;
+    color: #f7fafc;
+  }
+
+  .custom-select-field:focus {
+    background: #2d3748;
+    border-color: #667eea;
+  }
+
+  .custom-select-field:disabled {
+    background: #1a202c;
+  }
+
+  .select-arrow {
+    color: #cbd5e0;
+  }
+
+  .custom-select-field:focus ~ .select-arrow {
+    color: #667eea;
+  }
+}

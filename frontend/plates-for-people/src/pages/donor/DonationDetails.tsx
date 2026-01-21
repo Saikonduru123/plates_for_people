@@ -18,15 +18,7 @@ import {
   IonRefresherContent,
   RefresherEventDetail,
 } from '@ionic/react';
-import {
-  timeOutline,
-  calendarOutline,
-  restaurantOutline,
-  locationOutline,
-  closeCircle,
-  checkmarkCircle,
-  alertCircle,
-} from 'ionicons/icons';
+import { timeOutline, calendarOutline, restaurantOutline, locationOutline, closeCircle, checkmarkCircle, alertCircle } from 'ionicons/icons';
 import { useParams } from 'react-router-dom';
 import { donationService } from '../../services/donationService';
 import type { Donation } from '../../types';
@@ -192,6 +184,28 @@ const DonationDetails: React.FC = () => {
             </IonCardContent>
           </IonCard>
 
+          {/* NGO Details */}
+          {donation.ngo_name && (
+            <IonCard>
+              <IonCardContent>
+                <h2 className="card-title">
+                  <IonIcon icon={locationOutline} />
+                  NGO Details
+                </h2>
+                <div className="detail-row">
+                  <span className="detail-label">Organization:</span>
+                  <span className="detail-value">{donation.ngo_name}</span>
+                </div>
+                {donation.location_name && (
+                  <div className="detail-row">
+                    <span className="detail-label">Location:</span>
+                    <span className="detail-value">{donation.location_name}</span>
+                  </div>
+                )}
+              </IonCardContent>
+            </IonCard>
+          )}
+
           {/* Schedule Details */}
           <IonCard>
             <IonCardContent>
@@ -257,9 +271,7 @@ const DonationDetails: React.FC = () => {
                   <div className="timeline-dot"></div>
                   <div className="timeline-content">
                     <p className="timeline-label">Created</p>
-                    <p className="timeline-date">
-                      {new Date(donation.created_at).toLocaleString()}
-                    </p>
+                    <p className="timeline-date">{new Date(donation.created_at).toLocaleString()}</p>
                   </div>
                 </div>
                 {donation.confirmed_at && (
@@ -267,9 +279,7 @@ const DonationDetails: React.FC = () => {
                     <div className="timeline-dot"></div>
                     <div className="timeline-content">
                       <p className="timeline-label">Confirmed by NGO</p>
-                      <p className="timeline-date">
-                        {new Date(donation.confirmed_at).toLocaleString()}
-                      </p>
+                      <p className="timeline-date">{new Date(donation.confirmed_at).toLocaleString()}</p>
                     </div>
                   </div>
                 )}
@@ -278,9 +288,7 @@ const DonationDetails: React.FC = () => {
                     <div className="timeline-dot"></div>
                     <div className="timeline-content">
                       <p className="timeline-label">Completed</p>
-                      <p className="timeline-date">
-                        {new Date(donation.completed_at).toLocaleString()}
-                      </p>
+                      <p className="timeline-date">{new Date(donation.completed_at).toLocaleString()}</p>
                     </div>
                   </div>
                 )}
@@ -289,9 +297,7 @@ const DonationDetails: React.FC = () => {
                     <div className="timeline-dot"></div>
                     <div className="timeline-content">
                       <p className="timeline-label">Cancelled</p>
-                      <p className="timeline-date">
-                        {new Date(donation.cancelled_at).toLocaleString()}
-                      </p>
+                      <p className="timeline-date">{new Date(donation.cancelled_at).toLocaleString()}</p>
                     </div>
                   </div>
                 )}

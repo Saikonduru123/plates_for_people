@@ -8,24 +8,9 @@ import {
   IonButtons,
   IonButton,
   IonIcon,
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardTitle,
   IonRefresher,
   IonRefresherContent,
   IonSpinner,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonChip,
-  IonLabel,
-  IonItem,
-  IonList,
-  IonText,
-  IonBadge,
-  IonFab,
-  IonFabButton,
 } from '@ionic/react';
 import {
   logOutOutline,
@@ -44,14 +29,14 @@ import { donorService } from '../../services/donorService';
 import { donationService } from '../../services/donationService';
 import type { DonorDashboard, Donation } from '../../types';
 import { getErrorMessage } from '../../utils/errorUtils';
-import { getStatusColor, getStatusText } from '../../utils/formatUtils';
-import { formatDisplayDate, formatDisplayTime } from '../../utils/dateUtils';
+import { getStatusText } from '../../utils/formatUtils';
+import { formatDisplayDate } from '../../utils/dateUtils';
 import './DonorDashboard.css';
 
 const DonorDashboardPage: React.FC = () => {
   const history = useHistory();
   const { user, logout } = useAuth();
-  
+
   const [dashboard, setDashboard] = useState<DonorDashboard | null>(null);
   const [recentDonations, setRecentDonations] = useState<Donation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -65,19 +50,16 @@ const DonorDashboardPage: React.FC = () => {
     try {
       setLoading(true);
       setError('');
-      
+
       // Load dashboard stats
       const dashboardData = await donorService.getDashboard();
       setDashboard(dashboardData);
-      
+
       // Load recent donations
       const donations = await donationService.getMyDonations();
       // Sort by created_at desc and take first 5
-      const recent = donations
-        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-        .slice(0, 5);
+      const recent = donations.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 5);
       setRecentDonations(recent);
-      
     } catch (err) {
       const message = getErrorMessage(err);
       setError(message);
@@ -117,7 +99,7 @@ const DonorDashboardPage: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar color="primary">
+        <IonToolbar>
           <IonTitle>Dashboard</IonTitle>
           <IonButtons slot="end">
             <IonButton onClick={handleLogout}>
@@ -134,192 +116,108 @@ const DonorDashboardPage: React.FC = () => {
 
         <div className="dashboard-container">
           {/* Welcome Section */}
-          <div className="welcome-section ion-padding">
-            <h2>Welcome back, {user?.full_name}!</h2>
-            <p className="welcome-subtitle">Track your food donations and make a difference</p>
+          <div className="dashboard-header">
+            <h1>Welcome back, {user?.full_name}!</h1>
+            <p>Track your food donations and make a difference</p>
           </div>
 
           {/* Stats Grid */}
           {dashboard && (
-            <IonGrid className="stats-grid">
-              <IonRow>
-                <IonCol size="6" sizeMd="3">
-                  <IonCard className="stat-card stat-card-primary" button onClick={() => history.push('/donor/donations')}>
-                    <IonCardContent>
-                      <IonIcon icon={restaurantOutline} className="stat-icon" />
-                      <div className="stat-value">{dashboard.total_donations}</div>
-                      <div className="stat-label">Total Donations</div>
-                    </IonCardContent>
-                  </IonCard>
-                </IonCol>
+            <div className="stats-grid">
+              <div className="stat-card">
+                <IonIcon icon={restaurantOutline} className="stat-icon" />
+                <div className="stat-value">{dashboard.total_donations}</div>
+                <div className="stat-label">Total Donations</div>
+              </div>
 
-                <IonCol size="6" sizeMd="3">
-                  <IonCard className="stat-card stat-card-success">
-                    <IonCardContent>
-                      <IonIcon icon={checkmarkCircleOutline} className="stat-icon" />
-                      <div className="stat-value">{dashboard.completed_donations}</div>
-                      <div className="stat-label">Completed</div>
-                    </IonCardContent>
-                  </IonCard>
-                </IonCol>
+              <div className="stat-card">
+                <IonIcon icon={checkmarkCircleOutline} className="stat-icon" />
+                <div className="stat-value">{dashboard.completed_donations}</div>
+                <div className="stat-label">Completed</div>
+              </div>
 
-                <IonCol size="6" sizeMd="3">
-                  <IonCard className="stat-card stat-card-warning">
-                    <IonCardContent>
-                      <IonIcon icon={timeOutline} className="stat-icon" />
-                      <div className="stat-value">{dashboard.pending_donations}</div>
-                      <div className="stat-label">Pending</div>
-                    </IonCardContent>
-                  </IonCard>
-                </IonCol>
+              <div className="stat-card">
+                <IonIcon icon={timeOutline} className="stat-icon" />
+                <div className="stat-value">{dashboard.pending_donations}</div>
+                <div className="stat-label">Pending</div>
+              </div>
 
-                <IonCol size="6" sizeMd="3">
-                  <IonCard className="stat-card stat-card-info">
-                    <IonCardContent>
-                      <IonIcon icon={trophyOutline} className="stat-icon" />
-                      <div className="stat-value">{dashboard.total_meals_donated}</div>
-                      <div className="stat-label">Meals Donated</div>
-                    </IonCardContent>
-                  </IonCard>
-                </IonCol>
-              </IonRow>
+              <div className="stat-card">
+                <IonIcon icon={trophyOutline} className="stat-icon" />
+                <div className="stat-value">{dashboard.total_meals_donated}</div>
+                <div className="stat-label">Meals Donated</div>
+              </div>
+            </div>
+          )}
 
-              {/* Additional Stats Row */}
-              <IonRow className="ion-margin-top">
-                <IonCol size="12" sizeMd="6">
-                  <IonCard className="info-card">
-                    <IonCardContent>
-                      <div className="info-row">
-                        <IonIcon icon={closeCircleOutline} color="danger" />
-                        <span className="info-label">Cancelled:</span>
-                        <strong>{dashboard.cancelled_donations}</strong>
-                      </div>
-                    </IonCardContent>
-                  </IonCard>
-                </IonCol>
-                <IonCol size="12" sizeMd="6">
-                  <IonCard className="info-card">
-                    <IonCardContent>
-                      <div className="info-row">
-                        <IonIcon icon={statsChartOutline} color="primary" />
-                        <span className="info-label">Average Rating:</span>
-                        <strong>{dashboard.average_rating.toFixed(1)} ⭐</strong>
-                      </div>
-                    </IonCardContent>
-                  </IonCard>
-                </IonCol>
-              </IonRow>
-            </IonGrid>
+          {/* Additional Stats */}
+          {dashboard && (
+            <div className="stats-grid">
+              <div className="stat-card">
+                <IonIcon icon={closeCircleOutline} className="stat-icon" style={{ color: '#e53e3e' }} />
+                <div className="stat-value">{dashboard.cancelled_donations}</div>
+                <div className="stat-label">Cancelled</div>
+              </div>
+
+              <div className="stat-card">
+                <IonIcon icon={statsChartOutline} className="stat-icon" style={{ color: '#f59e0b' }} />
+                <div className="stat-value">{dashboard.average_rating.toFixed(1)}</div>
+                <div className="stat-label">Avg Rating</div>
+              </div>
+            </div>
           )}
 
           {/* Quick Actions */}
-          <div className="ion-padding-horizontal">
-            <IonCard className="quick-actions-card">
-              <IonCardHeader>
-                <IonCardTitle>Quick Actions</IonCardTitle>
-              </IonCardHeader>
-              <IonCardContent>
-                <IonGrid>
-                  <IonRow>
-                    <IonCol size="6">
-                      <IonButton
-                        expand="block"
-                        onClick={() => history.push('/donor/search-ngos')}
-                      >
-                        <IonIcon icon={searchOutline} slot="start" />
-                        Find NGOs
-                      </IonButton>
-                    </IonCol>
-                    <IonCol size="6">
-                      <IonButton
-                        expand="block"
-                        color="secondary"
-                        onClick={() => history.push('/donor/donations')}
-                      >
-                        <IonIcon icon={restaurantOutline} slot="start" />
-                        My Donations
-                      </IonButton>
-                    </IonCol>
-                  </IonRow>
-                </IonGrid>
-              </IonCardContent>
-            </IonCard>
+          <div className="quick-actions">
+            <h2>Quick Actions</h2>
+            <div className="action-buttons">
+              <IonButton expand="block" className="action-btn" onClick={() => history.push('/donor/donate-now')}>
+                <IonIcon icon={addCircleOutline} slot="start" />
+                Donate Now
+              </IonButton>
+              <IonButton expand="block" className="action-btn secondary" onClick={() => history.push('/donor/search-ngos')}>
+                <IonIcon icon={searchOutline} slot="start" />
+                Find NGOs
+              </IonButton>
+              <IonButton expand="block" className="action-btn secondary" onClick={() => history.push('/donor/donations')}>
+                <IonIcon icon={restaurantOutline} slot="start" />
+                My Donations
+              </IonButton>
+            </div>
           </div>
 
           {/* Recent Donations */}
-          <div className="ion-padding-horizontal ion-padding-bottom">
-            <IonCard>
-              <IonCardHeader>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <IonCardTitle>Recent Donations</IonCardTitle>
-                  <IonButton
-                    fill="clear"
-                    size="small"
-                    onClick={() => history.push('/donor/donations')}
-                  >
-                    View All
-                  </IonButton>
-                </div>
-              </IonCardHeader>
-              <IonCardContent>
-                {recentDonations.length === 0 ? (
-                  <div className="empty-state">
-                    <IonIcon icon={restaurantOutline} className="empty-icon" />
-                    <p>No donations yet</p>
-                    <IonButton onClick={() => history.push('/donor/search')}>
-                      Start Donating
-                    </IonButton>
+          <div className="recent-donations">
+            <h2>Recent Donations</h2>
+            {recentDonations.length === 0 ? (
+              <div className="empty-state">
+                <IonIcon icon={restaurantOutline} />
+                <p>No donations yet</p>
+              </div>
+            ) : (
+              <div>
+                {recentDonations.map((donation) => (
+                  <div key={donation.id} className="donation-item" onClick={() => handleDonationClick(donation)}>
+                    <div className="donation-header">
+                      <span className="donation-ngo">{donation.ngo_name || donation.food_type}</span>
+                      <span className={`donation-status ${donation.status.toLowerCase()}`}>{getStatusText(donation.status)}</span>
+                    </div>
+                    <div className="donation-info">
+                      <span>
+                        <IonIcon icon={restaurantOutline} />
+                        {donation.food_type} • {donation.quantity_plates} plates • {donation.meal_type}
+                      </span>
+                      <span>
+                        <IonIcon icon={timeOutline} />
+                        {formatDisplayDate(donation.donation_date)}
+                      </span>
+                    </div>
                   </div>
-                ) : (
-                  <IonList>
-                    {recentDonations.map((donation) => (
-                      <IonItem
-                        key={donation.id}
-                        button
-                        detail
-                        onClick={() => handleDonationClick(donation)}
-                      >
-                        <div className="donation-item-content">
-                          <div className="donation-main">
-                            <IonLabel>
-                              <h3>{donation.food_type}</h3>
-                              <p>
-                                {donation.quantity_plates} plates • {donation.meal_type}
-                              </p>
-                              <p className="donation-date">
-                                {formatDisplayDate(donation.donation_date)} at{' '}
-                                {formatDisplayTime(donation.pickup_time_start)}
-                              </p>
-                            </IonLabel>
-                          </div>
-                          <IonBadge color={getStatusColor(donation.status)}>
-                            {getStatusText(donation.status)}
-                          </IonBadge>
-                        </div>
-                      </IonItem>
-                    ))}
-                  </IonList>
-                )}
-              </IonCardContent>
-            </IonCard>
+                ))}
+              </div>
+            )}
           </div>
-
-          {/* Error Message */}
-          {error && (
-            <div className="ion-padding">
-              <IonText color="danger">
-                <p>{error}</p>
-              </IonText>
-            </div>
-          )}
         </div>
-
-        {/* Floating Action Button */}
-        <IonFab vertical="bottom" horizontal="end" slot="fixed">
-          <IonFabButton onClick={() => history.push('/donor/search')}>
-            <IonIcon icon={addCircleOutline} />
-          </IonFabButton>
-        </IonFab>
       </IonContent>
     </IonPage>
   );

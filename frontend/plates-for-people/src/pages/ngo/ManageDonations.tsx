@@ -100,9 +100,7 @@ const ManageDonations: React.FC = () => {
       const search = searchText.toLowerCase();
       filtered = filtered.filter(
         (d) =>
-          d.food_type.toLowerCase().includes(search) ||
-          d.meal_type.toLowerCase().includes(search) ||
-          d.description?.toLowerCase().includes(search)
+          d.food_type.toLowerCase().includes(search) || d.meal_type.toLowerCase().includes(search) || d.description?.toLowerCase().includes(search),
       );
     }
 
@@ -125,7 +123,7 @@ const ManageDonations: React.FC = () => {
     try {
       setActionLoading(true);
       await donationService.confirmDonation(selectedDonation.id);
-      
+
       present({
         message: 'Donation request confirmed successfully',
         duration: 3000,
@@ -161,7 +159,7 @@ const ManageDonations: React.FC = () => {
     try {
       setActionLoading(true);
       await donationService.rejectDonation(selectedDonation.id, rejectionReason);
-      
+
       present({
         message: 'Donation request rejected',
         duration: 3000,
@@ -190,7 +188,7 @@ const ManageDonations: React.FC = () => {
     try {
       setActionLoading(true);
       await donationService.completeDonation(selectedDonation.id);
-      
+
       present({
         message: 'Donation marked as completed',
         duration: 3000,
@@ -242,7 +240,7 @@ const ManageDonations: React.FC = () => {
   };
 
   const handleViewDetails = (donation: Donation) => {
-    history.push(`/ngo/donation/${donation.id}`);
+    history.push(`/donor/donation/${donation.id}`);
   };
 
   const renderDonationCard = (donation: Donation) => {
@@ -288,11 +286,7 @@ const ManageDonations: React.FC = () => {
           </div>
 
           <div className="card-actions">
-            <IonButton
-              fill="clear"
-              size="small"
-              onClick={() => handleViewDetails(donation)}
-            >
+            <IonButton fill="clear" size="small" onClick={() => handleViewDetails(donation)}>
               <IonIcon slot="start" icon={eyeOutline} />
               View Details
             </IonButton>
@@ -306,8 +300,7 @@ const ManageDonations: React.FC = () => {
                   onClick={() => {
                     setSelectedDonation(donation);
                     setShowConfirmAlert(true);
-                  }}
-                >
+                  }}>
                   <IonIcon slot="start" icon={checkmarkCircleOutline} />
                   Accept
                 </IonButton>
@@ -319,8 +312,7 @@ const ManageDonations: React.FC = () => {
                   onClick={() => {
                     setSelectedDonation(donation);
                     setShowRejectModal(true);
-                  }}
-                >
+                  }}>
                   <IonIcon slot="start" icon={closeCircleOutline} />
                   Reject
                 </IonButton>
@@ -335,8 +327,7 @@ const ManageDonations: React.FC = () => {
                 onClick={() => {
                   setSelectedDonation(donation);
                   setShowCompleteAlert(true);
-                }}
-              >
+                }}>
                 <IonIcon slot="start" icon={checkmarkCircleOutline} />
                 Mark Complete
               </IonButton>
@@ -380,21 +371,12 @@ const ManageDonations: React.FC = () => {
 
         {/* Search Bar */}
         <IonToolbar>
-          <IonSearchbar
-            value={searchText}
-            onIonInput={(e) => setSearchText(e.detail.value!)}
-            placeholder="Search by food type or meal..."
-            animated
-          />
+          <IonSearchbar value={searchText} onIonInput={(e) => setSearchText(e.detail.value!)} placeholder="Search by food type or meal..." animated />
         </IonToolbar>
 
         {/* Status Filter */}
         <IonToolbar>
-          <IonSegment
-            value={selectedStatus}
-            onIonChange={(e) => setSelectedStatus(e.detail.value as string)}
-            scrollable
-          >
+          <IonSegment value={selectedStatus} onIonChange={(e) => setSelectedStatus(e.detail.value as string)} scrollable>
             <IonSegmentButton value="all">
               <IonLabel>
                 All
@@ -443,14 +425,12 @@ const ManageDonations: React.FC = () => {
                 {searchText
                   ? 'No requests match your search'
                   : selectedStatus === 'all'
-                  ? 'No donation requests yet'
-                  : `No ${selectedStatus} requests`}
+                    ? 'No donation requests yet'
+                    : `No ${selectedStatus} requests`}
               </p>
             </div>
           ) : (
-            <div className="donations-list">
-              {filteredDonations.map((donation) => renderDonationCard(donation))}
-            </div>
+            <div className="donations-list">{filteredDonations.map((donation) => renderDonationCard(donation))}</div>
           )}
         </div>
 
@@ -503,8 +483,7 @@ const ManageDonations: React.FC = () => {
             setShowRejectModal(false);
             setSelectedDonation(null);
             setRejectionReason('');
-          }}
-        >
+          }}>
           <IonHeader>
             <IonToolbar>
               <IonTitle>Reject Donation Request</IonTitle>
@@ -514,10 +493,8 @@ const ManageDonations: React.FC = () => {
             </IonToolbar>
           </IonHeader>
           <IonContent className="ion-padding">
-            <p className="modal-description">
-              Please provide a reason for rejecting this donation request. The donor will be notified.
-            </p>
-            
+            <p className="modal-description">Please provide a reason for rejecting this donation request. The donor will be notified.</p>
+
             <IonTextarea
               value={rejectionReason}
               onIonInput={(e) => setRejectionReason(e.detail.value!)}
@@ -528,12 +505,7 @@ const ManageDonations: React.FC = () => {
               className="rejection-textarea"
             />
 
-            <IonButton
-              expand="block"
-              color="danger"
-              onClick={handleRejectDonation}
-              disabled={actionLoading || !rejectionReason.trim()}
-            >
+            <IonButton expand="block" color="danger" onClick={handleRejectDonation} disabled={actionLoading || !rejectionReason.trim()}>
               {actionLoading ? (
                 <>
                   <IonSpinner name="crescent" slot="start" />

@@ -382,7 +382,7 @@ async def create_location_capacity(
         date=capacity_data.date,
         meal_type=capacity_data.meal_type,
         total_capacity=capacity_data.total_capacity,
-        current_capacity=capacity_data.total_capacity  # Initially, current equals total
+        available_capacity=capacity_data.total_capacity  # Initially, available equals total
     )
     
     db.add(new_capacity)
