@@ -125,10 +125,9 @@ log_info "=== Step 3: Installing Dependencies ==="
 # Install Python 3.11
 log_info "Installing Python 3.11..."
 sudo add-apt-repository ppa:deadsnakes/ppa -y
-sudo apt update
-sudo apt install -y python3.11 python3.11-venv python3.11-dev python3-pip
+sudo apt update python3.11-venv python3.11-dev python3-pip
 # sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1
-alias python3=python3.11
+# alias python3=python3.11
 
 # Install Node.js 20
 log_info "Installing Node.js 20..."
@@ -137,6 +136,7 @@ sudo apt install -y nodejs
 
 # Install PostgreSQL
 log_info "Installing PostgreSQL..."
+sudo apt install -y python3.11
 sudo apt install -y postgresql postgresql-contrib
 
 # Install Nginx
