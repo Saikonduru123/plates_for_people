@@ -19,7 +19,7 @@
   width: 56px;
   height: 56px;
   border-radius: 12px;
-  background: var(--ion-color-primary-tint);
+  background: #e8f0fe;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -28,7 +28,7 @@
 
 .ngo-icon ion-icon {
   font-size: 32px;
-  color: var(--ion-color-primary);
+  color: #1976d2;
 }
 
 .ngo-title {
@@ -111,13 +111,13 @@
 }
 
 .reject-modal-content {
-  padding: 20px;
+  padding: 20px 0;
 }
 
 .reject-modal-content h2 {
   font-size: 20px;
   font-weight: 600;
-  margin: 0 0 8px 0;
+  margin: 0 0 12px 0;
   color: var(--ion-text-color);
 }
 
@@ -125,13 +125,26 @@
   font-size: 14px;
   color: var(--ion-color-medium);
   margin: 0 0 20px 0;
+  line-height: 1.5;
 }
 
 .rejection-textarea {
-  border: 1px solid var(--ion-color-light);
+  border: 1px solid #e0e0e0;
   border-radius: 8px;
   padding: 12px;
   margin-bottom: 20px;
+}
+
+.reject-modal-buttons {
+  display: flex;
+  gap: 12px;
+  padding: 16px 12px;
+}
+
+.reject-modal-buttons ion-button {
+  flex: 1;
+  height: 48px;
+  font-weight: 600;
 }
 
 .confirm-reject-button {
@@ -155,5 +168,250 @@
 @media (max-width: 576px) {
   .action-buttons {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Tab Navigation Styles */
+.ngos-segment {
+  margin-bottom: 24px;
+}
+
+.ngos-segment ion-segment-button {
+  --color-checked: var(--ion-color-primary);
+  --indicator-color: var(--ion-color-primary);
+}
+
+/* Table Styles */
+.ngos-table-wrapper {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.ngos-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.ngos-table thead {
+  background: #f5f5f5;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.ngos-table th {
+  padding: 16px 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #333;
+  white-space: nowrap;
+}
+
+.ngos-table tbody tr {
+  border-bottom: 1px solid #e0e0e0;
+  transition: background-color 0.2s ease;
+}
+
+.ngos-table tbody tr:hover {
+  background-color: #fafafa;
+}
+
+.ngos-table td {
+  padding: 14px 12px;
+  color: #666;
+}
+
+.ngos-table .org-name {
+  font-weight: 600;
+  color: #333;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ngos-table .actions-cell {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+.ngos-table ion-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 16px;
+}
+
+.loading-container p {
+  color: #999;
+  font-size: 14px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.empty-icon {
+  font-size: 64px;
+  color: #ccc;
+  margin-bottom: 16px;
+}
+
+.empty-state h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 8px 0;
+}
+
+.empty-state p {
+  color: #999;
+  font-size: 14px;
+  margin: 0;
+}
+
+/* Responsive Table */
+@media (max-width: 1024px) {
+  .ngos-table th,
+  .ngos-table td {
+    padding: 12px 8px;
+    font-size: 13px;
+  }
+
+  .ngos-table .org-name {
+    max-width: 150px;
+  }
+}
+
+@media (max-width: 768px) {
+  .verify-ngos-container {
+    padding: 12px;
+  }
+
+  .ngos-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ngos-table {
+    font-size: 12px;
+  }
+
+  .ngos-table th,
+  .ngos-table td {
+    padding: 10px 6px;
+  }
+
+  .ngos-table .org-name {
+    max-width: 120px;
+  }
+
+  .ngos-segment ion-segment-button {
+    --padding-top: 8px;
+    --padding-bottom: 8px;
+  }
+}
+
+/* Tabs Header with Export Button */
+.tabs-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.export-btn {
+  height: 40px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Mobile Horizontal Scroll for Table */
+.ngos-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #ccc #f5f5f5;
+}
+
+.ngos-table-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.ngos-table-wrapper::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-radius: 3px;
+}
+
+.ngos-table-wrapper::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+.ngos-table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+/* Pagination Styles */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  padding: 16px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.page-info {
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  min-width: 120px;
+  text-align: center;
+}
+
+.pagination ion-button {
+  min-width: auto;
+}
+
+@media (max-width: 768px) {
+  .tabs-header {
+    flex-direction: column;
+  }
+
+  .export-btn {
+    width: 100%;
+  }
+
+  .ngos-table-wrapper {
+    border-radius: 8px;
+  }
+
+  .pagination {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .pagination ion-button {
+    width: 100%;
   }
 }

@@ -1,7 +1,7 @@
 """
 NGO profile and location models
 """
-from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, DateTime, Date, Enum as SQLEnum, Text
+from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, DateTime, Date, Enum as SQLEnum, Text, CheckConstraint
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 import enum
@@ -20,6 +20,7 @@ class MealType(str, enum.Enum):
     """Meal type enumeration"""
     BREAKFAST = "breakfast"
     LUNCH = "lunch"
+    SNACKS = "snacks"
     DINNER = "dinner"
 
 
@@ -77,8 +78,19 @@ class NGOLocation(Base):
     latitude = Column(Float, nullable=False, index=True)
     longitude = Column(Float, nullable=False, index=True)
     
+    # Contact information
+    contact_person = Column(String(255))
+    contact_phone = Column(String(20))
+    operating_hours = Column(String(255))
+    
     # Status
     is_active = Column(Boolean, default=True, nullable=False)
+    
+    # Default capacity for each meal type
+    default_breakfast_capacity = Column(Integer, default=0, nullable=False)
+    default_lunch_capacity = Column(Integer, default=0, nullable=False)
+    default_snacks_capacity = Column(Integer, default=0, nullable=False)
+    default_dinner_capacity = Column(Integer, default=0, nullable=False)
     
     # Metadata
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
@@ -104,21 +116,22 @@ class NGOLocationCapacity(Base):
     date = Column(Date, nullable=False, index=True)
     meal_type = Column(SQLEnum(MealType), nullable=False)
     
-    # Capacity tracking
-    total_capacity = Column(Integer, nullable=False)  # Max plates for this meal
-    current_capacity = Column(Integer, nullable=False)  # Remaining capacity
+    # Capacity
+    capacity = Column(Integer, nullable=False)  # Max plates for this meal/date
+    notes = Column(Text)  # Optional notes for this override
     
     # Metadata
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     
     # Relationships
     location = relationship("NGOLocation", back_populates="capacities")
     
     def __repr__(self):
-        return f"<Capacity {self.date} {self.meal_type}: {self.current_capacity}/{self.total_capacity}>"
+        return f"<Capacity {self.date} {self.meal_type}: {self.capacity}>"
     
     # Unique constraint: one capacity entry per location/date/meal
     __table_args__ = (
-        {"sqlite_autoincrement": True},
+        CheckConstraint('capacity >= 0', name='positive_capacity'),
+        {},
     )

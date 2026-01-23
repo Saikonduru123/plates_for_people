@@ -1,0 +1,784 @@
+.admin-reports {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  background: var(--ion-background-color);
+}
+
+/* Date picker modal - increase size of calendar popup */
+.admin-reports ion-datetime {
+  --height: 350px !important;
+  --min-height: 350px !important;
+  --width: 100% !important;
+  --min-width: 380px !important;
+}
+
+/* Unified Filters Section */
+.unified-filters-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 32px;
+  padding: 18px;
+  background: var(--ion-card-background, #fff);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.filter-row {
+  display: flex;
+  gap: 14px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+/* Period Filter Section - Top */
+.period-filter-section {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 16px 20px;
+  background: var(--ion-card-background, #fff);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+}
+
+.period-button {
+  padding: 10px 20px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  background: #f9f9f9;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ion-text-color);
+  transition: all 0.3s ease;
+  text-align: center;
+  white-space: nowrap;
+  flex: 1;
+  max-width: 150px;
+}
+
+.period-button:hover {
+  border-color: var(--ion-color-primary);
+  background: rgba(var(--ion-color-primary-rgb, 56, 128, 255), 0.08);
+}
+
+.period-button.active {
+  border-color: var(--ion-color-primary);
+  background: var(--ion-color-primary);
+  color: white;
+  box-shadow: 0 4px 12px rgba(var(--ion-color-primary-rgb, 56, 128, 255), 0.3);
+}
+
+/* Additional Filters Section */
+.filters-section {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 32px;
+  padding: 20px;
+  background: var(--ion-card-background, #fff);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  box-sizing: border-box;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 140px;
+  max-width: 180px;
+}
+
+.date-range-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  align-items: flex-start;
+  margin-top: 0;
+  min-width: 250px;
+}
+
+.date-inputs-wrapper {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+  margin-top: 2px;
+}
+
+.date-input-from {
+  width: 100%;
+  --background: #ffffff;
+  --border-radius: 8px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  --font-size: 14px;
+  border: 1px solid #e0e0e0;
+  height: 48px;
+  box-sizing: border-box;
+  margin: 0;
+  --highlight-height: 0;
+  --highlight-color: transparent;
+  --min-height: 200px;
+}
+
+.date-input-from:focus {
+  --background: #ffffff;
+}
+
+.date-input-to {
+  width: 100%;
+  --background: #ffffff;
+  --border-radius: 8px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  --font-size: 14px;
+  border: 1px solid #e0e0e0;
+  height: 48px;
+  box-sizing: border-box;
+  margin: 0;
+  --highlight-height: 0;
+  --highlight-color: transparent;
+  --min-height: 200px;
+}
+
+.date-input-to:focus {
+  --background: #ffffff;
+}
+
+/* Date picker modal styling */
+.date-input-from::part(container),
+.date-input-to::part(container) {
+  min-height: 300px;
+}
+
+ion-datetime {
+  --height: 300px;
+  --min-height: 300px;
+  --width: 100%;
+  --min-width: 350px;
+}
+
+.date-input-separator {
+  font-size: 12px;
+  color: var(--ion-color-medium);
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.date-separator {
+  display: none;
+}
+
+.filter-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ion-text-color);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filter-select {
+  width: 100%;
+  --background: #ffffff;
+  --border-radius: 8px;
+  --padding-start: 14px;
+  --padding-end: 14px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  --font-size: 14px;
+  border: 2px solid #e0e0e0;
+  height: 48px;
+  box-sizing: border-box;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.filter-select:hover {
+  border-color: var(--ion-color-primary);
+  --background: #fafafa;
+}
+
+.filter-select::part(placeholder) {
+  color: var(--ion-color-medium);
+  opacity: 0.7;
+}
+
+.filter-select::part(text) {
+  color: var(--ion-text-color);
+  font-weight: 500;
+}
+
+.filter-select::part(icon) {
+  color: var(--ion-color-primary);
+  font-size: 20px;
+}
+
+/* Custom popover styling for filter dropdowns */
+.filter-popover {
+  --width: 300px;
+  --max-height: 400px;
+}
+
+.filter-popover .popover-content {
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.filter-input {
+  width: 100%;
+  --background: #f5f5f5;
+  --border-radius: 8px;
+  --padding-start: 8px;
+  --padding-end: 8px;
+  --padding-top: 8px;
+  --padding-bottom: 8px;
+  --font-size: 13px;
+  border: 1px solid #e0e0e0;
+  height: 40px;
+  box-sizing: border-box;
+}
+
+.report-section {
+  margin-bottom: 40px;
+  padding: 0;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 24px 0;
+  padding: 0;
+  color: var(--ion-text-color);
+  letter-spacing: -0.3px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  margin: 0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  background: var(--ion-card-background, #fff);
+  height: 160px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.stat-card ion-card-content {
+  padding: 28px 24px;
+  text-align: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+.stat-value {
+  font-size: 38px;
+  font-weight: 700;
+  color: var(--ion-color-primary);
+  line-height: 1;
+  margin: 0;
+  letter-spacing: -1px;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: var(--ion-color-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Donations Table Styling */
+.donations-table-section {
+  margin-top: 40px;
+}
+
+.donations-table-wrapper {
+  background: var(--ion-card-background, #fff);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #ccc #f5f5f5;
+}
+
+.donations-table-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.donations-table-wrapper::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-radius: 3px;
+}
+
+.donations-table-wrapper::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+.donations-table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+.donations-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0;
+}
+
+.donations-table thead {
+  background: #f5f5f5;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.donations-table th {
+  padding: 16px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ion-text-color);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.donations-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 14px;
+  color: var(--ion-text-color);
+}
+
+.donations-table tbody tr:hover {
+  background: #fafafa;
+}
+
+.donations-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.export-section {
+  margin-top: 32px;
+  padding: 0 8px;
+}
+
+.export-button {
+  font-weight: 600;
+  height: 48px;
+  font-size: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Donations Styling */
+.filters-section {
+  margin-bottom: 20px;
+}
+
+.search-bar {
+  margin-bottom: 12px;
+  border-radius: 8px;
+}
+
+.donations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.donation-card {
+  margin: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.donation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.donation-info {
+  flex: 1;
+}
+
+.donation-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ion-text-color);
+  margin-bottom: 8px;
+}
+
+.donation-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--ion-color-medium);
+  margin-bottom: 6px;
+}
+
+.meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.donation-date {
+  font-size: 12px;
+  color: var(--ion-color-medium);
+}
+
+.donation-description {
+  font-size: 14px;
+  color: var(--ion-text-color);
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--ion-border-color);
+}
+
+.donation-status {
+  display: flex;
+  gap: 8px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.empty-state p {
+  font-size: 16px;
+  color: var(--ion-color-medium);
+  margin-top: 16px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  gap: 16px;
+}
+
+.loading-container p {
+  color: var(--ion-color-medium);
+  font-size: 16px;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 1024px) {
+  .admin-reports {
+    padding: 16px;
+  }
+
+  .unified-filters-section {
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .filter-row {
+    gap: 12px;
+  }
+
+  .period-button {
+    padding: 8px 16px;
+    font-size: 12px;
+    max-width: 120px;
+  }
+
+  .filter-group {
+    min-width: 130px;
+    max-width: 160px;
+  }
+
+  .date-range-group {
+    min-width: 220px;
+    padding: 6px;
+  }
+
+  .date-range-group .filter-input {
+    height: 34px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .stat-card {
+    min-height: 130px;
+  }
+
+  .stat-card ion-card-content {
+    padding: 20px 16px;
+  }
+
+  .stat-value {
+    font-size: 32px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+  }
+
+  .donations-table th,
+  .donations-table td {
+    padding: 12px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-reports {
+    padding: 14px;
+  }
+
+  .unified-filters-section {
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .filter-row {
+    gap: 12px;
+    flex-direction: column;
+  }
+
+  .filter-row:first-child {
+    flex-direction: row;
+    gap: 10px;
+  }
+
+  .period-button {
+    padding: 8px 14px;
+    font-size: 12px;
+    max-width: 100%;
+    flex: 1;
+  }
+
+  .filter-group {
+    min-width: 100%;
+    max-width: 100%;
+  }
+
+  .date-range-group {
+    width: 100%;
+    min-width: 100%;
+    flex-direction: column;
+  }
+
+  .date-inputs-wrapper {
+    gap: 6px;
+  }
+
+  .date-input-from,
+  .date-input-to {
+    height: 38px;
+  }
+
+  .report-section {
+    margin-bottom: 32px;
+  }
+
+  .section-title {
+    font-size: 16px;
+    margin-bottom: 16px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .stat-card {
+    min-height: 120px;
+  }
+
+  .stat-card ion-card-content {
+    padding: 18px 14px;
+    gap: 10px;
+  }
+
+  .stat-value {
+    font-size: 28px;
+  }
+
+  .stat-label {
+    font-size: 10px;
+  }
+
+  .donations-table th,
+  .donations-table td {
+    padding: 10px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 576px) {
+  .admin-reports {
+    padding: 12px;
+  }
+
+  .unified-filters-section {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .filter-row {
+    gap: 10px;
+    flex-direction: column;
+  }
+
+  .filter-row:first-child {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .period-button {
+    padding: 8px 12px;
+    font-size: 11px;
+    max-width: 100%;
+  }
+
+  .filter-group {
+    min-width: 100%;
+    max-width: 100%;
+  }
+
+  .date-range-group {
+    width: 100%;
+    min-width: 100%;
+    flex-direction: column;
+  }
+
+  .date-inputs-wrapper {
+    gap: 6px;
+    flex-direction: column;
+  }
+
+  .date-input-from,
+  .date-input-to {
+    height: 36px;
+    width: 100%;
+  }
+
+  .date-input-separator {
+    display: none;
+  }
+
+  .report-section {
+    margin-bottom: 28px;
+    padding: 0;
+  }
+
+  .section-title {
+    font-size: 15px;
+    margin-bottom: 14px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .stat-card {
+    min-height: 110px;
+  }
+
+  .stat-card ion-card-content {
+    padding: 16px 12px;
+    gap: 8px;
+  }
+
+  .stat-value {
+    font-size: 24px;
+  }
+
+  .stat-label {
+    font-size: 9px;
+  }
+
+  .donations-table {
+    font-size: 11px;
+  }
+
+  .donations-table th,
+  .donations-table td {
+    padding: 8px;
+  }
+
+  .export-button {
+    height: 44px;
+    font-size: 14px;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .stat-card:hover {
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+  }
+
+  .period-button.active {
+    box-shadow: 0 4px 12px rgba(var(--ion-color-primary-rgb, 56, 128, 255), 0.5);
+  }
+}
+
+/* Global datetime picker modal styling */
+.ion-datetime-modal {
+  --height: 350px !important;
+  --min-height: 350px !important;
+  --width: 100% !important;
+  --min-width: 380px !important;
+}
+
+ion-popover .datetime-container {
+  min-height: 350px !important;
+  min-width: 380px !important;
+}

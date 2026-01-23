@@ -158,6 +158,10 @@ class NGOLocationBase(BaseModel):
     contact_person: Optional[str] = Field(None, max_length=255)
     contact_phone: Optional[str] = Field(None, max_length=20)
     operating_hours: Optional[str] = Field(None, max_length=255)
+    default_breakfast_capacity: int = Field(default=0, ge=0)
+    default_lunch_capacity: int = Field(default=0, ge=0)
+    default_snacks_capacity: int = Field(default=0, ge=0)
+    default_dinner_capacity: int = Field(default=0, ge=0)
 
 
 class NGOLocationCreate(NGOLocationBase):
@@ -178,6 +182,10 @@ class NGOLocationUpdate(BaseModel):
     contact_phone: Optional[str] = Field(None, max_length=20)
     operating_hours: Optional[str] = Field(None, max_length=255)
     is_active: Optional[bool] = None
+    default_breakfast_capacity: Optional[int] = Field(None, ge=0)
+    default_lunch_capacity: Optional[int] = Field(None, ge=0)
+    default_snacks_capacity: Optional[int] = Field(None, ge=0)
+    default_dinner_capacity: Optional[int] = Field(None, ge=0)
 
 
 class NGOLocationResponse(NGOLocationBase):
@@ -193,24 +201,35 @@ class NGOLocationResponse(NGOLocationBase):
 class CapacityBase(BaseModel):
     date: date
     meal_type: MealType
-    total_capacity: int = Field(..., ge=0)
+    capacity: int = Field(..., ge=0)
+    notes: Optional[str] = None
 
 
 class CapacityCreate(CapacityBase):
-    pass
+    location_id: int
+
+
+class CapacityUpdate(BaseModel):
+    capacity: Optional[int] = Field(None, ge=0)
+    notes: Optional[str] = None
+
+
+class CapacityResponse(BaseModel):
+    id: int
+    location_id: int
+    date: date
+    meal_type: MealType
+    capacity: int
+    is_manual: bool  # True if from ngo_location_capacity, False if from defaults
+    available: int  # capacity - confirmed bookings
+    notes: Optional[str] = None
+    
+    class Config:
+        from_attributes = True
 
 
 class CapacityBulkCreate(BaseModel):
     capacities: List[CapacityCreate]
-
-
-class CapacityResponse(CapacityBase):
-    id: int
-    location_id: int
-    current_capacity: int
-    
-    class Config:
-        from_attributes = True
 
 
 # Aliases for NGO Location Capacity (matching model names)

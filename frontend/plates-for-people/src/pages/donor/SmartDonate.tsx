@@ -33,7 +33,16 @@ import {
   useIonToast,
   IonModal,
 } from '@ionic/react';
-import { restaurantOutline, calendarOutline, timeOutline, locationOutline, star, checkmarkCircleOutline, refreshOutline } from 'ionicons/icons';
+import {
+  restaurantOutline,
+  calendarOutline,
+  timeOutline,
+  locationOutline,
+  star,
+  checkmarkCircleOutline,
+  refreshOutline,
+  arrowBack,
+} from 'ionicons/icons';
 import { useHistory, useLocation } from 'react-router-dom';
 import { searchService } from '../../services/searchService';
 import { donationService } from '../../services/donationService';
@@ -121,13 +130,11 @@ const SmartDonatePage: React.FC = () => {
       let searchLng = userLng;
 
       try {
-        await getCurrentPosition();
-        // Wait a bit for the hook to update state
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        if (latitude && longitude) {
-          searchLat = latitude;
-          searchLng = longitude;
-        }
+        const coords = await getCurrentPosition();
+        // Use the coordinates directly from getCurrentPosition
+        searchLat = coords.latitude;
+        searchLng = coords.longitude;
+        console.log('Using current GPS location:', searchLat, searchLng);
       } catch (error) {
         console.log('GPS location not available, trying saved location');
       }
@@ -151,6 +158,14 @@ const SmartDonatePage: React.FC = () => {
         }
       }
 
+      console.log('Search params:', {
+        lat: searchLat,
+        lng: searchLng,
+        meal_type: donationParams.meal_type,
+        date: donationParams.donation_date,
+        quantity: donationParams.quantity_plates,
+      });
+
       const searchParams = {
         latitude: searchLat!,
         longitude: searchLng!,
@@ -161,8 +176,9 @@ const SmartDonatePage: React.FC = () => {
       };
 
       const results = await searchService.searchNGOs(searchParams);
+      console.log('Search results:', results);
 
-      // Sort by distance and rating
+      // Sort by capacity and distance
       const sorted = results.sort((a, b) => {
         // Prioritize by available capacity first
         if (a.available_capacity && b.available_capacity) {
@@ -173,10 +189,6 @@ const SmartDonatePage: React.FC = () => {
             return 1;
           }
         }
-
-        // Then by rating
-        const ratingDiff = (b.average_rating || 0) - (a.average_rating || 0);
-        if (Math.abs(ratingDiff) > 0.5) return ratingDiff;
 
         // Finally by distance
         return a.distance_km - b.distance_km;
@@ -422,7 +434,7 @@ const SmartDonatePage: React.FC = () => {
       <div className="results-header">
         <h2>Available NGOs ({availableNGOs.length})</h2>
         <IonText color="medium">
-          <p>Sorted by availability, rating, and distance</p>
+          <p>Sorted by availability and distance</p>
         </IonText>
       </div>
 
@@ -463,15 +475,6 @@ const SmartDonatePage: React.FC = () => {
                       Capacity: {ngo.available_capacity} plates
                     </IonBadge>
                   )}
-
-                  {ngo.average_rating && (
-                    <div className="rating">
-                      <IonIcon icon={star} color="warning" />
-                      <span>
-                        {ngo.average_rating.toFixed(1)} ({ngo.total_ratings})
-                      </span>
-                    </div>
-                  )}
                 </div>
 
                 <div className="ngo-address">
@@ -495,6 +498,10 @@ const SmartDonatePage: React.FC = () => {
 
       {selectedNGO && (
         <div className="sticky-footer">
+          <IonButton fill="outline" expand="block" onClick={() => setStep(1)} style={{ marginBottom: '10px' }}>
+            <IonIcon slot="start" icon={arrowBack} />
+            Back to Details
+          </IonButton>
           <IonButton expand="block" size="large" onClick={() => setStep(3)}>
             Continue with {selectedNGO.ngo_name}
           </IonButton>
@@ -597,7 +604,13 @@ const SmartDonatePage: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/donor/dashboard" />
+            {step === 1 ? (
+              <IonBackButton defaultHref="/donor/dashboard" />
+            ) : (
+              <IonButton onClick={() => setStep((step - 1) as 1 | 2 | 3)}>
+                <IonIcon slot="icon-only" icon={arrowBack} />
+              </IonButton>
+            )}
           </IonButtons>
           <IonTitle>Donate Now</IonTitle>
         </IonToolbar>

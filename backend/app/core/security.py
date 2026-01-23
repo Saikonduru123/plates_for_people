@@ -12,7 +12,7 @@ from sqlalchemy import select
 
 from app.core.config import settings
 from app.core.database import get_db
-from app.models.user import User
+from app.models.user import User, UserRole
 
 # Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -106,10 +106,12 @@ async def get_current_user(
             detail="User not found"
         )
     
-    if not user.is_active:
+    # Only NGOs require is_active check (they need admin verification)
+    # Donors can use the app immediately after registration
+    if user.role == UserRole.NGO and not user.is_active:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Inactive user"
+            detail="Your account is pending verification"
         )
     
     return user

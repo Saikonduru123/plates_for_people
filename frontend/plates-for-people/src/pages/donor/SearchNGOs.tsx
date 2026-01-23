@@ -154,8 +154,6 @@ const SearchNGOs: React.FC = () => {
     latitude: ngo.coordinates.latitude,
     longitude: ngo.coordinates.longitude,
     distance: ngo.distance_km,
-    rating: ngo.average_rating || undefined,
-    totalRatings: ngo.total_ratings,
   }));
 
   return (
@@ -211,6 +209,7 @@ const SearchNGOs: React.FC = () => {
               <IonSelectOption value="">All</IonSelectOption>
               <IonSelectOption value="breakfast">Breakfast</IonSelectOption>
               <IonSelectOption value="lunch">Lunch</IonSelectOption>
+              <IonSelectOption value="snacks">Snacks</IonSelectOption>
               <IonSelectOption value="dinner">Dinner</IonSelectOption>
             </IonSelect>
           </div>
@@ -297,15 +296,6 @@ const SearchNGOs: React.FC = () => {
                       <p className="address">
                         📍 {ngo.address.city}, {ngo.address.state}
                       </p>
-
-                      {ngo.average_rating !== null && (
-                        <div className="rating">
-                          <IonIcon icon={star} color="warning" />
-                          <span>
-                            {ngo.average_rating.toFixed(1)} ({ngo.total_ratings} reviews)
-                          </span>
-                        </div>
-                      )}
 
                       {ngo.available_capacity !== null && (
                         <IonChip color="success">

@@ -88,6 +88,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('accessToken', response.access_token);
     localStorage.setItem('refreshToken', response.refresh_token);
 
+    // Small delay to ensure localStorage is updated and token is available
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
     // Fetch user data after successful registration
     const userData = await authService.me();
     localStorage.setItem('user', JSON.stringify(userData));
@@ -105,6 +108,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const response = await authService.registerNGO(data);
     localStorage.setItem('accessToken', response.access_token);
     localStorage.setItem('refreshToken', response.refresh_token);
+
+    // Small delay to ensure localStorage is updated and token is available
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     // Fetch user data after successful registration
     const userData = await authService.me();

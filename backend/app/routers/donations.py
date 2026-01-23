@@ -21,6 +21,7 @@ from app.services.notification_service import (
     notify_donation_created, notify_donation_confirmed, notify_donation_rejected,
     notify_donation_completed, notify_donation_cancelled
 )
+from app.services import capacity_service
 
 
 router = APIRouter()
@@ -65,28 +66,19 @@ async def create_donation_request(
             detail="NGO location not found or inactive"
         )
     
-    # Check if NGO has capacity for this date and meal type
-    capacity_result = await db.execute(
-        select(NGOLocationCapacity).where(
-            and_(
-                NGOLocationCapacity.location_id == donation_data.ngo_location_id,
-                NGOLocationCapacity.date == donation_data.donation_date,
-                NGOLocationCapacity.meal_type == donation_data.meal_type
-            )
-        )
+    # Check capacity using the capacity service
+    capacity_info = await capacity_service.get_capacity_for_date(
+        db=db,
+        location_id=donation_data.ngo_location_id,
+        target_date=donation_data.donation_date,
+        meal_type=donation_data.meal_type
     )
-    capacity = capacity_result.scalar_one_or_none()
     
-    if not capacity:
+    available = capacity_info['available']
+    if available < donation_data.quantity_plates:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="NGO has not set capacity for this date and meal type"
-        )
-    
-    if capacity.current_capacity < donation_data.quantity_plates:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Insufficient capacity. Available: {capacity.current_capacity} plates"
+            detail=f"Insufficient capacity. Available: {available} plates"
         )
     
     # Create donation request
@@ -105,9 +97,6 @@ async def create_donation_request(
     )
     
     db.add(donation_request)
-    
-    # Update available capacity
-    capacity.current_capacity -= donation_data.quantity_plates
     
     # Flush to get the donation ID
     await db.flush()
@@ -240,6 +229,8 @@ async def get_ngo_requests(
     """
     Get all donation requests for the current NGO's locations
     """
+    print(f"\n[NGO Requests] User: {current_user.email} (ID: {current_user.id}, Role: {current_user.role})")
+    
     if current_user.role != UserRole.NGO:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -251,6 +242,8 @@ async def get_ngo_requests(
         select(NGOProfile).where(NGOProfile.user_id == current_user.id)
     )
     ngo_profile = ngo_result.scalar_one_or_none()
+    
+    print(f"[NGO Requests] NGO Profile: {ngo_profile.id if ngo_profile else 'None'} - {ngo_profile.organization_name if ngo_profile else 'N/A'}")
     
     if not ngo_profile:
         raise HTTPException(
@@ -264,7 +257,10 @@ async def get_ngo_requests(
     )
     location_ids = [row[0] for row in location_ids_result.all()]
     
+    print(f"[NGO Requests] Location IDs: {location_ids}")
+    
     if not location_ids:
+        print(f"[NGO Requests] No locations found - returning empty array")
         return []
     
     # Build query
@@ -282,6 +278,10 @@ async def get_ngo_requests(
     
     result = await db.execute(query.order_by(DonationRequest.created_at.desc()))
     donations = result.scalars().all()
+    
+    print(f"[NGO Requests] Found {len(donations)} donations")
+    if donations:
+        print(f"[NGO Requests] Sample donation: ID={donations[0].id}, Status={donations[0].status.value}")
     
     return [
         {
@@ -536,19 +536,8 @@ async def reject_donation_request(
     donation.rejected_at = datetime.utcnow()
     donation.rejection_reason = rejection_reason
     
-    # Restore capacity
-    capacity_result = await db.execute(
-        select(NGOLocationCapacity).where(
-            and_(
-                NGOLocationCapacity.location_id == donation.ngo_location_id,
-                NGOLocationCapacity.date == donation.donation_date,
-                NGOLocationCapacity.meal_type == donation.meal_type
-            )
-        )
-    )
-    capacity = capacity_result.scalar_one_or_none()
-    if capacity:
-        capacity.current_capacity += donation.quantity_plates
+    # Note: Capacity is now calculated dynamically based on confirmed donations
+    # so no need to update capacity records
     
     # Get donor user for notification
     donor_result = await db.execute(
@@ -636,15 +625,22 @@ async def complete_donation_request(
     )
     donor_profile = donor_result.scalar_one_or_none()
     
-    # Create notification for donor
+    # Create notifications for both donor and NGO
     if donor_profile and ngo_profile:
-        await notify_donation_completed(
-            db=db,
-            donor_user_id=donor_profile.user_id,
-            ngo_name=ngo_profile.organization_name,
-            donation_id=donation_id,
-            quantity=donation.quantity_plates
-        )
+        from app.services.notification_service import notify_both_donation_completed
+        try:
+            await notify_both_donation_completed(
+                db=db,
+                donor_user_id=donor_profile.user_id,
+                ngo_user_id=current_user.id,
+                donor_name=donor_profile.organization_name or donor_profile.user.email,
+                ngo_name=ngo_profile.organization_name,
+                donation_id=donation_id,
+                quantity=donation.quantity_plates
+            )
+        except Exception as e:
+            # Don't fail completion if notification fails
+            print(f"Failed to create completion notifications: {e}")
     
     await db.commit()
     
@@ -701,20 +697,8 @@ async def cancel_donation_request(
     donation.status = DonationStatus.CANCELLED
     donation.cancelled_at = datetime.utcnow()
     
-    # Restore capacity if not yet confirmed
-    if donation.status == DonationStatus.PENDING:
-        capacity_result = await db.execute(
-            select(NGOLocationCapacity).where(
-                and_(
-                    NGOLocationCapacity.location_id == donation.ngo_location_id,
-                    NGOLocationCapacity.date == donation.donation_date,
-                    NGOLocationCapacity.meal_type == donation.meal_type
-                )
-            )
-        )
-        capacity = capacity_result.scalar_one_or_none()
-        if capacity:
-            capacity.current_capacity += donation.quantity_plates
+    # Note: Capacity is now calculated dynamically based on confirmed donations
+    # so no need to update capacity records
     
     # Get NGO user for notification
     location_result = await db.execute(

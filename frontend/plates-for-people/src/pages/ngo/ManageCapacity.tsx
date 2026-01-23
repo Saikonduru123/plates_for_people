@@ -23,6 +23,9 @@ import {
   IonToast,
   IonIcon,
   IonChip,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
   useIonRouter,
 } from '@ionic/react';
 import {
@@ -35,7 +38,16 @@ import {
   alertCircleOutline,
 } from 'ionicons/icons';
 import { ngoService } from '../../services/ngoService';
-import type { NGOLocation, NGOLocationCapacity, SetCapacityFormData } from '../../types';
+import {
+  getCapacity,
+  setCapacity,
+  deleteCapacity,
+  formatMealType,
+  getMealTypeIcon,
+  type MealType,
+  type MealTypeCapacity,
+} from '../../services/capacityService';
+import type { NGOLocation } from '../../types';
 import './ManageCapacity.css';
 
 interface CalendarDay {
@@ -43,24 +55,22 @@ interface CalendarDay {
   dateString: string;
   isCurrentMonth: boolean;
   isToday: boolean;
-  capacity?: NGOLocationCapacity;
+  capacity?: MealTypeCapacity;
 }
 
 const ManageCapacity: React.FC = () => {
   const router = useIonRouter();
   const [locations, setLocations] = useState<NGOLocation[]>([]);
   const [selectedLocationId, setSelectedLocationId] = useState<number | null>(null);
+  const [selectedMealType, setSelectedMealType] = useState<MealType>('breakfast');
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([]);
-  const [capacityData, setCapacityData] = useState<Map<string, NGOLocationCapacity>>(new Map());
+  const [capacityData, setCapacityData] = useState<Map<string, MealTypeCapacity>>(new Map());
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [selectedDay, setSelectedDay] = useState<CalendarDay | null>(null);
-  const [formData, setFormData] = useState<SetCapacityFormData>({
-    date: '',
-    max_capacity: 0,
-    notes: '',
-  });
+  const [formCapacity, setFormCapacity] = useState<number>(0);
+  const [formNotes, setFormNotes] = useState<string>('');
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastColor, setToastColor] = useState<'success' | 'danger'>('success');
@@ -73,7 +83,7 @@ const ManageCapacity: React.FC = () => {
     if (selectedLocationId) {
       loadCapacityData();
     }
-  }, [selectedLocationId, currentDate]);
+  }, [selectedLocationId, currentDate, selectedMealType]);
 
   useEffect(() => {
     generateCalendar();
@@ -102,16 +112,26 @@ const ManageCapacity: React.FC = () => {
     try {
       const startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
       const endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+      const daysInMonth = endDate.getDate();
 
-      const startDateString = formatDate(startDate);
-      const endDateString = formatDate(endDate);
+      const capacityMap = new Map<string, MealTypeCapacity>();
 
-      const capacities = await ngoService.getCapacityRange(selectedLocationId, startDateString, endDateString);
+      // Load capacity for each day in the month
+      for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+        const dateString = formatDate(date);
 
-      const capacityMap = new Map<string, NGOLocationCapacity>();
-      capacities.forEach((cap) => {
-        capacityMap.set(cap.date, cap);
-      });
+        try {
+          const token = localStorage.getItem('accessToken') || undefined;
+          const capacityData = (await getCapacity(selectedLocationId, dateString, selectedMealType, token)) as MealTypeCapacity;
+
+          capacityMap.set(dateString, capacityData);
+        } catch (error) {
+          // If no capacity set for this date, skip silently
+          console.debug(`No capacity for ${dateString}`);
+        }
+      }
+
       setCapacityData(capacityMap);
     } catch (error: any) {
       console.error('Error loading capacity data:', error);
@@ -214,46 +234,70 @@ const ManageCapacity: React.FC = () => {
     }
 
     setSelectedDay(day);
-    setFormData({
-      date: day.dateString,
-      max_capacity: day.capacity?.max_capacity || 0,
-      notes: day.capacity?.notes || '',
-    });
+    setFormCapacity(day.capacity?.capacity || 0);
+    setFormNotes(day.capacity?.notes || '');
     setShowModal(true);
   };
 
   const handleSaveCapacity = async () => {
     if (!selectedLocationId || !selectedDay) return;
 
-    if (formData.max_capacity <= 0) {
+    if (formCapacity <= 0) {
       showToastMessage('Capacity must be greater than 0', 'danger');
       return;
     }
 
     setLoading(true);
     try {
-      if (selectedDay.capacity) {
-        // Update existing capacity
-        await ngoService.updateCapacity(selectedLocationId, selectedDay.dateString, {
-          max_capacity: formData.max_capacity,
-          notes: formData.notes || undefined,
-        });
-        showToastMessage('Capacity updated successfully!', 'success');
-      } else {
-        // Create new capacity
-        await ngoService.setCapacity(selectedLocationId, {
-          date: formData.date,
-          max_capacity: formData.max_capacity,
-          notes: formData.notes || undefined,
-        });
-        showToastMessage('Capacity set successfully!', 'success');
+      const token = localStorage.getItem('accessToken');
+
+      if (!token) {
+        showToastMessage('Authentication required. Please login again.', 'danger');
+        setLoading(false);
+        return;
       }
+
+      console.log(
+        'Saving capacity for location:',
+        selectedLocationId,
+        'date:',
+        selectedDay.dateString,
+        'meal:',
+        selectedMealType,
+        'capacity:',
+        formCapacity,
+      );
+
+      await setCapacity(
+        selectedLocationId,
+        {
+          date: selectedDay.dateString,
+          meal_type: selectedMealType,
+          capacity: formCapacity,
+          notes: formNotes || undefined,
+        },
+        token,
+      );
+
+      showToastMessage('Capacity set successfully!', 'success');
 
       setShowModal(false);
       await loadCapacityData();
     } catch (error: any) {
       console.error('Error saving capacity:', error);
-      showToastMessage(error.response?.data?.detail || 'Failed to save capacity', 'danger');
+      const status = error.response?.status;
+      const detail = error.response?.data?.detail;
+
+      let errorMessage = 'Failed to save capacity';
+      if (status === 404) {
+        errorMessage = 'Location not found or does not belong to your organization';
+      } else if (status === 401 || status === 403) {
+        errorMessage = 'Authentication required. Please login again.';
+      } else if (detail) {
+        errorMessage = detail;
+      }
+
+      showToastMessage(errorMessage, 'danger');
     } finally {
       setLoading(false);
     }
@@ -268,9 +312,12 @@ const ManageCapacity: React.FC = () => {
     return currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
   };
 
-  const getCapacityStatus = (capacity?: NGOLocationCapacity): string => {
+  const getCapacityStatus = (capacity?: MealTypeCapacity): string => {
     if (!capacity) return 'not-set';
-    const utilization = capacity.current_bookings / capacity.max_capacity;
+    const available = capacity.available || 0;
+    const total = capacity.capacity || 0;
+    if (total === 0) return 'not-set';
+    const utilization = (total - available) / total;
     if (utilization >= 1) return 'full';
     if (utilization >= 0.8) return 'high';
     if (utilization >= 0.5) return 'medium';
@@ -281,11 +328,13 @@ const ManageCapacity: React.FC = () => {
     if (!day.isCurrentMonth || !day.capacity) return null;
 
     const status = getCapacityStatus(day.capacity);
+    const confirmed = (day.capacity.capacity || 0) - (day.capacity.available || 0);
     return (
       <div className={`capacity-indicator ${status}`}>
         <span className="capacity-text">
-          {day.capacity.current_bookings}/{day.capacity.max_capacity}
+          {confirmed}/{day.capacity.capacity}
         </span>
+        {day.capacity.is_manual && <span className="manual-badge">M</span>}
       </div>
     );
   };
@@ -377,6 +426,29 @@ const ManageCapacity: React.FC = () => {
             </IonCardContent>
           </IonCard>
 
+          {/* Meal Type Selector */}
+          <IonCard>
+            <IonCardContent>
+              <div className="meal-type-selector">
+                <label className="selector-label">Meal Type</label>
+                <IonSegment value={selectedMealType} onIonChange={(e) => setSelectedMealType(e.detail.value as MealType)} scrollable>
+                  <IonSegmentButton value="breakfast">
+                    <IonLabel>{getMealTypeIcon('breakfast')} Breakfast</IonLabel>
+                  </IonSegmentButton>
+                  <IonSegmentButton value="lunch">
+                    <IonLabel>{getMealTypeIcon('lunch')} Lunch</IonLabel>
+                  </IonSegmentButton>
+                  <IonSegmentButton value="snacks">
+                    <IonLabel>{getMealTypeIcon('snacks')} Snacks</IonLabel>
+                  </IonSegmentButton>
+                  <IonSegmentButton value="dinner">
+                    <IonLabel>{getMealTypeIcon('dinner')} Dinner</IonLabel>
+                  </IonSegmentButton>
+                </IonSegment>
+              </div>
+            </IonCardContent>
+          </IonCard>
+
           {/* Calendar Controls */}
           <IonCard>
             <IonCardHeader>
@@ -418,6 +490,12 @@ const ManageCapacity: React.FC = () => {
                 <div className="legend-item">
                   <div className="legend-indicator full"></div>
                   <span>Full</span>
+                </div>
+                <div className="legend-item">
+                  <span className="manual-badge" style={{ padding: '2px 6px', fontSize: '10px' }}>
+                    M
+                  </span>
+                  <span>Manual Override</span>
                 </div>
               </div>
 
@@ -487,41 +565,47 @@ const ManageCapacity: React.FC = () => {
                   </span>
                 </div>
 
+                <div className="modal-meal-type">
+                  <span className="meal-type-badge">
+                    {getMealTypeIcon(selectedMealType)} {formatMealType(selectedMealType)}
+                  </span>
+                  {selectedDay.capacity?.is_manual && (
+                    <IonChip color="primary" outline>
+                      <IonLabel>Manual Override</IonLabel>
+                    </IonChip>
+                  )}
+                </div>
+
                 {selectedDay.capacity && (
-                  <div className="current-bookings">
-                    <IonIcon icon={peopleOutline} />
-                    <span>Current Bookings: {selectedDay.capacity.current_bookings}</span>
+                  <div className="capacity-stats">
+                    <div className="stat-item">
+                      <IonIcon icon={peopleOutline} />
+                      <span>Confirmed: {(selectedDay.capacity.capacity || 0) - (selectedDay.capacity.available || 0)}</span>
+                    </div>
+                    <div className="stat-item">
+                      <span>Available: {selectedDay.capacity.available || 0}</span>
+                    </div>
                   </div>
                 )}
 
                 <div className="form-group">
-                  <label className="form-label required">Maximum Capacity</label>
+                  <label className="form-label required">Capacity</label>
                   <IonInput
                     type="number"
-                    value={formData.max_capacity}
+                    value={formCapacity}
                     style={{ color: '#000' }}
-                    onIonInput={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        max_capacity: parseInt(e.detail.value || '0'),
-                      }))
-                    }
-                    placeholder="Enter maximum capacity"
+                    onIonInput={(e) => setFormCapacity(parseInt(e.detail.value || '0'))}
+                    placeholder="Enter capacity"
                     min="1"
                   />
-                  <p className="helper-text">Maximum number of donations this location can accept on this date</p>
+                  <p className="helper-text">Maximum number of {formatMealType(selectedMealType).toLowerCase()} donations on this date</p>
                 </div>
 
                 <div className="form-group">
                   <label className="form-label">Notes</label>
                   <IonTextarea
-                    value={formData.notes}
-                    onIonInput={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        notes: e.detail.value || '',
-                      }))
-                    }
+                    value={formNotes}
+                    onIonInput={(e) => setFormNotes(e.detail.value || '')}
                     placeholder="Optional notes (e.g., special events, holidays)"
                     rows={3}
                   />

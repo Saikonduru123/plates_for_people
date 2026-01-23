@@ -1,0 +1,97 @@
+.notifications-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+}
+
+.notifications-empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+  text-align: center;
+}
+
+.notifications-empty h2 {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.notifications-empty p {
+  font-size: 16px;
+}
+
+.notification-item-wrapper {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  padding: 12px 0;
+  gap: 12px;
+}
+
+.notification-item-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+  width: 40px;
+  text-align: center;
+}
+
+.notification-item-content {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+}
+
+.notification-item-content h2 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 6px 0;
+  color: var(--ion-color-dark);
+}
+
+.notification-item-content p {
+  font-size: 14px;
+  margin: 0 0 6px 0;
+  color: var(--ion-color-medium);
+  line-height: 1.4;
+}
+
+.notification-item-time {
+  font-size: 12px !important;
+  color: var(--ion-color-step-600) !important;
+}
+
+.notification-item-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 10px;
+  padding: 2px 6px;
+}
+
+.notification-item-unread {
+  background-color: rgba(var(--ion-color-primary-rgb), 0.05);
+  border-left: 3px solid var(--ion-color-primary);
+}
+
+.notification-item-unread .notification-item-content h2 {
+  color: var(--ion-color-primary);
+  font-weight: 700;
+}
+
+.notifications-actions {
+  padding: 16px;
+  margin-top: 16px;
+}
+
+/* Segment customization */
+ion-segment {
+  --background: var(--ion-color-light);
+}
+
+ion-segment-button {
+  --indicator-color: var(--ion-color-primary);
+  --color: var(--ion-color-medium);
+  --color-checked: var(--ion-color-primary);
+}

@@ -28,6 +28,9 @@
   position: relative;
   width: 100%;
 }
+.ion-delegate-host .ion-page {
+  min-height: 400px !important;
+}
 
 .custom-input-field {
   width: 100%;

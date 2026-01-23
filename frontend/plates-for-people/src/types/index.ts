@@ -86,6 +86,10 @@ export interface NGOLocation {
   contact_phone?: string | null;
   operating_hours?: string | null;
   is_active: boolean;
+  default_breakfast_capacity?: number;
+  default_lunch_capacity?: number;
+  default_snacks_capacity?: number;
+  default_dinner_capacity?: number;
   created_at?: string;
   updated_at?: string;
 }
@@ -121,6 +125,7 @@ export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snacks';
 export interface Donation {
   id: number;
   donor_id: number;
+  donor_name?: string | null;
   ngo_location_id: number;
   food_type: string;
   quantity_plates: number;
@@ -325,6 +330,10 @@ export interface CreateLocationFormData {
   contact_person: string;
   contact_phone: string;
   operating_hours?: string;
+  default_breakfast_capacity?: number;
+  default_lunch_capacity?: number;
+  default_snacks_capacity?: number;
+  default_dinner_capacity?: number;
 }
 
 export interface SetCapacityFormData {

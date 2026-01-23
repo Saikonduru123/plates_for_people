@@ -1,10 +1,5 @@
 import api from './api';
-import type {
-  AdminDashboard,
-  NGOProfile,
-  User,
-  Donation,
-} from '../types';
+import type { AdminDashboard, NGOProfile, User, Donation } from '../types';
 
 export const adminService = {
   // Get admin dashboard stats
@@ -19,13 +14,38 @@ export const adminService = {
     return response.data;
   },
 
+  async getAllNGOs(status?: string): Promise<NGOProfile[]> {
+    const params = status ? { status } : {};
+    const response = await api.get<NGOProfile[]>('/admin/ngos/all', { params });
+    return response.data;
+  },
+
   async approveNGO(ngoId: number): Promise<NGOProfile> {
-    const response = await api.post<NGOProfile>(`/admin/ngos/${ngoId}/approve`);
+    const response = await api.post<NGOProfile>(`/admin/ngos/${ngoId}/verify`);
     return response.data;
   },
 
   async rejectNGO(ngoId: number, reason: string): Promise<NGOProfile> {
-    const response = await api.post<NGOProfile>(`/admin/ngos/${ngoId}/reject`, { reason });
+    const response = await api.post<NGOProfile>(
+      `/admin/ngos/${ngoId}/reject`,
+      {},
+      {
+        params: { rejection_reason: reason },
+      },
+    );
+    return response.data;
+  },
+
+  async updateNGOProfile(
+    ngoId: number,
+    data: {
+      organization_name: string;
+      registration_number: string;
+      contact_person: string;
+      phone: string;
+    },
+  ): Promise<NGOProfile> {
+    const response = await api.put<NGOProfile>(`/admin/ngos/${ngoId}`, data);
     return response.data;
   },
 
@@ -57,6 +77,18 @@ export const adminService = {
     const response = await api.get('/admin/reports/system', {
       params: { start_date: startDate, end_date: endDate },
     });
+    return response.data;
+  },
+
+  // Get NGO names for filter dropdown
+  async getNGONames(): Promise<string[]> {
+    const response = await api.get<string[]>('/admin/ngos/names');
+    return response.data;
+  },
+
+  // Get Donor names for filter dropdown
+  async getDonorNames(): Promise<string[]> {
+    const response = await api.get<string[]>('/admin/donors/names');
     return response.data;
   },
 };

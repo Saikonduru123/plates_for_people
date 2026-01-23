@@ -12,6 +12,9 @@
   height: 60vh;
   gap: 16px;
 }
+.reject-modal .ion-page {
+  min-height: 400px;
+}
 
 .loading-container p {
   color: var(--ion-text-color, #666);

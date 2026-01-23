@@ -11,17 +11,20 @@ import NGODetails from './pages/donor/NGODetails';
 import CreateDonation from './pages/donor/CreateDonation';
 import DonationDetails from './pages/donor/DonationDetails';
 import DonationHistory from './pages/donor/DonationHistory';
-import RateNGO from './pages/donor/RateNGO';
 import DonorProfileSettings from './pages/donor/DonorProfileSettings';
+import Notifications from './pages/Notifications';
 import NGODashboard from './pages/ngo/NGODashboard';
 import ManageDonations from './pages/ngo/ManageDonations';
 import ManageLocations from './pages/ngo/ManageLocations';
 import AddEditLocation from './pages/ngo/AddEditLocation';
 import ManageCapacity from './pages/ngo/ManageCapacity';
-import ViewRatings from './pages/ngo/ViewRatings';
 import ProfileSettings from './pages/ngo/ProfileSettings';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import VerifyNGOs from './pages/admin/VerifyNGOs';
+import ManageUsers from './pages/admin/ManageUsers';
+import EditNGO from './pages/admin/EditNGO';
+import AdminReports from './pages/admin/AdminReports';
+import AdminDonations from './pages/admin/AdminDonations';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -123,12 +126,13 @@ const AppRoutes: React.FC = () => {
         {isAuthenticated && user?.role === 'donor' ? <DonationHistory /> : <Redirect to="/login" />}
       </Route>
 
-      <Route exact path="/donor/rate/:donation_id">
-        {isAuthenticated && user?.role === 'donor' ? <RateNGO /> : <Redirect to="/login" />}
-      </Route>
-
       <Route exact path="/donor/profile">
         {isAuthenticated && user?.role === 'donor' ? <DonorProfileSettings /> : <Redirect to="/login" />}
+      </Route>
+
+      {/* Notifications Route - Available for both Donor and NGO */}
+      <Route exact path="/notifications">
+        {isAuthenticated && (user?.role === 'donor' || user?.role === 'ngo') ? <Notifications /> : <Redirect to="/login" />}
       </Route>
 
       {/* NGO Routes */}
@@ -160,10 +164,6 @@ const AppRoutes: React.FC = () => {
         {isAuthenticated && user?.role === 'ngo' ? <ManageCapacity /> : <Redirect to="/login" />}
       </Route>
 
-      <Route exact path="/ngo/ratings">
-        {isAuthenticated && user?.role === 'ngo' ? <ViewRatings /> : <Redirect to="/login" />}
-      </Route>
-
       <Route exact path="/ngo/profile">
         {isAuthenticated && user?.role === 'ngo' ? <ProfileSettings /> : <Redirect to="/login" />}
       </Route>
@@ -175,6 +175,22 @@ const AppRoutes: React.FC = () => {
 
       <Route exact path="/admin/verify-ngos">
         {isAuthenticated && user?.role === 'admin' ? <VerifyNGOs /> : <Redirect to="/login" />}
+      </Route>
+
+      <Route exact path="/admin/users">
+        {isAuthenticated && user?.role === 'admin' ? <ManageUsers /> : <Redirect to="/login" />}
+      </Route>
+
+      <Route exact path="/admin/ngo/:userId">
+        {isAuthenticated && user?.role === 'admin' ? <EditNGO /> : <Redirect to="/login" />}
+      </Route>
+
+      <Route exact path="/admin/reports">
+        {isAuthenticated && user?.role === 'admin' ? <AdminReports /> : <Redirect to="/login" />}
+      </Route>
+
+      <Route exact path="/admin/donations">
+        {isAuthenticated && user?.role === 'admin' ? <AdminDonations /> : <Redirect to="/login" />}
       </Route>
 
       {/* Dashboard Route - Redirect based on role */}

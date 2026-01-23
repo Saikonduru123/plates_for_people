@@ -9,20 +9,20 @@ export const notificationService = {
   },
 
   // Get unread notifications
-  async getUnreadNotifications(): Promise<Notification[]> {
-    const response = await api.get<Notification[]>('/notifications/unread');
+  async getUnreadNotifications(): Promise<any> {
+    const response = await api.get('/notifications/unread');
     return response.data;
   },
 
   // Mark notification as read
-  async markAsRead(id: number): Promise<Notification> {
-    const response = await api.patch<Notification>(`/notifications/${id}/read`);
+  async markAsRead(id: number): Promise<{ message: string; notification_id: number }> {
+    const response = await api.put<{ message: string; notification_id: number }>(`/notifications/${id}/read`);
     return response.data;
   },
 
   // Mark all notifications as read
-  async markAllAsRead(): Promise<{ message: string }> {
-    const response = await api.post<{ message: string }>('/notifications/mark-all-read');
+  async markAllAsRead(): Promise<{ message: string; count: number }> {
+    const response = await api.put<{ message: string; count: number }>('/notifications/read-all');
     return response.data;
   },
 

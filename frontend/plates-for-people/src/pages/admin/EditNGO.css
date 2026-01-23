@@ -1,0 +1,124 @@
+.edit-ngo-container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.edit-ngo-container ion-card {
+  margin-bottom: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.edit-ngo-container ion-card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--ion-color-primary);
+}
+
+.edit-ngo-container ion-item {
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  margin-bottom: 16px;
+}
+
+.edit-ngo-container ion-label {
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-bottom: 8px;
+}
+
+.edit-ngo-container ion-input,
+.edit-ngo-container ion-textarea {
+  --padding-start: 12px;
+  --padding-end: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.submit-btn {
+  --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --background-activated: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+  --border-radius: 8px;
+  --padding-top: 14px;
+  --padding-bottom: 14px;
+  font-weight: 600;
+  text-transform: none;
+}
+
+.cancel-btn {
+  --border-radius: 8px;
+  --padding-top: 14px;
+  --padding-bottom: 14px;
+  font-weight: 600;
+  text-transform: none;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #4a5568;
+  font-size: 0.875rem;
+}
+
+.info-value {
+  color: #1a202c;
+  font-size: 0.875rem;
+}
+
+.info-value.status-pending {
+  color: #d69e2e;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.info-value.status-verified {
+  color: #38a169;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.info-value.status-rejected {
+  color: #e53e3e;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  gap: 16px;
+}
+
+.loading-container p {
+  color: var(--ion-color-medium);
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .edit-ngo-container {
+    padding: 16px;
+  }
+}

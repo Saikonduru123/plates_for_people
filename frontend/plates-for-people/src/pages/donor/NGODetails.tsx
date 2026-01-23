@@ -23,9 +23,7 @@ import {
 } from '@ionic/react';
 import { callOutline, personOutline, locationOutline, timeOutline, checkmarkCircle, addOutline } from 'ionicons/icons';
 import { MapComponent } from '../../components/maps/MapComponent';
-import { RatingsSummary } from '../../components/ngo/RatingsSummary';
 import { searchService } from '../../services/searchService';
-import { ratingService } from '../../services/ratingService';
 import { NGOSearchResult } from '../../types';
 import './NGODetails.css';
 
@@ -37,11 +35,6 @@ const NGODetails: React.FC = () => {
 
   const [ngo, setNgo] = useState<NGOSearchResult | null>(location.state?.ngo || null);
   const [loading, setLoading] = useState(!location.state?.ngo);
-  const [ratingSummary, setRatingSummary] = useState<{
-    average_rating: number | null;
-    total_ratings: number;
-    rating_distribution: Record<number, number>;
-  } | null>(null);
 
   useEffect(() => {
     loadNGODetails();
@@ -49,16 +42,8 @@ const NGODetails: React.FC = () => {
 
   const loadNGODetails = async () => {
     try {
-      // If we already have NGO data from route state, just load ratings
+      // If we already have NGO data from route state, we're done
       if (location.state?.ngo) {
-        // Load rating summary
-        try {
-          const summary = await ratingService.getNGORatingSummary(location.state.ngo.ngo_id);
-          setRatingSummary(summary);
-        } catch (error) {
-          console.error('Failed to load ratings:', error);
-          // Continue without ratings
-        }
         return;
       }
 
@@ -79,15 +64,6 @@ const NGODetails: React.FC = () => {
       }
 
       setNgo(foundNGO);
-
-      // Load rating summary
-      try {
-        const summary = await ratingService.getNGORatingSummary(foundNGO.ngo_id);
-        setRatingSummary(summary);
-      } catch (error) {
-        console.error('Failed to load ratings:', error);
-        // Continue without ratings
-      }
     } catch (error: any) {
       present({
         message: error.message || 'Failed to load NGO details',
@@ -162,11 +138,6 @@ const NGODetails: React.FC = () => {
                 <IonIcon icon={locationOutline} />
                 {ngo.location_name}
               </p>
-              {ngo.average_rating !== null && (
-                <div className="hero-rating">
-                  <RatingsSummary averageRating={ngo.average_rating} totalRatings={ngo.total_ratings} size="medium" />
-                </div>
-              )}
             </div>
           </div>
 
@@ -277,38 +248,6 @@ const NGODetails: React.FC = () => {
               </IonCard>
             )}
           </div>
-
-          {/* Rating Distribution (if available) */}
-          {ratingSummary && ratingSummary.total_ratings > 0 && (
-            <IonCard>
-              <IonCardHeader>
-                <IonCardTitle>Ratings & Reviews</IonCardTitle>
-              </IonCardHeader>
-              <IonCardContent>
-                <div className="rating-stats">
-                  <div className="average-rating">
-                    <h2>{ratingSummary.average_rating?.toFixed(1) || 'N/A'}</h2>
-                    <RatingsSummary averageRating={ratingSummary.average_rating} totalRatings={ratingSummary.total_ratings} size="medium" />
-                  </div>
-                  <div className="rating-bars">
-                    {[5, 4, 3, 2, 1].map((stars) => {
-                      const count = ratingSummary.rating_distribution[stars] || 0;
-                      const percentage = ratingSummary.total_ratings > 0 ? (count / ratingSummary.total_ratings) * 100 : 0;
-                      return (
-                        <div key={stars} className="rating-bar-row">
-                          <span className="stars-label">{stars} ⭐</span>
-                          <div className="rating-bar">
-                            <div className="rating-bar-fill" style={{ width: `${percentage}%` }} />
-                          </div>
-                          <span className="count-label">{count}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </IonCardContent>
-            </IonCard>
-          )}
         </div>
       </IonContent>
     </IonPage>

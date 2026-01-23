@@ -1,0 +1,210 @@
+.admin-donations {
+  padding: 16px;
+  max-width: 100%;
+  margin: 0 auto;
+  background: var(--ion-background-color);
+}
+
+.filters-section {
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.search-bar {
+  margin-bottom: 8px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+ion-segment {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+ion-segment-button {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.donations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.donation-card {
+  margin: 0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  background: var(--ion-card-background, #fff);
+}
+
+.donation-card ion-card-content {
+  padding: 16px;
+}
+
+.donation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.donation-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.donation-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ion-text-color);
+  word-break: break-word;
+}
+
+.donation-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--ion-color-medium);
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.donation-date {
+  font-size: 12px;
+  color: var(--ion-color-medium);
+  font-weight: 500;
+}
+
+.donation-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.donation-status ion-badge {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 6px 10px;
+}
+
+.donation-description {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--ion-color-light);
+  font-size: 13px;
+  color: var(--ion-color-medium);
+  line-height: 1.5;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  gap: 16px;
+}
+
+.empty-state p {
+  font-size: 16px;
+  color: var(--ion-color-medium);
+  margin: 0;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  gap: 16px;
+}
+
+.loading-container p {
+  color: var(--ion-color-medium);
+  font-size: 16px;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  .admin-donations {
+    padding: 12px;
+  }
+
+  .filters-section {
+    margin-bottom: 20px;
+  }
+
+  .donation-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .donation-status {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  ion-segment-button {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 576px) {
+  .admin-donations {
+    padding: 10px;
+  }
+
+  .donation-card ion-card-content {
+    padding: 14px;
+  }
+
+  .donation-title {
+    font-size: 14px;
+  }
+
+  .donation-meta {
+    font-size: 12px;
+    gap: 8px;
+  }
+
+  .donation-date {
+    font-size: 11px;
+  }
+
+  ion-segment {
+    font-size: 11px;
+  }
+
+  ion-segment-button {
+    font-size: 9px;
+    padding: 8px 4px;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .donation-card:hover {
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+  }
+}

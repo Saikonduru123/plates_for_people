@@ -18,6 +18,7 @@ import {
   IonRow,
   IonCol,
   IonBadge,
+  IonButtons,
 } from '@ionic/react';
 import {
   peopleOutline,
@@ -31,6 +32,7 @@ import {
 import { useHistory } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { adminService } from '../../services/adminService';
+import NotificationBell from '../../components/NotificationBell';
 import type { AdminDashboard } from '../../types';
 import './AdminDashboard.css';
 
@@ -103,9 +105,14 @@ const AdminDashboardPage: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonTitle>Admin Dashboard</IonTitle>
-          <IonButton slot="end" fill="clear" onClick={handleLogout}>
-            <IonIcon icon={logOutOutline} slot="icon-only" />
-          </IonButton>
+          <IonButtons slot="end">
+            <IonButton fill="clear" style={{ '--padding-start': '8px', '--padding-end': '8px' }}>
+              <NotificationBell />
+            </IonButton>
+            <IonButton fill="clear" onClick={handleLogout} className="logout-button">
+              <IonIcon icon={logOutOutline} slot="icon-only" />
+            </IonButton>
+          </IonButtons>
         </IonToolbar>
       </IonHeader>
 
@@ -201,12 +208,8 @@ const AdminDashboardPage: React.FC = () => {
             <h2 className="section-title">Quick Actions</h2>
             <IonGrid>
               <IonRow>
-                <IonCol size="6">
-                  <IonCard
-                    className="action-card"
-                    button
-                    onClick={() => history.push('/admin/verify-ngos')}
-                  >
+                <IonCol sizeLg="4" sizeMd="4" size="12">
+                  <IonCard className="action-card" button onClick={() => history.push('/admin/verify-ngos')}>
                     <IonCardContent>
                       <IonIcon icon={businessOutline} className="action-icon" />
                       <div className="action-label">Verify NGOs</div>
@@ -219,12 +222,8 @@ const AdminDashboardPage: React.FC = () => {
                   </IonCard>
                 </IonCol>
 
-                <IonCol size="6">
-                  <IonCard
-                    className="action-card"
-                    button
-                    onClick={() => history.push('/admin/users')}
-                  >
+                <IonCol sizeLg="4" sizeMd="4" size="12">
+                  <IonCard className="action-card" button onClick={() => history.push('/admin/users')}>
                     <IonCardContent>
                       <IonIcon icon={peopleOutline} className="action-icon" />
                       <div className="action-label">Manage Users</div>
@@ -232,28 +231,11 @@ const AdminDashboardPage: React.FC = () => {
                   </IonCard>
                 </IonCol>
 
-                <IonCol size="6">
-                  <IonCard
-                    className="action-card"
-                    button
-                    onClick={() => history.push('/admin/reports')}
-                  >
+                <IonCol sizeLg="4" sizeMd="4" size="12">
+                  <IonCard className="action-card" button onClick={() => history.push('/admin/reports')}>
                     <IonCardContent>
                       <IonIcon icon={statsChartOutline} className="action-icon" />
                       <div className="action-label">View Reports</div>
-                    </IonCardContent>
-                  </IonCard>
-                </IonCol>
-
-                <IonCol size="6">
-                  <IonCard
-                    className="action-card"
-                    button
-                    onClick={() => history.push('/admin/donations')}
-                  >
-                    <IonCardContent>
-                      <IonIcon icon={fastFoodOutline} className="action-icon" />
-                      <div className="action-label">All Donations</div>
                     </IonCardContent>
                   </IonCard>
                 </IonCol>
@@ -275,9 +257,7 @@ const AdminDashboardPage: React.FC = () => {
               </div>
               <div className="status-item">
                 <span>Pending Actions</span>
-                <IonBadge color={dashboard.pending_verifications > 0 ? 'warning' : 'success'}>
-                  {dashboard.pending_verifications}
-                </IonBadge>
+                <IonBadge color={dashboard.pending_verifications > 0 ? 'warning' : 'success'}>{dashboard.pending_verifications}</IonBadge>
               </div>
             </IonCardContent>
           </IonCard>

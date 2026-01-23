@@ -1,10 +1,5 @@
 import api from './api';
-import type {
-  LoginRequest,
-  RegisterRequest,
-  AuthResponse,
-  User,
-} from '../types';
+import type { LoginRequest, RegisterRequest, AuthResponse, User } from '../types';
 
 export const authService = {
   // Login
@@ -25,15 +20,16 @@ export const authService = {
         role: 'donor',
       },
       profile_data: {
-        organization_name: data.full_name, // Using full_name as organization name
+        organization_name: data.full_name,
         contact_person: data.full_name,
         phone: data.phone_number || '+1234567890',
-        address: 'Not provided',
+        address_line1: 'Not provided',
+        address_line2: null,
         city: 'Not provided',
         state: 'Not provided',
+        zip_code: '000000',
         country: 'India',
-        postal_code: '000000',
-        latitude: 19.0760,
+        latitude: 19.076,
         longitude: 72.8777,
       },
     };
@@ -42,12 +38,14 @@ export const authService = {
   },
 
   // Register NGO
-  async registerNGO(data: RegisterRequest & {
-    organization_name: string;
-    registration_number: string;
-    address: string;
-    description?: string;
-  }): Promise<AuthResponse> {
+  async registerNGO(
+    data: RegisterRequest & {
+      organization_name: string;
+      registration_number: string;
+      address: string;
+      description?: string;
+    },
+  ): Promise<AuthResponse> {
     const requestBody = {
       user_data: {
         email: data.email,

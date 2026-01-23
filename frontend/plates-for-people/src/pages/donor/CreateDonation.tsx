@@ -67,7 +67,37 @@ const CreateDonation: React.FC = () => {
     description: '',
   });
 
-  // Step 1: Food Details
+  // Step 1: NGO Selection/Confirmation
+  const renderStep1 = () => (
+    <div className="form-step">
+      <h2>Select NGO</h2>
+      <p className="step-description">Confirm the NGO for your donation</p>
+
+      <IonCard className="ngo-selection-card">
+        <IonCardContent>
+          <div className="ngo-info">
+            <h3>{ngoName}</h3>
+            {locationName && (
+              <p className="location-name">
+                <strong>Location:</strong> {locationName}
+              </p>
+            )}
+            {ngoId && (
+              <IonNote color="medium">
+                <p style={{ marginTop: '8px' }}>NGO ID: {ngoId}</p>
+              </IonNote>
+            )}
+          </div>
+        </IonCardContent>
+      </IonCard>
+
+      <IonButton expand="block" fill="outline" onClick={() => router.push('/donor/search-ngos', 'back')} style={{ marginTop: '16px' }}>
+        Change NGO
+      </IonButton>
+    </div>
+  );
+
+  // Step 2: Food Details
   const renderStep2 = () => (
     <div className="form-step">
       <h2>Food Details</h2>
@@ -223,26 +253,32 @@ const CreateDonation: React.FC = () => {
   const validateStep = (step: number): boolean => {
     switch (step) {
       case 1:
-        const step1Valid = !!(formData.meal_type && formData.food_type && formData.quantity_plates && formData.quantity_plates > 0);
-        console.log('Step 1 validation:', {
+        // NGO selection step - just check if we have an NGO
+        const hasNgo = !!(ngoId || formData.ngo_location_id || locationId);
+        console.log('Step 1 validation (NGO):', { hasNgo });
+        return hasNgo;
+      case 2:
+        const step2Valid = !!(formData.meal_type && formData.food_type && formData.quantity_plates && formData.quantity_plates > 0);
+        console.log('Step 2 validation:', {
           meal_type: formData.meal_type,
           food_type: formData.food_type,
           quantity: formData.quantity_plates,
-          valid: step1Valid,
+          valid: step2Valid,
         });
-        return step1Valid;
-      case 2:
-        const step2Valid = !!(formData.donation_date && formData.pickup_time_start);
-        console.log('Step 2 validation:', { date: formData.donation_date, time: formData.pickup_time_start, valid: step2Valid });
         return step2Valid;
       case 3:
-        // Check ngo_location_id or locationId
+        const step3Valid = !!(formData.donation_date && formData.pickup_time_start);
+        console.log('Step 3 validation:', { date: formData.donation_date, time: formData.pickup_time_start, valid: step3Valid });
+        return step3Valid;
+      case 4:
+        // Check all previous steps
         const hasLocationId = !!(formData.ngo_location_id || locationId);
         const step1Check = validateStep(1);
         const step2Check = validateStep(2);
-        const step3Valid = hasLocationId && step1Check && step2Check;
-        console.log('Step 3 validation:', { hasLocationId, step1Check, step2Check, valid: step3Valid });
-        return step3Valid;
+        const step3Check = validateStep(3);
+        const step4Valid = hasLocationId && step1Check && step2Check && step3Check;
+        console.log('Step 4 validation:', { hasLocationId, step1Check, step2Check, step3Check, valid: step4Valid });
+        return step4Valid;
       default:
         return false;
     }
@@ -271,7 +307,7 @@ const CreateDonation: React.FC = () => {
 
   // Submit
   const handleSubmit = async () => {
-    if (!validateStep(3)) {
+    if (!validateStep(4)) {
       present({
         message: 'Please fill in all required fields',
         duration: 2000,
@@ -329,27 +365,29 @@ const CreateDonation: React.FC = () => {
           </IonButtons>
           <IonTitle>Create Donation</IonTitle>
         </IonToolbar>
-        <IonProgressBar value={currentStep / 3} />
+        <IonProgressBar value={currentStep / 4} />
       </IonHeader>
 
       <IonContent className="create-donation-content">
         <div className="step-indicator">
           <div className="step-dots">
-            {[1, 2, 3].map((step) => (
+            {[1, 2, 3, 4].map((step) => (
               <div key={step} className={`step-dot ${currentStep >= step ? 'active' : ''} ${currentStep === step ? 'current' : ''}`}>
                 {step}
               </div>
             ))}
           </div>
           <p className="step-label">
-            Step {currentStep} of 3: {currentStep === 1 ? 'Food Details' : currentStep === 2 ? 'Schedule' : 'Review'}
+            Step {currentStep} of 4:{' '}
+            {currentStep === 1 ? 'Select NGO' : currentStep === 2 ? 'Food Details' : currentStep === 3 ? 'Schedule' : 'Review'}
           </p>
         </div>
 
         <div className="form-container">
-          {currentStep === 1 && renderStep2()}
-          {currentStep === 2 && renderStep3()}
-          {currentStep === 3 && renderStep4()}
+          {currentStep === 1 && renderStep1()}
+          {currentStep === 2 && renderStep2()}
+          {currentStep === 3 && renderStep3()}
+          {currentStep === 4 && renderStep4()}
         </div>
 
         <div className="button-container">
@@ -358,13 +396,13 @@ const CreateDonation: React.FC = () => {
             {currentStep === 1 ? 'Cancel' : 'Back'}
           </IonButton>
 
-          {currentStep < 3 ? (
+          {currentStep < 4 ? (
             <IonButton expand="block" onClick={handleNext} disabled={!validateStep(currentStep)}>
               Next
               <IonIcon slot="end" icon={arrowForward} />
             </IonButton>
           ) : (
-            <IonButton expand="block" onClick={handleSubmit} disabled={loading || !validateStep(3)}>
+            <IonButton expand="block" onClick={handleSubmit} disabled={loading || !validateStep(4)}>
               {loading ? 'Creating...' : 'Submit Donation'}
               <IonIcon slot="end" icon={checkmarkCircle} />
             </IonButton>

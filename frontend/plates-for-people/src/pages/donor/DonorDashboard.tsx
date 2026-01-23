@@ -32,6 +32,7 @@ import type { DonorDashboard, Donation } from '../../types';
 import { getErrorMessage } from '../../utils/errorUtils';
 import { getStatusText } from '../../utils/formatUtils';
 import { formatDisplayDate } from '../../utils/dateUtils';
+import NotificationBell from '../../components/NotificationBell';
 import './DonorDashboard.css';
 
 const DonorDashboardPage: React.FC = () => {
@@ -103,6 +104,9 @@ const DonorDashboardPage: React.FC = () => {
         <IonToolbar>
           <IonTitle>Dashboard</IonTitle>
           <IonButtons slot="end">
+            <IonButton fill="clear" style={{ '--padding-start': '8px', '--padding-end': '8px' }}>
+              <NotificationBell />
+            </IonButton>
             <IonButton onClick={() => history.push('/donor/profile')} fill="clear" style={{ '--padding-start': '12px', '--padding-end': '12px' }}>
               <IonIcon icon={settingsOutline} style={{ fontSize: '28px', color: '#667eea' }} />
             </IonButton>
@@ -147,26 +151,15 @@ const DonorDashboardPage: React.FC = () => {
               </div>
 
               <div className="stat-card">
-                <IonIcon icon={starOutline} className="stat-icon" />
-                <div className="stat-value">{dashboard.total_meals_donated}</div>
-                <div className="stat-label">Meals Donated</div>
-              </div>
-            </div>
-          )}
-
-          {/* Additional Stats */}
-          {dashboard && (
-            <div className="stats-grid">
-              <div className="stat-card">
                 <IonIcon icon={close} className="stat-icon" style={{ color: '#e53e3e' }} />
                 <div className="stat-value">{dashboard.cancelled_donations}</div>
                 <div className="stat-label">Cancelled</div>
               </div>
 
               <div className="stat-card">
-                <IonIcon icon={statsChartOutline} className="stat-icon" style={{ color: '#f59e0b' }} />
-                <div className="stat-value">{dashboard.average_rating.toFixed(1)}</div>
-                <div className="stat-label">Avg Rating</div>
+                <IonIcon icon={starOutline} className="stat-icon" />
+                <div className="stat-value">{dashboard.total_meals_donated}</div>
+                <div className="stat-label">Meals Donated</div>
               </div>
             </div>
           )}
@@ -175,15 +168,15 @@ const DonorDashboardPage: React.FC = () => {
           <div className="quick-actions">
             <h2>Quick Actions</h2>
             <div className="action-buttons">
-              <IonButton expand="block" className="action-btn" onClick={() => history.push('/donor/donate-now')}>
+              <IonButton className="action-btn" onClick={() => history.push('/donor/donate-now')}>
                 <IonIcon icon={addCircle} slot="start" />
                 Donate Now
               </IonButton>
-              <IonButton expand="block" className="action-btn secondary" onClick={() => history.push('/donor/search-ngos')}>
+              <IonButton className="action-btn secondary" onClick={() => history.push('/donor/search-ngos')}>
                 <IonIcon icon={search} slot="start" />
                 Find NGOs
               </IonButton>
-              <IonButton expand="block" className="action-btn secondary" onClick={() => history.push('/donor/donations')}>
+              <IonButton className="action-btn secondary" onClick={() => history.push('/donor/donations')}>
                 <IonIcon icon={fastFoodOutline} slot="start" />
                 My Donations
               </IonButton>

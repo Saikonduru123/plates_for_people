@@ -52,6 +52,10 @@ interface FormData {
   contact_person: string;
   contact_phone: string;
   operating_hours: string;
+  default_breakfast_capacity: string;
+  default_lunch_capacity: string;
+  default_snacks_capacity: string;
+  default_dinner_capacity: string;
 }
 
 interface FormErrors {
@@ -84,6 +88,10 @@ const AddEditLocation: React.FC = () => {
     contact_person: '',
     contact_phone: '',
     operating_hours: '',
+    default_breakfast_capacity: '100',
+    default_lunch_capacity: '200',
+    default_snacks_capacity: '50',
+    default_dinner_capacity: '150',
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
@@ -110,7 +118,7 @@ const AddEditLocation: React.FC = () => {
     try {
       const locations = await ngoService.getLocations();
       const location = locations.find((loc: NGOLocation) => loc.id === parseInt(id));
-      
+
       if (location) {
         setFormData({
           location_name: location.location_name || '',
@@ -125,8 +133,12 @@ const AddEditLocation: React.FC = () => {
           contact_person: location.contact_person || '',
           contact_phone: location.contact_phone || '',
           operating_hours: location.operating_hours || '',
+          default_breakfast_capacity: location.default_breakfast_capacity?.toString() || '',
+          default_lunch_capacity: location.default_lunch_capacity?.toString() || '',
+          default_snacks_capacity: location.default_snacks_capacity?.toString() || '',
+          default_dinner_capacity: location.default_dinner_capacity?.toString() || '',
         });
-        
+
         // Set map position and marker if coordinates exist
         if (location.latitude && location.longitude) {
           const lat = location.latitude;
@@ -161,7 +173,7 @@ const AddEditLocation: React.FC = () => {
             longitude: longitude.toFixed(6),
           }));
           setGettingLocation(false);
-          
+
           // Also fetch address for current location
           reverseGeocode(latitude, longitude);
         },
@@ -169,7 +181,7 @@ const AddEditLocation: React.FC = () => {
           console.error('Error getting location:', error);
           setGettingLocation(false);
           showToastMessage('Could not get your location. Please select manually.', 'warning');
-        }
+        },
       );
     } else {
       showToastMessage('Geolocation is not supported by your browser', 'danger');
@@ -183,7 +195,7 @@ const AddEditLocation: React.FC = () => {
       latitude: lat.toFixed(6),
       longitude: lng.toFixed(6),
     }));
-    
+
     // Reverse geocode to get address (optional enhancement)
     reverseGeocode(lat, lng);
   };
@@ -191,20 +203,17 @@ const AddEditLocation: React.FC = () => {
   const reverseGeocode = async (lat: number, lng: number) => {
     try {
       // Use our backend proxy to avoid CORS and User-Agent issues
-      const response = await fetch(
-        `http://localhost:8000/api/geocoding/reverse?lat=${lat}&lon=${lng}`,
-        {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json',
-          },
-        }
-      );
-      
+      const response = await fetch(`http://localhost:8000/api/geocoding/reverse?lat=${lat}&lon=${lng}`, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+
       if (response.ok) {
         const data = await response.json();
         console.log('Reverse geocode response:', data); // Debug log
-        
+
         if (data) {
           // Auto-fill address fields if they're empty
           setFormData((prev) => ({
@@ -215,7 +224,7 @@ const AddEditLocation: React.FC = () => {
             country: prev.country || data.country || '',
             zip_code: prev.zip_code || data.zip_code || '',
           }));
-          
+
           showToastMessage('Address details auto-filled from map location', 'success');
         } else {
           console.warn('No address data in response');
@@ -347,6 +356,10 @@ const AddEditLocation: React.FC = () => {
         contact_person: formData.contact_person.trim() || '',
         contact_phone: formData.contact_phone.trim() || '',
         operating_hours: formData.operating_hours.trim() || '',
+        default_breakfast_capacity: parseInt(formData.default_breakfast_capacity) || 0,
+        default_lunch_capacity: parseInt(formData.default_lunch_capacity) || 0,
+        default_snacks_capacity: parseInt(formData.default_snacks_capacity) || 0,
+        default_dinner_capacity: parseInt(formData.default_dinner_capacity) || 0,
       };
 
       if (isEditMode) {
@@ -363,10 +376,7 @@ const AddEditLocation: React.FC = () => {
       }, 1000);
     } catch (error: any) {
       console.error('Error saving location:', error);
-      showToastMessage(
-        error.response?.data?.detail || `Failed to ${isEditMode ? 'update' : 'create'} location`,
-        'danger'
-      );
+      showToastMessage(error.response?.data?.detail || `Failed to ${isEditMode ? 'update' : 'create'} location`, 'danger');
     } finally {
       setLoading(false);
     }
@@ -503,9 +513,7 @@ const AddEditLocation: React.FC = () => {
               {/* Coordinates Section */}
               <div className="section-header">
                 <h3>Coordinates</h3>
-                <p className="section-description">
-                  Latitude and longitude help donors find your location on the map
-                </p>
+                <p className="section-description">Latitude and longitude help donors find your location on the map</p>
               </div>
 
               {/* Latitude, Longitude */}
@@ -539,11 +547,7 @@ const AddEditLocation: React.FC = () => {
               {/* Map Picker Toggle */}
               <IonItem lines="none" className="map-toggle-item">
                 <IonLabel>Use Map to Pick Location</IonLabel>
-                <IonToggle
-                  checked={useMapPicker}
-                  onIonChange={(e) => setUseMapPicker(e.detail.checked)}
-                  disabled={loading}
-                />
+                <IonToggle checked={useMapPicker} onIonChange={(e) => setUseMapPicker(e.detail.checked)} disabled={loading} />
               </IonItem>
 
               {/* Map Picker */}
@@ -551,15 +555,10 @@ const AddEditLocation: React.FC = () => {
                 <div className="map-picker-container">
                   <div className="map-instructions">
                     <p>
-                      <strong>📍 Click on the map to drop a pin</strong> at your location. 
-                      The coordinates will be auto-filled and address details will be suggested.
+                      <strong>📍 Click on the map to drop a pin</strong> at your location. The coordinates will be auto-filled and address details
+                      will be suggested.
                     </p>
-                    <IonButton
-                      size="small"
-                      fill="outline"
-                      onClick={handleUseCurrentLocation}
-                      disabled={gettingLocation}
-                    >
+                    <IonButton size="small" fill="outline" onClick={handleUseCurrentLocation} disabled={gettingLocation}>
                       {gettingLocation ? (
                         <>
                           <IonSpinner name="crescent" />
@@ -576,8 +575,7 @@ const AddEditLocation: React.FC = () => {
                       center={mapPosition}
                       zoom={13}
                       style={{ height: '400px', width: '100%', borderRadius: '8px' }}
-                      key={`${mapPosition[0]}-${mapPosition[1]}`}
-                    >
+                      key={`${mapPosition[0]}-${mapPosition[1]}`}>
                       <TileLayer
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -600,19 +598,76 @@ const AddEditLocation: React.FC = () => {
               {!useMapPicker && (
                 <div className="coordinates-help">
                   <p>
-                    <strong>Tip:</strong> Enable "Use Map to Pick Location" above to visually select 
-                    your location, or you can find coordinates using{' '}
-                    <a
-                      href="https://www.google.com/maps"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
+                    <strong>Tip:</strong> Enable "Use Map to Pick Location" above to visually select your location, or you can find coordinates using{' '}
+                    <a href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer">
                       Google Maps
                     </a>
                     . Right-click on your location and select "What's here?"
                   </p>
                 </div>
               )}
+
+              {/* Default Meal Capacities Section */}
+              <div className="section-header">
+                <h3>Default Meal Capacities</h3>
+                <p className="section-description">Set default daily capacity for each meal type. You can override these for specific dates later.</p>
+              </div>
+
+              {/* Breakfast & Lunch Capacity */}
+              <div className="form-row">
+                <div className="form-group form-group-half">
+                  <label className="form-label">🌅 Breakfast Capacity</label>
+                  <IonInput
+                    type="number"
+                    value={formData.default_breakfast_capacity}
+                    onIonInput={(e) => handleInputChange('default_breakfast_capacity', e.detail.value || '0')}
+                    placeholder="100"
+                    min="0"
+                    disabled={loading}
+                  />
+                  <p className="help-text">Meals per day</p>
+                </div>
+                <div className="form-group form-group-half">
+                  <label className="form-label">☀️ Lunch Capacity</label>
+                  <IonInput
+                    type="number"
+                    value={formData.default_lunch_capacity}
+                    onIonInput={(e) => handleInputChange('default_lunch_capacity', e.detail.value || '0')}
+                    placeholder="200"
+                    min="0"
+                    disabled={loading}
+                  />
+                  <p className="help-text">Meals per day</p>
+                </div>
+              </div>
+
+              {/* Snacks & Dinner Capacity */}
+              <div className="form-row">
+                <div className="form-group form-group-half">
+                  <label className="form-label">🥤 Snacks Capacity</label>
+                  <IonInput
+                    type="number"
+                    value={formData.default_snacks_capacity}
+                    onIonInput={(e) => handleInputChange('default_snacks_capacity', e.detail.value || '0')}
+                    placeholder="50"
+                    min="0"
+                    disabled={loading}
+                  />
+                  <p className="help-text">Meals per day</p>
+                </div>
+                <div className="form-group form-group-half">
+                  <label className="form-label">🌙 Dinner Capacity</label>
+                  <IonInput
+                    type="number"
+                    value={formData.default_dinner_capacity}
+                    onIonInput={(e) => handleInputChange('default_dinner_capacity', e.detail.value || '0')}
+                    placeholder="150"
+                    min="0"
+                    disabled={loading}
+                  />
+                  <p className="help-text">Meals per day</p>
+                </div>
+              </div>
 
               {/* Contact Information Section */}
               <div className="section-header">
@@ -659,22 +714,14 @@ const AddEditLocation: React.FC = () => {
 
               {/* Form Actions */}
               <div className="form-actions">
-                <IonButton
-                  expand="block"
-                  color="medium"
-                  fill="outline"
-                  onClick={handleCancel}
-                  disabled={loading}
-                >
+                <IonButton expand="block" color="medium" fill="outline" onClick={handleCancel} disabled={loading}>
                   Cancel
                 </IonButton>
                 <IonButton expand="block" onClick={handleSubmit} disabled={loading}>
                   {loading ? (
                     <>
                       <IonSpinner name="crescent" />
-                      <span style={{ marginLeft: '8px' }}>
-                        {isEditMode ? 'Updating...' : 'Creating...'}
-                      </span>
+                      <span style={{ marginLeft: '8px' }}>{isEditMode ? 'Updating...' : 'Creating...'}</span>
                     </>
                   ) : (
                     <span>{isEditMode ? 'Update Location' : 'Create Location'}</span>

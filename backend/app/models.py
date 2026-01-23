@@ -37,6 +37,7 @@ class DonationStatus(str, enum.Enum):
 class MealType(str, enum.Enum):
     BREAKFAST = "breakfast"
     LUNCH = "lunch"
+    SNACKS = "snacks"
     DINNER = "dinner"
 
 
@@ -112,6 +113,7 @@ class NGOProfile(Base):
 class NGOLocation(Base):
     """Physical locations/branches of NGO"""
     __tablename__ = "ngo_locations"
+    TEST_MARKER = "MODEL_FILE_VERSION_2"
     
     id = Column(Integer, primary_key=True, index=True)
     ngo_id = Column(Integer, ForeignKey("ngo_profiles.id", ondelete="CASCADE"), nullable=False)
@@ -129,6 +131,22 @@ class NGOLocation(Base):
     operating_hours = Column(String(255))
     is_active = Column(Boolean, default=True, nullable=False)
     
+    # Default capacity for each meal type
+    default_breakfast_capacity = Column(Integer, default=0, nullable=False)
+    default_lunch_capacity = Column(Integer, default=0, nullable=False)
+    default_snacks_capacity = Column(Integer, default=0, nullable=False)
+    default_dinner_capacity = Column(Integer, default=0, nullable=False)
+    
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    
+    __table_args__ = (
+        CheckConstraint('default_breakfast_capacity >= 0', name='positive_breakfast_capacity'),
+        CheckConstraint('default_lunch_capacity >= 0', name='positive_lunch_capacity'),
+        CheckConstraint('default_snacks_capacity >= 0', name='positive_snacks_capacity'),
+        CheckConstraint('default_dinner_capacity >= 0', name='positive_dinner_capacity'),
+    )
+    
     # Relationships
     ngo = relationship("NGOProfile", back_populates="locations")
     capacities = relationship("NGOLocationCapacity", back_populates="location", cascade="all, delete-orphan")
@@ -136,19 +154,20 @@ class NGOLocation(Base):
 
 
 class NGOLocationCapacity(Base):
-    """Daily capacity tracking for each NGO location"""
+    """Manual capacity overrides for specific dates and meal types"""
     __tablename__ = "ngo_location_capacity"
     
     id = Column(Integer, primary_key=True, index=True)
     location_id = Column(Integer, ForeignKey("ngo_locations.id", ondelete="CASCADE"), nullable=False)
     date = Column(Date, nullable=False)
     meal_type = Column(Enum(MealType), nullable=False)
-    total_capacity = Column(Integer, nullable=False)
-    available_capacity = Column(Integer, nullable=False)
+    capacity = Column(Integer, nullable=False)
+    notes = Column(Text)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
     __table_args__ = (
-        CheckConstraint('available_capacity >= 0', name='check_available_capacity_positive'),
-        CheckConstraint('available_capacity <= total_capacity', name='check_available_capacity_lte_total'),
+        CheckConstraint('capacity >= 0', name='positive_capacity'),
     )
     
     # Relationships

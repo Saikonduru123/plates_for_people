@@ -16,6 +16,7 @@ import {
   IonRow,
   IonCol,
   IonButton,
+  IonButtons,
   IonIcon,
   IonBadge,
   IonList,
@@ -29,7 +30,6 @@ import {
   checkmarkCircleOutline,
   timeOutline,
   closeCircleOutline,
-  starOutline,
   restaurantOutline,
   locationOutline,
   addCircleOutline,
@@ -43,6 +43,7 @@ import { ngoService } from '../../services/ngoService';
 import { donationService } from '../../services/donationService';
 import type { NGODashboard, NGOProfile, Donation } from '../../types';
 import DonationCard from '../../components/donation/DonationCard';
+import NotificationBell from '../../components/NotificationBell';
 import './NGODashboard.css';
 
 const NGODashboard: React.FC = () => {
@@ -145,12 +146,17 @@ const NGODashboard: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonTitle>NGO Dashboard</IonTitle>
-          <IonButton slot="end" fill="clear" onClick={() => history.push('/ngo/profile')}>
-            <IonIcon icon={settingsOutline} />
-          </IonButton>
-          <IonButton slot="end" fill="clear" onClick={handleLogout}>
-            <IonIcon icon={logOutOutline} />
-          </IonButton>
+          <IonButtons slot="end">
+            <IonButton fill="clear" style={{ '--padding-start': '8px', '--padding-end': '8px' }}>
+              <NotificationBell />
+            </IonButton>
+            <IonButton fill="clear" onClick={() => history.push('/ngo/profile')}>
+              <IonIcon icon={settingsOutline} color="primary" style={{ fontSize: '28px' }} />
+            </IonButton>
+            <IonButton fill="clear" onClick={handleLogout}>
+              <IonIcon icon={logOutOutline} color="danger" style={{ fontSize: '28px' }} />
+            </IonButton>
+          </IonButtons>
         </IonToolbar>
       </IonHeader>
 
@@ -252,23 +258,6 @@ const NGODashboard: React.FC = () => {
           </IonGrid>
 
           {/* Rating Card */}
-          <IonCard className="rating-card">
-            <IonCardContent>
-              <div className="rating-content">
-                <div className="rating-icon">
-                  <IonIcon icon={starOutline} color="warning" />
-                </div>
-                <div className="rating-info">
-                  <div className="rating-value">{dashboard.average_rating ? dashboard.average_rating.toFixed(1) : 'N/A'}</div>
-                  <div className="rating-label">Average Rating</div>
-                </div>
-                <IonButton fill="clear" size="small" onClick={() => history.push('/ngo/ratings')}>
-                  View All
-                </IonButton>
-              </div>
-            </IonCardContent>
-          </IonCard>
-
           {/* Quick Actions */}
           <div className="quick-actions">
             <h2 className="section-title">Quick Actions</h2>

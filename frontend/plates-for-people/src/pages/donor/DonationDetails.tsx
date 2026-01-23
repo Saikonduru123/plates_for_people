@@ -30,28 +30,38 @@ const DonationDetails: React.FC = () => {
   const [donation, setDonation] = useState<Donation | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const loadDonation = async () => {
+  useEffect(() => {
+    const loadDonation = async () => {
+      try {
+        console.log('[DonationDetails] Loading donation ID:', id);
+        setLoading(true);
+        const data = await donationService.getDonation(parseInt(id, 10));
+        console.log('[DonationDetails] Received donation data:', data);
+        setDonation(data);
+      } catch (error: any) {
+        console.error('[DonationDetails] Failed to load donation:', error);
+        console.error('[DonationDetails] Error details:', error.response?.data);
+        present({
+          message: error.response?.data?.detail || 'Failed to load donation details',
+          duration: 3000,
+          color: 'danger',
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadDonation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
+  const handleRefresh = async (event: CustomEvent<RefresherEventDetail>) => {
     try {
       const data = await donationService.getDonation(parseInt(id, 10));
       setDonation(data);
     } catch (error: any) {
-      console.error('Failed to load donation:', error);
-      present({
-        message: 'Failed to load donation details',
-        duration: 2000,
-        color: 'danger',
-      });
-    } finally {
-      setLoading(false);
+      console.error('Refresh failed:', error);
     }
-  };
-
-  useEffect(() => {
-    loadDonation();
-  }, [id]);
-
-  const handleRefresh = async (event: CustomEvent<RefresherEventDetail>) => {
-    await loadDonation();
     event.detail.complete();
   };
 

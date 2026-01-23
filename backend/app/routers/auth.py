@@ -11,7 +11,7 @@ from app.core.security import (
     hash_password, verify_password, create_access_token,
     create_refresh_token, decode_token, get_current_user
 )
-from app.models import User, DonorProfile, NGOProfile, UserRole
+from app.models import User, DonorProfile, NGOProfile, UserRole, NGOVerificationStatus
 from app.schemas import (
     UserCreate, UserLogin, UserResponse, TokenResponse,
     ChangePasswordRequest, DonorProfileCreate, NGOProfileCreate
@@ -97,12 +97,12 @@ async def register_ngo(
             detail="Registration number already exists"
         )
     
-    # Create user (inactive until verified)
+    # Create user (active for testing, will be inactive until verified in production)
     user = User(
         email=user_data.email,
         password_hash=hash_password(user_data.password),
         role=UserRole.NGO,
-        is_active=False  # NGOs can't login until verified
+        is_active=True  # Allow NGOs to login immediately for testing
     )
     db.add(user)
     await db.flush()
@@ -115,6 +115,20 @@ async def register_ngo(
     db.add(ngo_profile)
     await db.commit()
     await db.refresh(user)
+    await db.refresh(ngo_profile)
+    
+    # Notify admins about new NGO registration
+    from app.services.notification_service import notify_admins_ngo_registration
+    try:
+        await notify_admins_ngo_registration(
+            db=db,
+            ngo_name=profile_data.organization_name,
+            ngo_id=ngo_profile.id
+        )
+        await db.commit()
+    except Exception as e:
+        # Don't fail registration if notification fails
+        print(f"Failed to create notification: {e}")
     
     # Generate tokens (user can't use them until verified, but return for consistency)
     token_data = {"sub": str(user.id), "email": user.email, "role": user.role.value}
@@ -134,32 +148,65 @@ async def login(credentials: UserLogin, db: AsyncSession = Depends(get_db)):
     Login with email and password
     Returns access and refresh tokens
     """
-    # Find user by email
-    result = await db.execute(select(User).where(User.email == credentials.email))
-    user = result.scalar_one_or_none()
-    
-    if not user or not verify_password(credentials.password, user.password_hash):
+    try:
+        # Find user by email
+        result = await db.execute(select(User).where(User.email == credentials.email))
+        user = result.scalar_one_or_none()
+        
+        if not user or not verify_password(credentials.password, user.password_hash):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect email or password"
+            )
+        
+        # For NGO users, check if they are verified/approved by admin
+        if user.role == UserRole.NGO:
+            # Check if account is active
+            if not user.is_active:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Account not active. Please wait for admin verification."
+                )
+            
+            # Query NGO verification status
+            ngo_result = await db.execute(
+                select(NGOProfile.verification_status).where(
+                    NGOProfile.user_id == user.id
+                )
+            )
+            verification_status = ngo_result.scalar_one_or_none()
+            
+            if verification_status is None:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="NGO profile not found"
+                )
+            
+            # Check if NGO is verified/approved
+            if verification_status != NGOVerificationStatus.VERIFIED:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail=f"Your NGO account is {verification_status.value}. Please wait for admin approval."
+                )
+        
+        # Generate tokens
+        token_data = {"sub": str(user.id), "email": user.email, "role": user.role.value}
+        access_token = create_access_token(token_data)
+        refresh_token = create_refresh_token(token_data)
+        
+        return {
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+            "token_type": "bearer"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"[ERROR] Login error: {str(e)}")
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred during login"
         )
-    
-    if not user.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Account not active. Please wait for admin verification."
-        )
-    
-    # Generate tokens
-    token_data = {"sub": str(user.id), "email": user.email, "role": user.role.value}
-    access_token = create_access_token(token_data)
-    refresh_token = create_refresh_token(token_data)
-    
-    return {
-        "access_token": access_token,
-        "refresh_token": refresh_token,
-        "token_type": "bearer"
-    }
 
 
 @router.post("/refresh", response_model=TokenResponse)

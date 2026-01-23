@@ -54,7 +54,8 @@ class NotificationType:
     DONATION_CANCELLED = "donation_cancelled"
     NGO_VERIFIED = "ngo_verified"
     NGO_REJECTED = "ngo_rejected"
-    RATING_RECEIVED = "rating_received"
+    NGO_REGISTRATION = "ngo_registration"
+    LOCATION_ADDED = "location_added"
 
 
 # Helper functions for specific notification types
@@ -197,21 +198,158 @@ async def notify_ngo_rejected(
     )
 
 
-async def notify_rating_received(
+async def notify_admins_ngo_registration(
     db: AsyncSession,
+    ngo_name: str,
+    ngo_id: int
+):
+    """Notify all admins when a new NGO registers"""
+    from app.models import User
+    
+    # Get all admin users
+    result = await db.execute(
+        db.query(User).filter(User.role == 'admin')
+    )
+    admin_users = result.scalars().all()
+    
+    notifications = []
+    for admin in admin_users:
+        notification = await create_notification(
+            db=db,
+            user_id=admin.id,
+            title="New NGO Registration",
+            message=f"{ngo_name} has registered and is pending verification",
+            notification_type=NotificationType.NGO_REGISTRATION,
+            related_entity_type="ngo",
+            related_entity_id=ngo_id
+        )
+        notifications.append(notification)
+    
+    return notifications
+
+
+async def notify_admins_location_added(
+    db: AsyncSession,
+    ngo_name: str,
+    location_name: str,
+    location_id: int,
+    ngo_id: int
+):
+    """Notify all admins when an NGO adds a new location"""
+    from app.models import User
+    
+    # Get all admin users
+    result = await db.execute(
+        db.query(User).filter(User.role == 'admin')
+    )
+    admin_users = result.scalars().all()
+    
+    notifications = []
+    for admin in admin_users:
+        notification = await create_notification(
+            db=db,
+            user_id=admin.id,
+            title="New Location Added",
+            message=f"{ngo_name} added new location: {location_name}",
+            notification_type=NotificationType.LOCATION_ADDED,
+            related_entity_type="location",
+            related_entity_id=location_id
+        )
+        notifications.append(notification)
+    
+    return notifications
+
+
+async def notify_both_donation_completed(
+    db: AsyncSession,
+    donor_user_id: int,
     ngo_user_id: int,
     donor_name: str,
-    rating: int,
-    donation_id: int
+    ngo_name: str,
+    donation_id: int,
+    quantity: int
 ):
-    """Notify NGO when they receive a rating"""
-    stars = "⭐" * rating
-    return await create_notification(
+    """Notify both donor and NGO when donation is completed"""
+    notifications = []
+    
+    # Notify donor
+    donor_notification = await create_notification(
         db=db,
-        user_id=ngo_user_id,
-        title="New Rating Received",
-        message=f"{donor_name} rated your service {stars} ({rating}/5)",
-        notification_type=NotificationType.RATING_RECEIVED,
+        user_id=donor_user_id,
+        title="Donation Completed!",
+        message=f"Your donation to {ngo_name} has been completed! Please rate your experience.",
+        notification_type=NotificationType.DONATION_COMPLETED,
         related_entity_type="donation",
         related_entity_id=donation_id
     )
+    notifications.append(donor_notification)
+    
+    # Notify NGO
+    ngo_notification = await create_notification(
+        db=db,
+        user_id=ngo_user_id,
+        title="Donation Completed",
+        message=f"Donation from {donor_name} has been completed. Thank you!",
+        notification_type=NotificationType.DONATION_COMPLETED,
+        related_entity_type="donation",
+        related_entity_id=donation_id
+    )
+    notifications.append(ngo_notification)
+    
+    return notifications
+
+
+async def notify_admins_custom(
+    db: AsyncSession,
+    title: str,
+    message: str,
+    notification_type: str,
+    related_entity_type: str = None,
+    related_entity_id: int = None
+):
+    """
+    Send custom notification to all admin users
+    
+    Args:
+        db: Database session
+        title: Notification title
+        message: Notification message
+        notification_type: Type identifier (e.g., "system_alert", "user_report")
+        related_entity_type: Optional - "donation", "ngo", "user", etc.
+        related_entity_id: Optional - ID of the related entity
+        
+    Returns:
+        List of created notification objects
+        
+    Example:
+        await notify_admins_custom(
+            db=db,
+            title="System Alert",
+            message="High server load detected",
+            notification_type="system_alert"
+        )
+    """
+    from app.models import User, UserRole
+    from sqlalchemy import select
+    
+    # Get all admin users
+    result = await db.execute(
+        select(User).where(User.role == UserRole.ADMIN)
+    )
+    admin_users = result.scalars().all()
+    
+    notifications = []
+    for admin in admin_users:
+        notification = await create_notification(
+            db=db,
+            user_id=admin.id,
+            title=title,
+            message=message,
+            notification_type=notification_type,
+            related_entity_type=related_entity_type,
+            related_entity_id=related_entity_id
+        )
+        notifications.append(notification)
+    
+    return notifications
+

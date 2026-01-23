@@ -49,17 +49,23 @@
 
 .register-card ion-segment {
   margin-bottom: 24px;
-  --background: var(--ion-color-light);
+  --background: transparent;
   border-radius: 12px;
   padding: 4px;
+  border: 2px solid var(--ion-color-primary);
+  display: flex;
 }
 
 .register-card ion-segment-button {
   --indicator-color: var(--ion-color-primary);
   --color-checked: white;
+  --background-checked: var(--ion-color-primary);
   font-weight: 600;
   text-transform: none;
   min-height: 40px;
+  border-radius: 10px;
+  flex: 1;
+  transition: all 0.3s ease;
 }
 
 .register-card ion-button {

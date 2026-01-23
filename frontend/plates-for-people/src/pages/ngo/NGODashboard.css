@@ -94,19 +94,90 @@
 
 /* Stats Grid */
 .stats-grid {
-  padding: 0;
+  padding: 16px;
   margin-bottom: 16px;
+  --ion-grid-padding-xs: 0;
+  --ion-grid-padding-sm: 0;
+  --ion-grid-padding-md: 0;
+  --ion-grid-padding-lg: 0;
+}
+
+.stats-grid ion-row {
+  gap: 16px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.stats-grid ion-col {
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column;
+  justify-content: stretch;
+}
+
+/* Desktop: Force single row for all 4 cards */
+@media (min-width: 992px) {
+  .stats-grid {
+    max-width: 1800px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 16px 32px;
+  }
+  
+  .stats-grid ion-row {
+    flex-wrap: nowrap;
+    gap: 24px;
+  }
+  
+  .stats-grid ion-col {
+    flex: 1 1 0;
+    min-width: 240px;
+  }
+  
+  .stat-card {
+    height: 220px;
+    min-height: 220px;
+  }
+  
+  .stat-card ion-card-content {
+    padding: 28px 20px;
+  }
 }
 
 .stat-card {
   margin: 0;
   text-align: center;
-  transition: transform 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  height: 200px;
+  min-height: 200px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 0;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.stat-card ion-card-content {
+  padding: 24px 16px;
+  width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0;
 }
 
 .stat-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .stat-card.primary {
@@ -126,24 +197,28 @@
 }
 
 .stat-icon {
-  font-size: 32px;
+  font-size: 36px;
   color: var(--ion-color-medium, #666);
-  margin-bottom: 12px;
+  margin-bottom: 6px;
+  line-height: 1;
 }
 
 .stat-value {
-  font-size: 32px;
+  font-size: 36px;
   font-weight: 700;
   color: var(--ion-text-color, #333);
-  margin-bottom: 4px;
+  margin-bottom: 2px;
+  line-height: 1;
 }
 
 .stat-label {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--ion-color-medium, #666);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 500;
+  line-height: 1.2;
+}
 }
 
 /* Rating Card */

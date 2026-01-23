@@ -21,6 +21,9 @@ import {
   IonBackButton,
   IonLabel,
   IonItem,
+  IonFooter,
+  IonSegment,
+  IonSegmentButton,
 } from '@ionic/react';
 import {
   checkmarkCircleOutline,
@@ -31,6 +34,8 @@ import {
   mailOutline,
   personOutline,
   cardOutline,
+  hourglassOutline,
+  downloadOutline,
 } from 'ionicons/icons';
 import { adminService } from '../../services/adminService';
 import type { NGOProfile } from '../../types';
@@ -38,25 +43,29 @@ import './VerifyNGOs.css';
 
 const VerifyNGOs: React.FC = () => {
   const [present] = useIonToast();
-  const [ngos, setNgos] = useState<NGOProfile[]>([]);
+  const [allNgos, setAllNgos] = useState<NGOProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [selectedNgo, setSelectedNgo] = useState<NGOProfile | null>(null);
   const [rejectionReason, setRejectionReason] = useState('');
   const [processing, setProcessing] = useState(false);
+  const [selectedTab, setSelectedTab] = useState<'pending' | 'approved' | 'rejected'>('pending');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
-    loadPendingNGOs();
+    loadAllNGOs();
   }, []);
 
-  const loadPendingNGOs = async () => {
+  const loadAllNGOs = async () => {
     try {
       setLoading(true);
-      const data = await adminService.getPendingNGOs();
-      setNgos(data);
+      const data = await adminService.getAllNGOs();
+      setAllNgos(data);
+      setCurrentPage(1);
     } catch (error: any) {
       present({
-        message: error.response?.data?.detail || 'Failed to load pending NGOs',
+        message: error.response?.data?.detail || 'Failed to load NGOs',
         duration: 3000,
         color: 'danger',
       });
@@ -65,8 +74,50 @@ const VerifyNGOs: React.FC = () => {
     }
   };
 
+  // Filter NGOs based on selected tab
+  const getFilteredNgos = () => {
+    return allNgos.filter((ngo) => {
+      if (selectedTab === 'pending') return ngo.verification_status === 'pending';
+      if (selectedTab === 'approved') return ngo.verification_status === 'verified';
+      if (selectedTab === 'rejected') return ngo.verification_status === 'rejected';
+      return true;
+    });
+  };
+
+  // Pagination
+  const filteredNgos = getFilteredNgos();
+  const totalPages = Math.ceil(filteredNgos.length / itemsPerPage);
+  const paginatedNgos = filteredNgos.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const handleTabChange = (tab: 'pending' | 'approved' | 'rejected') => {
+    setSelectedTab(tab);
+    setCurrentPage(1);
+  };
+
+  // Excel Export
+  const exportToExcel = () => {
+    const headers = ['Organization Name', 'Registration No.', 'Contact Person', 'Phone', 'Status', 'Date'];
+    const rows = filteredNgos.map((ngo) => [
+      ngo.organization_name,
+      ngo.registration_number,
+      ngo.contact_person,
+      ngo.phone,
+      ngo.verification_status.charAt(0).toUpperCase() + ngo.verification_status.slice(1),
+      ngo.created_at ? new Date(ngo.created_at).toLocaleDateString() : '',
+    ]);
+
+    const csvContent = [headers.join(','), ...rows.map((row) => row.map((cell) => `"${cell}"`).join(','))].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `ngos-${selectedTab}-${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+  };
+
   const handleRefresh = async (event: CustomEvent) => {
-    await loadPendingNGOs();
+    await loadAllNGOs();
     event.detail.complete();
   };
 
@@ -79,7 +130,7 @@ const VerifyNGOs: React.FC = () => {
         duration: 3000,
         color: 'success',
       });
-      await loadPendingNGOs();
+      await loadAllNGOs();
     } catch (error: any) {
       present({
         message: error.response?.data?.detail || 'Failed to approve NGO',
@@ -98,7 +149,22 @@ const VerifyNGOs: React.FC = () => {
   };
 
   const handleRejectConfirm = async () => {
-    if (!selectedNgo || !rejectionReason.trim()) {
+    console.log('🔴 handleRejectConfirm called');
+    console.log('selectedNgo:', selectedNgo);
+    console.log('rejectionReason:', rejectionReason);
+
+    if (!selectedNgo) {
+      console.error('❌ No NGO selected');
+      present({
+        message: 'No NGO selected',
+        duration: 2000,
+        color: 'danger',
+      });
+      return;
+    }
+
+    if (!rejectionReason || rejectionReason.trim() === '') {
+      console.warn('⚠️  No rejection reason provided');
       present({
         message: 'Please provide a rejection reason',
         duration: 2000,
@@ -109,17 +175,39 @@ const VerifyNGOs: React.FC = () => {
 
     try {
       setProcessing(true);
-      await adminService.rejectNGO(selectedNgo.id, rejectionReason);
+      console.log(`🔄 Rejecting NGO ${selectedNgo.id} with reason: ${rejectionReason}`);
+      console.log(`📤 Calling API: /admin/ngos/${selectedNgo.id}/reject?rejection_reason=${rejectionReason}`);
+
+      // Call the reject API
+      const result = await adminService.rejectNGO(selectedNgo.id, rejectionReason);
+      console.log('✅ NGO rejected successfully:', result);
+
+      // Show success message
       present({
-        message: `${selectedNgo.organization_name} has been rejected`,
+        message: `${selectedNgo.organization_name} has been rejected!`,
         duration: 3000,
         color: 'success',
       });
+
+      // Close modal and refresh list
       setShowRejectModal(false);
-      await loadPendingNGOs();
+      setRejectionReason('');
+      setSelectedNgo(null);
+
+      // Reload the pending NGOs list after a short delay
+      setTimeout(() => {
+        loadAllNGOs();
+      }, 500);
     } catch (error: any) {
+      console.error('❌ Reject error:', error);
+      console.error('Response status:', error.response?.status);
+      console.error('Error response:', error.response);
+      console.error('Error data:', error.response?.data);
+      console.error('Error message:', error.message);
+
+      const errorMessage = error.response?.data?.detail || error.message || 'Failed to reject NGO';
       present({
-        message: error.response?.data?.detail || 'Failed to reject NGO',
+        message: errorMessage,
         duration: 3000,
         color: 'danger',
       });
@@ -157,9 +245,6 @@ const VerifyNGOs: React.FC = () => {
             <IonBackButton defaultHref="/admin/dashboard" />
           </IonButtons>
           <IonTitle>Verify NGOs</IonTitle>
-          <IonChip slot="end" color="warning">
-            <IonLabel>{ngos.length} Pending</IonLabel>
-          </IonChip>
         </IonToolbar>
       </IonHeader>
 
@@ -168,100 +253,98 @@ const VerifyNGOs: React.FC = () => {
           <IonRefresherContent />
         </IonRefresher>
 
+        {/* Tab Navigation */}
         <div className="verify-ngos-container">
-          {ngos.length === 0 ? (
+          <IonSegment
+            value={selectedTab}
+            onIonChange={(e) => setSelectedTab(e.detail.value as 'pending' | 'approved' | 'rejected')}
+            className="ngos-segment">
+            <IonSegmentButton value="pending" layout="icon-top">
+              <IonIcon icon={hourglassOutline} />
+              <IonLabel>Pending</IonLabel>
+              <IonBadge color="warning">{allNgos.filter((n) => n.verification_status === 'pending').length}</IonBadge>
+            </IonSegmentButton>
+            <IonSegmentButton value="approved" layout="icon-top">
+              <IonIcon icon={checkmarkCircleOutline} />
+              <IonLabel>Approved</IonLabel>
+              <IonBadge color="success">{allNgos.filter((n) => n.verification_status === 'verified').length}</IonBadge>
+            </IonSegmentButton>
+            <IonSegmentButton value="rejected" layout="icon-top">
+              <IonIcon icon={closeCircleOutline} />
+              <IonLabel>Rejected</IonLabel>
+              <IonBadge color="danger">{allNgos.filter((n) => n.verification_status === 'rejected').length}</IonBadge>
+            </IonSegmentButton>
+          </IonSegment>
+
+          {/* Table View */}
+          {loading ? (
+            <div className="loading-container">
+              <IonSpinner name="crescent" />
+              <p>Loading NGOs...</p>
+            </div>
+          ) : getFilteredNgos().length === 0 ? (
             <div className="empty-state">
               <IonIcon icon={checkmarkCircleOutline} className="empty-icon" />
-              <h2>All caught up!</h2>
-              <p>No pending NGO verifications at the moment.</p>
+              <h2>No {selectedTab} NGOs</h2>
+              <p>No {selectedTab} NGOs at the moment.</p>
             </div>
           ) : (
-            ngos.map((ngo) => (
-              <IonCard key={ngo.id} className="ngo-card">
-                <IonCardContent>
-                  <div className="ngo-header">
-                    <div className="ngo-icon">
-                      <IonIcon icon={businessOutline} />
-                    </div>
-                    <div className="ngo-title">
-                      <h2>{ngo.organization_name}</h2>
-                      <IonBadge color="warning">Pending Verification</IonBadge>
-                    </div>
-                  </div>
+            <>
+              <div className="ngos-table-wrapper">
+                <table className="ngos-table">
+                  <thead>
+                    <tr>
+                      <th>Organization Name</th>
+                      <th>Registration No.</th>
+                      <th>Contact Person</th>
+                      <th>Phone</th>
+                      <th>Status</th>
+                      {selectedTab === 'pending' && <th>Actions</th>}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paginatedNgos.map((ngo) => (
+                      <tr key={ngo.id}>
+                        <td className="org-name">{ngo.organization_name}</td>
+                        <td>{ngo.registration_number}</td>
+                        <td>{ngo.contact_person}</td>
+                        <td>{ngo.phone}</td>
+                        <td>
+                          <IonBadge color={selectedTab === 'approved' ? 'success' : selectedTab === 'rejected' ? 'danger' : 'warning'}>
+                            {selectedTab.charAt(0).toUpperCase() + selectedTab.slice(1)}
+                          </IonBadge>
+                        </td>
+                        {selectedTab === 'pending' && (
+                          <td className="actions-cell">
+                            <IonButton size="small" color="success" onClick={() => handleApprove(ngo)} disabled={processing}>
+                              <IonIcon icon={checkmarkCircleOutline} slot="icon-only" />
+                            </IonButton>
+                            <IonButton size="small" color="danger" onClick={() => handleRejectClick(ngo)} disabled={processing}>
+                              <IonIcon icon={closeCircleOutline} slot="icon-only" />
+                            </IonButton>
+                          </td>
+                        )}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
 
-                  <div className="ngo-details">
-                    <IonItem lines="none" className="detail-item">
-                      <IonIcon icon={cardOutline} slot="start" />
-                      <IonLabel>
-                        <p>Registration Number</p>
-                        <h3>{ngo.registration_number}</h3>
-                      </IonLabel>
-                    </IonItem>
-
-                    <IonItem lines="none" className="detail-item">
-                      <IonIcon icon={personOutline} slot="start" />
-                      <IonLabel>
-                        <p>Contact Person</p>
-                        <h3>{ngo.contact_person}</h3>
-                      </IonLabel>
-                    </IonItem>
-
-                    <IonItem lines="none" className="detail-item">
-                      <IonIcon icon={callOutline} slot="start" />
-                      <IonLabel>
-                        <p>Phone</p>
-                        <h3>{ngo.phone}</h3>
-                      </IonLabel>
-                    </IonItem>
-
-                    <IonItem lines="none" className="detail-item">
-                      <IonIcon icon={mailOutline} slot="start" />
-                      <IonLabel>
-                        <p>Email</p>
-                        <h3>{ngo.user_id}</h3>
-                      </IonLabel>
-                    </IonItem>
-
-                    {ngo.verification_document_url && (
-                      <IonButton
-                        expand="block"
-                        fill="outline"
-                        size="small"
-                        href={ngo.verification_document_url}
-                        target="_blank"
-                        className="doc-button"
-                      >
-                        <IonIcon icon={documentTextOutline} slot="start" />
-                        View Verification Documents
-                      </IonButton>
-                    )}
-                  </div>
-
-                  <div className="action-buttons">
-                    <IonButton
-                      expand="block"
-                      color="success"
-                      onClick={() => handleApprove(ngo)}
-                      disabled={processing}
-                    >
-                      <IonIcon icon={checkmarkCircleOutline} slot="start" />
-                      Approve
-                    </IonButton>
-
-                    <IonButton
-                      expand="block"
-                      color="danger"
-                      fill="outline"
-                      onClick={() => handleRejectClick(ngo)}
-                      disabled={processing}
-                    >
-                      <IonIcon icon={closeCircleOutline} slot="start" />
-                      Reject
-                    </IonButton>
-                  </div>
-                </IonCardContent>
-              </IonCard>
-            ))
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="pagination">
+                  <IonButton size="small" disabled={currentPage === 1} onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}>
+                    Previous
+                  </IonButton>
+                  <span className="page-info">
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  <IonButton size="small" disabled={currentPage === totalPages} onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}>
+                    Next
+                  </IonButton>
+                </div>
+              )}
+            </>
           )}
         </div>
 
@@ -271,42 +354,52 @@ const VerifyNGOs: React.FC = () => {
             <IonToolbar>
               <IonTitle>Reject NGO</IonTitle>
               <IonButtons slot="end">
-                <IonButton onClick={() => setShowRejectModal(false)}>Cancel</IonButton>
+                <IonButton onClick={() => setShowRejectModal(false)}>Close</IonButton>
               </IonButtons>
             </IonToolbar>
           </IonHeader>
           <IonContent className="ion-padding">
-            <div className="reject-modal-content">
-              <h2>Reject {selectedNgo?.organization_name}?</h2>
-              <p>Please provide a reason for rejection. This will be sent to the NGO.</p>
+            <div style={{ marginTop: '20px' }}>
+              <h2 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>Reject {selectedNgo?.organization_name}?</h2>
+              <p style={{ fontSize: '14px', color: '#666', marginBottom: '20px' }}>
+                Please provide a reason for rejection. This will be sent to the NGO.
+              </p>
 
-              <IonTextarea
-                value={rejectionReason}
-                onIonInput={(e) => setRejectionReason(e.detail.value!)}
-                placeholder="Enter rejection reason (e.g., Invalid documents, Missing information, etc.)"
-                rows={6}
-                className="rejection-textarea"
-              />
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '8px' }}>Rejection Reason:</label>
+                <IonTextarea
+                  value={rejectionReason}
+                  onIonChange={(e) => setRejectionReason(e.detail.value || '')}
+                  placeholder="Enter rejection reason (e.g., Invalid documents, Missing information, etc.)"
+                  rows={6}
+                  style={{
+                    border: '1px solid #ddd',
+                    borderRadius: '6px',
+                    marginBottom: '8px',
+                  }}
+                />
+                <div style={{ fontSize: '12px', color: '#999' }}>Characters: {rejectionReason?.length || 0}</div>
+              </div>
 
-              <IonButton
-                expand="block"
-                color="danger"
-                onClick={handleRejectConfirm}
-                disabled={processing || !rejectionReason.trim()}
-                className="confirm-reject-button"
-              >
-                {processing ? (
-                  <>
-                    <IonSpinner name="crescent" slot="start" />
-                    Rejecting...
-                  </>
-                ) : (
-                  <>
-                    <IonIcon icon={closeCircleOutline} slot="start" />
-                    Confirm Rejection
-                  </>
-                )}
-              </IonButton>
+              <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
+                <IonButton expand="block" fill="outline" color="medium" onClick={() => setShowRejectModal(false)} disabled={processing}>
+                  Cancel
+                </IonButton>
+
+                <IonButton expand="block" color="danger" onClick={handleRejectConfirm} disabled={processing}>
+                  {processing ? (
+                    <>
+                      <IonSpinner name="crescent" slot="start" />
+                      Rejecting...
+                    </>
+                  ) : (
+                    <>
+                      <IonIcon icon={closeCircleOutline} slot="start" />
+                      Reject
+                    </>
+                  )}
+                </IonButton>
+              </div>
             </div>
           </IonContent>
         </IonModal>

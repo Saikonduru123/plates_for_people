@@ -1,0 +1,21 @@
+                                           Table "public.notifications"
+       Column        |           Type           | Collation | Nullable |                  Default                  
+---------------------+--------------------------+-----------+----------+-------------------------------------------
+ id                  | integer                  |           | not null | nextval('notifications_id_seq'::regclass)
+ user_id             | integer                  |           | not null | 
+ title               | character varying(255)   |           | not null | 
+ message             | text                     |           | not null | 
+ notification_type   | character varying(50)    |           | not null | 
+ related_entity_type | character varying(50)    |           |          | 
+ related_entity_id   | integer                  |           |          | 
+ is_read             | boolean                  |           | not null | 
+ read_at             | timestamp with time zone |           |          | 
+ created_at          | timestamp with time zone |           | not null | now()
+Indexes:
+    "notifications_pkey" PRIMARY KEY, btree (id)
+    "ix_notifications_id" btree (id)
+    "ix_notifications_is_read" btree (is_read)
+    "ix_notifications_user_id" btree (user_id)
+Foreign-key constraints:
+    "notifications_user_id_fkey" FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+

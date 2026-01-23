@@ -13,6 +13,7 @@ from app.core.database import get_db
 from app.core.security import get_current_user
 from app.models import User, NGOProfile, NGOLocation, NGOLocationCapacity
 from app.models.ngo import NGOVerificationStatus, MealType
+from app.services import capacity_service
 
 router = APIRouter()
 
@@ -87,27 +88,26 @@ async def search_ngos(
         # Check capacity if date and meal_type provided
         available_capacity = None
         if donation_date and meal_type:
-            capacity_result = await db.execute(
-                select(NGOLocationCapacity).where(
-                    and_(
-                        NGOLocationCapacity.location_id == location.id,
-                        NGOLocationCapacity.date == donation_date,
-                        NGOLocationCapacity.meal_type == meal_type
-                    )
+            try:
+                # Use capacity service to get proper capacity (defaults + manual overrides)
+                capacity_data = await capacity_service.get_capacity_for_date(
+                    db=db,
+                    location_id=location.id,
+                    target_date=donation_date,
+                    meal_type=meal_type
                 )
-            )
-            capacity = capacity_result.scalar_one_or_none()
-            
-            if capacity:
-                available_capacity = capacity.current_capacity
+                
+                available_capacity = capacity_data.get("available", 0)
                 
                 # Skip if doesn't meet minimum capacity requirement
                 if min_capacity and available_capacity < min_capacity:
                     continue
-            else:
-                # Skip if no capacity set for this date/meal
+            except Exception as e:
+                # If capacity check fails, skip if min_capacity is required
                 if min_capacity:
                     continue
+                # Otherwise, include the location without capacity info
+                available_capacity = None
         
         # Calculate average rating
         from app.models import Rating
@@ -187,30 +187,32 @@ async def get_location_availability(
             detail="Location not found"
         )
     
-    # Get all capacity entries in date range
-    capacity_result = await db.execute(
-        select(NGOLocationCapacity).where(
-            and_(
-                NGOLocationCapacity.location_id == location_id,
-                NGOLocationCapacity.date >= start_date,
-                NGOLocationCapacity.date <= end_date
-            )
-        ).order_by(NGOLocationCapacity.date, NGOLocationCapacity.meal_type)
-    )
-    capacities = capacity_result.scalars().all()
-    
-    # Group by date
+    # Build availability map using capacity service
     availability_by_date = {}
-    for capacity in capacities:
-        date_str = capacity.date.isoformat()
-        if date_str not in availability_by_date:
-            availability_by_date[date_str] = {}
+    current_date = start_date
+    while current_date <= end_date:
+        date_str = current_date.isoformat()
+        availability_by_date[date_str] = {}
         
-        availability_by_date[date_str][capacity.meal_type.value] = {
-            "total_capacity": capacity.total_capacity,
-            "current_capacity": capacity.current_capacity,
-            "available": capacity.current_capacity > 0
-        }
+        # Check each meal type
+        for meal_type in [MealType.BREAKFAST, MealType.LUNCH, MealType.SNACKS, MealType.DINNER]:
+            capacity_info = await capacity_service.get_capacity_for_date(
+                db=db,
+                location_id=location_id,
+                target_date=current_date,
+                meal_type=meal_type
+            )
+            
+            availability_by_date[date_str][meal_type.value] = {
+                "capacity": capacity_info['capacity'],
+                "available": capacity_info['available'],
+                "confirmed": capacity_info['confirmed'],
+                "is_manual": capacity_info['is_manual']
+            }
+        
+        # Move to next day
+        from datetime import timedelta
+        current_date += timedelta(days=1)
     
     return {
         "location_id": location_id,

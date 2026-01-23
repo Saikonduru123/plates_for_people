@@ -73,15 +73,27 @@ const ManageDonations: React.FC = () => {
   const loadDonations = async () => {
     try {
       setLoading(true);
+      console.log('[ManageDonations] Loading NGO donation requests...');
       const data = await donationService.getNGORequests();
-      setDonations(data);
+      console.log('[ManageDonations] Loaded donations:', data);
+      console.log('[ManageDonations] Data type:', typeof data);
+      console.log('[ManageDonations] Is array:', Array.isArray(data));
+      console.log('[ManageDonations] Data length:', data?.length);
+      if (data && data.length > 0) {
+        console.log('[ManageDonations] First donation:', data[0]);
+      }
+      setDonations(data || []);
     } catch (error: any) {
-      console.error('Failed to load donations:', error);
+      console.error('[ManageDonations] Failed to load donations:', error);
+      console.error('[ManageDonations] Error response:', error.response?.data);
+      console.error('[ManageDonations] Error status:', error.response?.status);
       present({
-        message: 'Failed to load donation requests',
+        message: error.response?.data?.detail || 'Failed to load donation requests',
         duration: 3000,
         color: 'danger',
       });
+      // Set empty array on error
+      setDonations([]);
     } finally {
       setLoading(false);
     }
@@ -90,20 +102,37 @@ const ManageDonations: React.FC = () => {
   const filterDonations = () => {
     let filtered = donations;
 
-    // Filter by status
-    if (selectedStatus !== 'all') {
-      filtered = filtered.filter((d) => d.status === selectedStatus);
+    console.log('[ManageDonations] Filtering - selectedStatus:', selectedStatus);
+    console.log('[ManageDonations] Total donations:', donations.length);
+    console.log('[ManageDonations] Search text:', searchText);
+    if (donations.length > 0) {
+      console.log('[ManageDonations] Sample donation status:', donations[0].status);
+      console.log('[ManageDonations] Sample donation food_type:', donations[0].food_type);
+      console.log('[ManageDonations] Sample donation meal_type:', donations[0].meal_type);
     }
+
+    // Filter by status (handle case-insensitive comparison)
+    if (selectedStatus !== 'all') {
+      filtered = filtered.filter((d) => d.status.toLowerCase() === selectedStatus.toLowerCase());
+    }
+
+    console.log('[ManageDonations] After status filter count:', filtered.length);
 
     // Filter by search text
     if (searchText.trim()) {
       const search = searchText.toLowerCase();
+      console.log('[ManageDonations] Searching for:', search);
       filtered = filtered.filter(
         (d) =>
           d.food_type.toLowerCase().includes(search) || d.meal_type.toLowerCase().includes(search) || d.description?.toLowerCase().includes(search),
       );
+      console.log('[ManageDonations] After search filter count:', filtered.length);
+      if (filtered.length > 0) {
+        console.log('[ManageDonations] First match:', filtered[0].food_type, filtered[0].meal_type);
+      }
     }
 
+    console.log('[ManageDonations] Final filtered count:', filtered.length);
     setFilteredDonations(filtered);
   };
 
@@ -478,6 +507,7 @@ const ManageDonations: React.FC = () => {
 
         {/* Reject Modal */}
         <IonModal
+          className="reject-modal"
           isOpen={showRejectModal}
           onDidDismiss={() => {
             setShowRejectModal(false);

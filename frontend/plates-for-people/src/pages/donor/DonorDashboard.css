@@ -23,18 +23,42 @@
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 16px;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
+}
+
+@media (min-width: 640px) {
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
 }
 
 .stat-card {
   background: linear-gradient(135deg, #ffffff 0%, #f7fafc 100%);
-  border-radius: 12px;
-  padding: 20px;
+  border-radius: 16px;
+  padding: 24px 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   border: 1px solid #e2e8f0;
   transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-height: 160px;
+  justify-content: center;
+}
+
+@media (min-width: 640px) {
+  .stat-card {
+    padding: 24px 20px;
+  }
 }
 
 .stat-card:hover {
@@ -60,14 +84,18 @@
 }
 
 .stat-card:nth-child(4) .stat-icon {
+  color: #e53e3e;
+}
+
+.stat-card:nth-child(5) .stat-icon {
   color: #38b2ac;
 }
 
 .stat-value {
-  font-size: 3rem;
+  font-size: 2.5rem;
   font-weight: 900;
   color: #0b0b0b !important;
-  margin: 8px 0;
+  margin: 12px 0 8px 0;
   line-height: 1;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
@@ -78,14 +106,16 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  line-height: 1.2;
 }
 
 .quick-actions {
   background: #ffffff;
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 24px;
   margin-bottom: 24px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
 }
 
 .quick-actions h2 {
@@ -96,31 +126,34 @@
 }
 
 .action-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 0 2px;
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 16px;
+  padding: 0;
+  flex-wrap: nowrap !important;
+  align-items: stretch;
+  justify-content: center;
 }
 
-.action-buttons .action-btn:first-child {
-  order: -1;
+.action-buttons .action-btn {
+  flex: 0 0 auto !important;
+  min-width: 150px;
+  max-width: 180px;
+  width: auto;
+  margin: 0 !important;
+  display: inline-flex !important;
 }
 
-.action-buttons .action-btn.secondary {
-  display: inline-block;
-}
-
-@media (min-width: 768px) {
+/* Mobile: Stack vertically on very small screens */
+@media (max-width: 640px) {
   .action-buttons {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
-    gap: 12px;
-    padding: 0 2px;
+    flex-direction: column !important;
   }
 
-  .action-buttons .action-btn:first-child {
-    grid-column: 1 / -1;
+  .action-buttons .action-btn {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: auto !important;
   }
 }
 
@@ -128,12 +161,16 @@
   --background: #667eea;
   --background-activated: #5a6fce;
   --border-radius: 8px;
-  --padding-top: 14px;
-  --padding-bottom: 14px;
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+  --padding-start: 20px;
+  --padding-end: 20px;
+  height: 52px;
   font-weight: 600;
   text-transform: none;
   letter-spacing: 0.3px;
-  overflow: visible;
+  font-size: 0.95rem;
+  display: inline-flex;
 }
 
 .action-btn.secondary {
@@ -146,9 +183,10 @@
 
 .recent-donations {
   background: #ffffff;
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 24px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
 }
 
 .recent-donations h2 {
@@ -159,19 +197,24 @@
 }
 
 .donation-item {
-  padding: 16px;
+  padding: 20px;
   border-bottom: 1px solid #e2e8f0;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
   cursor: pointer;
   background: #ffffff;
+  border-radius: 8px;
+  margin-bottom: 8px;
 }
 
 .donation-item:last-child {
   border-bottom: none;
+  margin-bottom: 0;
 }
 
 .donation-item:hover {
   background: #f7fafc;
+  transform: translateX(4px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .donation-header {

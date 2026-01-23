@@ -22,6 +22,22 @@ ion-toolbar {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
+/* Toolbar Container Overrides */
+ion-toolbar::part(container) {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: var(--min-height, 44px);
+}
+
+ion-toolbar::part(content) {
+  flex: 1;
+  order: 4;
+  min-width: 0;
+}
+
 ion-title {
   font-weight: 700;
   font-size: 1.125rem;

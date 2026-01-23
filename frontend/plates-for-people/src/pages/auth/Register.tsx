@@ -22,15 +22,7 @@ import {
   IonButtons,
   IonTitle,
 } from '@ionic/react';
-import { 
-  mailOutline, 
-  lockClosedOutline, 
-  personOutline, 
-  callOutline,
-  businessOutline,
-  documentTextOutline,
-  homeOutline,
-} from 'ionicons/icons';
+import { mailOutline, lockClosedOutline, personOutline, callOutline, businessOutline, documentTextOutline, homeOutline } from 'ionicons/icons';
 import { useHistory } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { getErrorMessage } from '../../utils/errorUtils';
@@ -40,7 +32,7 @@ import './Register.css';
 const Register: React.FC = () => {
   const history = useHistory();
   const { registerDonor, registerNGO } = useAuth();
-  
+
   const [role, setRole] = useState<UserRole>('donor');
   const [formData, setFormData] = useState({
     email: '',
@@ -53,13 +45,13 @@ const Register: React.FC = () => {
     address: '',
     description: '',
   });
-  
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showToast, setShowToast] = useState(false);
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const validateForm = (): boolean => {
@@ -90,7 +82,7 @@ const Register: React.FC = () => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       setShowToast(true);
       return;
@@ -121,7 +113,7 @@ const Register: React.FC = () => {
           description: formData.description || undefined,
         });
       }
-      
+
       // Redirect will be handled by App.tsx
       history.push('/dashboard');
     } catch (err) {
@@ -149,39 +141,33 @@ const Register: React.FC = () => {
           <IonCard className="register-card">
             <IonCardHeader>
               <IonCardTitle>Create Account</IonCardTitle>
-              <IonSegment 
-                value={role} 
-                onIonChange={(e) => setRole(e.detail.value as UserRole)}
-                className="ion-margin-top"
-              >
-                <IonSegmentButton value="donor">
-                  <IonLabel>Donor</IonLabel>
-                </IonSegmentButton>
-                <IonSegmentButton value="ngo">
-                  <IonLabel>NGO</IonLabel>
-                </IonSegmentButton>
-              </IonSegment>
+              <div style={{ marginTop: '16px', marginBottom: '16px' }}>
+                <IonSegment value={role} onIonChange={(e) => setRole(e.detail.value as UserRole)} style={{ width: '100%' }}>
+                  <IonSegmentButton value="donor">
+                    <IonLabel>Donor</IonLabel>
+                  </IonSegmentButton>
+                  <IonSegmentButton value="ngo">
+                    <IonLabel>NGO</IonLabel>
+                  </IonSegmentButton>
+                </IonSegment>
+              </div>
             </IonCardHeader>
 
             <IonCardContent>
               <form onSubmit={handleRegister}>
+                {/* Basic Information Header */}
+                <div style={{ fontSize: '14px', fontWeight: '600', color: '#667eea', marginBottom: '16px' }}>Basic Information</div>
+
                 {/* Common Fields */}
                 <IonItem className="ion-margin-bottom">
                   <IonIcon icon={mailOutline} slot="start" />
                   <IonLabel position="floating">Email *</IonLabel>
-                  <IonInput
-                    type="email"
-                    value={formData.email}
-                    onIonInput={(e) => handleInputChange('email', e.detail.value || '')}
-                    required
-                  />
+                  <IonInput type="email" value={formData.email} onIonInput={(e) => handleInputChange('email', e.detail.value || '')} required />
                 </IonItem>
 
                 <IonItem className="ion-margin-bottom">
                   <IonIcon icon={personOutline} slot="start" />
-                  <IonLabel position="floating">
-                    {role === 'donor' ? 'Full Name *' : 'Contact Person Name *'}
-                  </IonLabel>
+                  <IonLabel position="floating">{role === 'donor' ? 'Full Name *' : 'Contact Person Name *'}</IonLabel>
                   <IonInput
                     type="text"
                     value={formData.full_name}
@@ -192,9 +178,7 @@ const Register: React.FC = () => {
 
                 <IonItem className="ion-margin-bottom">
                   <IonIcon icon={callOutline} slot="start" />
-                  <IonLabel position="floating">
-                    Phone Number {role === 'ngo' ? '*' : '(Optional)'}
-                  </IonLabel>
+                  <IonLabel position="floating">Phone Number {role === 'ngo' ? '*' : '(Optional)'}</IonLabel>
                   <IonInput
                     type="tel"
                     value={formData.phone_number}
@@ -206,6 +190,8 @@ const Register: React.FC = () => {
                 {/* NGO-specific Fields */}
                 {role === 'ngo' && (
                   <>
+                    <div style={{ borderTop: '1px solid #e0e0e0', marginTop: '24px', marginBottom: '16px' }}></div>
+                    <div style={{ fontSize: '14px', fontWeight: '600', color: '#667eea', marginBottom: '16px' }}>Organization Details</div>
                     <IonItem className="ion-margin-bottom">
                       <IonIcon icon={businessOutline} slot="start" />
                       <IonLabel position="floating">Organization Name *</IonLabel>
@@ -242,14 +228,14 @@ const Register: React.FC = () => {
                     <IonItem className="ion-margin-bottom">
                       <IonIcon icon={documentTextOutline} slot="start" />
                       <IonLabel position="floating">Description (Optional)</IonLabel>
-                      <IonInput
-                        type="text"
-                        value={formData.description}
-                        onIonInput={(e) => handleInputChange('description', e.detail.value || '')}
-                      />
+                      <IonInput type="text" value={formData.description} onIonInput={(e) => handleInputChange('description', e.detail.value || '')} />
                     </IonItem>
                   </>
                 )}
+
+                {/* Security Section */}
+                <div style={{ borderTop: '1px solid #e0e0e0', marginTop: '24px', marginBottom: '16px' }}></div>
+                <div style={{ fontSize: '14px', fontWeight: '600', color: '#667eea', marginBottom: '16px' }}>Security</div>
 
                 <IonItem className="ion-margin-bottom">
                   <IonIcon icon={lockClosedOutline} slot="start" />
@@ -273,12 +259,7 @@ const Register: React.FC = () => {
                   />
                 </IonItem>
 
-                <IonButton
-                  expand="block"
-                  type="submit"
-                  disabled={loading}
-                  className="ion-margin-top"
-                >
+                <IonButton expand="block" type="submit" disabled={loading} className="ion-margin-top">
                   {loading ? <IonSpinner name="crescent" /> : 'Register'}
                 </IonButton>
               </form>
@@ -297,14 +278,7 @@ const Register: React.FC = () => {
           </IonCard>
         </div>
 
-        <IonToast
-          isOpen={showToast}
-          onDidDismiss={() => setShowToast(false)}
-          message={error}
-          duration={3000}
-          color="danger"
-          position="top"
-        />
+        <IonToast isOpen={showToast} onDidDismiss={() => setShowToast(false)} message={error} duration={3000} color="danger" position="top" />
       </IonContent>
     </IonPage>
   );
