@@ -54,11 +54,43 @@ const AdminReports: React.FC = () => {
   const [filteredDonations, setFilteredDonations] = useState<Donation[]>([]);
 
   useEffect(() => {
-    loadReport();
     loadDonations();
-    // Clear custom date range when period changes
-    setStartDate('');
-    setEndDate('');
+  }, []);
+
+  useEffect(() => {
+    loadReport();
+
+    // Calculate and apply period-based dates to donations filter
+    const today = new Date();
+    let periodStartDate = '';
+    let periodEndDate = today.toISOString().split('T')[0];
+
+    switch (selectedPeriod) {
+      case 'week':
+        const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+        periodStartDate = weekAgo.toISOString().split('T')[0];
+        setStartDate(periodStartDate);
+        setEndDate(periodEndDate);
+        break;
+      case 'month':
+        const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+        periodStartDate = monthAgo.toISOString().split('T')[0];
+        setStartDate(periodStartDate);
+        setEndDate(periodEndDate);
+        break;
+      case 'year':
+        const yearAgo = new Date(today.getTime() - 365 * 24 * 60 * 60 * 1000);
+        periodStartDate = yearAgo.toISOString().split('T')[0];
+        setStartDate(periodStartDate);
+        setEndDate(periodEndDate);
+        break;
+      case 'all':
+      default:
+        // Clear date filter for 'all time'
+        setStartDate('');
+        setEndDate('');
+        break;
+    }
   }, [selectedPeriod]);
 
   useEffect(() => {
@@ -111,7 +143,12 @@ const AdminReports: React.FC = () => {
           startDate = new Date('2020-01-01');
       }
 
-      const data = await adminService.getSystemReport(startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]);
+      const startStr = startDate.toISOString().split('T')[0];
+      const endStr = endDate.toISOString().split('T')[0];
+
+      console.log(`Loading report for period: ${selectedPeriod}, from ${startStr} to ${endStr}`);
+      const data = await adminService.getSystemReport(startStr, endStr);
+      console.log('Report data received:', data);
       setReport(data);
     } catch (err: any) {
       const message = err.response?.data?.detail || 'Failed to load report';
@@ -130,7 +167,13 @@ const AdminReports: React.FC = () => {
       // Load donations
       const data = await adminService.getAllDonations();
       console.log('Loaded donations:', data?.length);
+      console.log('Sample donation:', data?.[0]);
       setDonations(data || []);
+
+      // Initialize filtered donations with all donations
+      if (data && Array.isArray(data)) {
+        setFilteredDonations(data);
+      }
 
       // Load NGO and Donor names from dedicated API endpoints
       try {
@@ -196,18 +239,26 @@ const AdminReports: React.FC = () => {
     let filtered = [...donations];
 
     // Filter by NGO
-    if (selectedNGO) {
+    if (selectedNGO && selectedNGO.trim() !== '') {
       console.log('Filtering by NGO:', selectedNGO);
       const beforeNGOFilter = filtered.length;
-      filtered = filtered.filter((d) => d.ngo_name === selectedNGO);
+      filtered = filtered.filter((d) => {
+        const ngoName = (d.ngo_name || '').trim();
+        return ngoName === selectedNGO.trim();
+      });
       console.log(`NGO filter: ${beforeNGOFilter} -> ${filtered.length}`);
     }
 
     // Filter by Donor
-    if (selectedDonor) {
+    if (selectedDonor && selectedDonor.trim() !== '') {
       console.log('Filtering by Donor:', selectedDonor);
       const beforeDonorFilter = filtered.length;
-      filtered = filtered.filter((d) => d.donor_name === selectedDonor);
+      filtered = filtered.filter((d) => {
+        const donorName = (d.donor_name || '').trim();
+        const selected = selectedDonor.trim();
+        console.log(`Comparing: "${donorName}" === "${selected}" -> ${donorName === selected}`);
+        return donorName === selected;
+      });
       console.log(`Donor filter: ${beforeDonorFilter} -> ${filtered.length}`);
     }
 
@@ -599,7 +650,7 @@ const AdminReports: React.FC = () => {
                   <thead>
                     <tr>
                       <th>Donation Date</th>
-                      <th>NGO Name</th>
+                      <th>Location</th>
                       <th>Donation</th>
                       <th>Donor</th>
                       <th>Meal Type</th>
@@ -611,7 +662,7 @@ const AdminReports: React.FC = () => {
                     {filteredDonations.map((donation) => (
                       <tr key={donation.id}>
                         <td>{formatDate(donation.donation_date || donation.created_at || '')}</td>
-                        <td>{donation.ngo_name || 'N/A'}</td>
+                        <td>{donation.location_name || 'N/A'}</td>
                         <td>{donation.food_type || 'Meal Donation'}</td>
                         <td>{donation.donor_name || 'Anonymous'}</td>
                         <td>{donation.meal_type?.toUpperCase() || 'N/A'}</td>

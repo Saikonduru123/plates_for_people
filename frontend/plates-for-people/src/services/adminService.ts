@@ -20,6 +20,11 @@ export const adminService = {
     return response.data;
   },
 
+  async getAllDonors(): Promise<any[]> {
+    const response = await api.get<any[]>('/admin/donors/all');
+    return response.data;
+  },
+
   async approveNGO(ngoId: number): Promise<NGOProfile> {
     const response = await api.post<NGOProfile>(`/admin/ngos/${ngoId}/verify`);
     return response.data;
@@ -89,6 +94,19 @@ export const adminService = {
   // Get Donor names for filter dropdown
   async getDonorNames(): Promise<string[]> {
     const response = await api.get<string[]>('/admin/donors/names');
+    return response.data;
+  },
+
+  async updateNGOCapacity(
+    userId: number,
+    data: {
+      breakfast: number;
+      lunch: number;
+      snacks: number;
+      dinner: number;
+    },
+  ): Promise<any> {
+    const response = await api.put<any>(`/admin/users/${userId}/capacity`, data);
     return response.data;
   },
 };

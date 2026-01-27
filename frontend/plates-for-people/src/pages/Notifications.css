@@ -85,6 +85,11 @@
   margin-top: 16px;
 }
 
+/* Page min-height */
+.ion-delegate-host.ion-page {
+  min-height: 350px;
+}
+
 /* Segment customization */
 ion-segment {
   --background: var(--ion-color-light);

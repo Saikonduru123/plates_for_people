@@ -131,8 +131,6 @@
   font-weight: 600;
   margin: 0;
 }
-  margin: 0;
-}
 
 .quick-actions {
   margin-bottom: 32px;
@@ -275,10 +273,6 @@
     letter-spacing: 0.6px;
   }
 
-  .stat-label {
-    font-size: 11px;
-  }
-
   .welcome-section h1 {
     font-size: 28px;
   }
@@ -326,11 +320,6 @@
   .stat-value {
     font-size: 28px;
     margin: 0 0 3px 0;
-  }
-
-  .stat-label {
-    font-size: 10px;
-    letter-spacing: 0.5px;
   }
 
   .stat-label {
@@ -403,11 +392,6 @@
   .stat-value {
     font-size: 22px;
     margin: 0 0 2px 0;
-  }
-
-  .stat-label {
-    font-size: 8px;
-    letter-spacing: 0.3px;
   }
 
   .stat-label {

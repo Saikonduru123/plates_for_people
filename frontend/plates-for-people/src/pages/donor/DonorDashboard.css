@@ -129,10 +129,13 @@
   display: flex !important;
   flex-direction: row !important;
   gap: 16px;
-  padding: 0;
+  padding: 16px 20px !important;
   flex-wrap: nowrap !important;
-  align-items: stretch;
+  align-items: center !important;
   justify-content: center;
+  background: #f9fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
 }
 
 .action-buttons .action-btn {
@@ -142,6 +145,7 @@
   width: auto;
   margin: 0 !important;
   display: inline-flex !important;
+  height: auto !important;
 }
 
 /* Mobile: Stack vertically on very small screens */

@@ -130,9 +130,9 @@ const AppRoutes: React.FC = () => {
         {isAuthenticated && user?.role === 'donor' ? <DonorProfileSettings /> : <Redirect to="/login" />}
       </Route>
 
-      {/* Notifications Route - Available for both Donor and NGO */}
+      {/* Notifications Route - Available for Donor, NGO, and Admin */}
       <Route exact path="/notifications">
-        {isAuthenticated && (user?.role === 'donor' || user?.role === 'ngo') ? <Notifications /> : <Redirect to="/login" />}
+        {isAuthenticated && (user?.role === 'donor' || user?.role === 'ngo' || user?.role === 'admin') ? <Notifications /> : <Redirect to="/login" />}
       </Route>
 
       {/* NGO Routes */}

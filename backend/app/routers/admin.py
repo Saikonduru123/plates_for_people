@@ -4,14 +4,14 @@ Handles admin operations including NGO verification
 """
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
+from sqlalchemy import select, func, update
 from typing import List, Dict, Any
 from datetime import datetime
 from pydantic import BaseModel
 
 from app.core.database import get_db
 from app.core.security import get_current_user
-from app.models import User, NGOProfile, DonationRequest, UserRole, DonorProfile
+from app.models import User, NGOProfile, DonationRequest, UserRole, DonorProfile, NGOLocation
 from app.models.ngo import NGOVerificationStatus
 from app.schemas import NGOProfileResponse
 from app.services.notification_service import notify_ngo_verified, notify_ngo_rejected
@@ -104,7 +104,9 @@ async def get_all_ngos(
     db: AsyncSession = Depends(get_db)
 ):
     """
-    Get all NGOs, optionally filtered by verification status
+    Get all NGOs, optionally filtered by verification status.
+    Includes aggregated default capacities across all NGO locations
+    (sums of default_* capacity columns per meal type).
     """
     query = select(NGOProfile)
     
@@ -120,7 +122,29 @@ async def get_all_ngos(
     
     result = await db.execute(query.order_by(NGOProfile.created_at.desc()))
     ngos = result.scalars().all()
-    
+
+    # Pre-compute capacity sums for all NGOs in one query
+    ngo_ids = [ngo.id for ngo in ngos]
+    capacity_totals = {}
+    if ngo_ids:
+        capacity_rows = await db.execute(
+            select(
+                NGOLocation.ngo_id,
+                func.coalesce(func.sum(NGOLocation.default_breakfast_capacity), 0).label("breakfast"),
+                func.coalesce(func.sum(NGOLocation.default_lunch_capacity), 0).label("lunch"),
+                func.coalesce(func.sum(NGOLocation.default_snacks_capacity), 0).label("snacks"),
+                func.coalesce(func.sum(NGOLocation.default_dinner_capacity), 0).label("dinner"),
+            ).where(NGOLocation.ngo_id.in_(ngo_ids))
+            .group_by(NGOLocation.ngo_id)
+        )
+        for row in capacity_rows:
+            capacity_totals[row.ngo_id] = {
+                "breakfast": row.breakfast,
+                "lunch": row.lunch,
+                "snacks": row.snacks,
+                "dinner": row.dinner,
+            }
+
     return [
         {
             "id": ngo.id,
@@ -131,7 +155,11 @@ async def get_all_ngos(
             "phone": ngo.phone,
             "verification_status": ngo.verification_status.value,
             "created_at": ngo.created_at.isoformat() if ngo.created_at else None,
-            "verified_at": ngo.verified_at.isoformat() if ngo.verified_at else None
+            "verified_at": ngo.verified_at.isoformat() if ngo.verified_at else None,
+            "default_breakfast_capacity": capacity_totals.get(ngo.id, {}).get("breakfast", 0),
+            "default_lunch_capacity": capacity_totals.get(ngo.id, {}).get("lunch", 0),
+            "default_snacks_capacity": capacity_totals.get(ngo.id, {}).get("snacks", 0),
+            "default_dinner_capacity": capacity_totals.get(ngo.id, {}).get("dinner", 0),
         }
         for ngo in ngos
     ]
@@ -443,6 +471,21 @@ async def get_all_users(
     return users
 
 
+@router.get("/donors/all")
+async def get_all_donors(
+    current_user: User = Depends(require_admin),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Get all donors with their profiles
+    """
+    result = await db.execute(
+        select(DonorProfile).order_by(DonorProfile.organization_name)
+    )
+    donors = result.scalars().all()
+    return donors
+
+
 @router.post("/users/{user_id}/activate")
 async def activate_user(
     user_id: int,
@@ -495,6 +538,60 @@ async def deactivate_user(
     await db.refresh(user)
     
     return user
+
+
+class UpdateCapacityRequest(BaseModel):
+    breakfast: int = 0
+    lunch: int = 0
+    snacks: int = 0
+    dinner: int = 0
+
+
+@router.put("/users/{user_id}/capacity")
+async def update_ngo_capacity(
+    user_id: int,
+    capacity_data: UpdateCapacityRequest,
+    current_user: User = Depends(require_admin),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Update NGO meal capacity for all locations (sets default_* capacities per location)
+    """
+    # Get the NGO profile for this user
+    result = await db.execute(
+        select(NGOProfile).where(NGOProfile.user_id == user_id)
+    )
+    ngo_profile = result.scalar_one_or_none()
+    
+    if not ngo_profile:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="NGO profile not found"
+        )
+    
+    # Update default capacities for all locations under this NGO
+    await db.execute(
+        update(NGOLocation)
+        .where(NGOLocation.ngo_id == ngo_profile.id)
+        .values(
+            default_breakfast_capacity=capacity_data.breakfast,
+            default_lunch_capacity=capacity_data.lunch,
+            default_snacks_capacity=capacity_data.snacks,
+            default_dinner_capacity=capacity_data.dinner,
+            updated_at=datetime.utcnow(),
+        )
+    )
+
+    await db.commit()
+
+    return {
+        "ngo_id": ngo_profile.id,
+        "breakfast": capacity_data.breakfast,
+        "lunch": capacity_data.lunch,
+        "snacks": capacity_data.snacks,
+        "dinner": capacity_data.dinner,
+        "message": "Capacity updated successfully"
+    }
 
 
 # Reports Endpoints
@@ -552,35 +649,36 @@ async def get_system_report(
     )
     pending_donations = pending_donations_result.scalar() or 0
     
-    # Get user statistics
-    total_users_result = await db.execute(
-        select(func.count(User.id)).where(
-            User.created_at.between(start, end)
+    # Get user statistics - count unique donors who made donations in the period
+    donors_in_period_result = await db.execute(
+        select(func.count(func.distinct(DonationRequest.donor_id))).where(
+            DonationRequest.donation_date.between(start, end)
         )
     )
-    total_users = total_users_result.scalar() or 0
+    total_users = donors_in_period_result.scalar() or 0
     
+    # Count active donors (those with completed donations in period)
     active_users_result = await db.execute(
-        select(func.count(User.id)).where(
-            (User.is_active == True) &
-            (User.created_at.between(start, end))
+        select(func.count(func.distinct(DonationRequest.donor_id))).where(
+            (DonationRequest.status == 'completed') &
+            (DonationRequest.donation_date.between(start, end))
         )
     )
     active_users = active_users_result.scalar() or 0
     
-    # Get NGO statistics
-    verified_ngos_result = await db.execute(
-        select(func.count(NGOProfile.id)).where(
-            (NGOProfile.verification_status == NGOVerificationStatus.VERIFIED) &
-            (NGOProfile.created_at.between(start, end))
+    # Get NGO statistics - count unique NGO locations who received donations in the period
+    ngos_in_period_result = await db.execute(
+        select(func.count(func.distinct(DonationRequest.ngo_location_id))).where(
+            DonationRequest.donation_date.between(start, end)
         )
     )
-    verified_ngos = verified_ngos_result.scalar() or 0
+    verified_ngos = ngos_in_period_result.scalar() or 0
     
+    # Count NGO locations with pending donations in period
     pending_verifications_result = await db.execute(
-        select(func.count(NGOProfile.id)).where(
-            (NGOProfile.verification_status == NGOVerificationStatus.PENDING) &
-            (NGOProfile.created_at.between(start, end))
+        select(func.count(func.distinct(DonationRequest.ngo_location_id))).where(
+            (DonationRequest.status == 'pending') &
+            (DonationRequest.donation_date.between(start, end))
         )
     )
     pending_verifications = pending_verifications_result.scalar() or 0
@@ -604,10 +702,21 @@ async def get_all_donations(
     db: AsyncSession = Depends(get_db)
 ) -> List[Dict[str, Any]]:
     """
-    Get all donations in the system
+    Get all donations in the system with NGO and donor names
     """
     try:
-        query = select(DonationRequest).order_by(DonationRequest.created_at.desc())
+        from sqlalchemy.orm import selectinload, joinedload
+        
+        query = (
+            select(DonationRequest)
+            .options(
+                selectinload(DonationRequest.ngo_location)
+                .selectinload(NGOLocation.ngo),
+                joinedload(DonationRequest.donor)
+                .joinedload(DonorProfile.user)
+            )
+            .order_by(DonationRequest.created_at.desc())
+        )
         
         # Filter by status if provided
         if status and status != "all":
@@ -622,7 +731,7 @@ async def get_all_donations(
             # Get NGO location info and donor info
             ngo_name = ""
             location_name = ""
-            donor_name = ""
+            donor_name = "Anonymous"
             
             try:
                 if donation.ngo_location:
@@ -630,18 +739,15 @@ async def get_all_donations(
                     if donation.ngo_location.ngo:
                         ngo_name = donation.ngo_location.ngo.organization_name or ""
                 
-                # Get donor name
-                if donation.donor_id:
-                    donor_result = await db.execute(
-                        select(User).where(User.id == donation.donor_id)
-                    )
-                    donor_user = donor_result.scalar_one_or_none()
-                    if donor_user and donor_user.donor_profile:
-                        donor_name = donor_user.donor_profile.organization_name or donor_user.email
-                    elif donor_user:
-                        donor_name = donor_user.email
+                # Get donor name - use eager loaded relationship
+                if donation.donor:
+                    if donation.donor.organization_name:
+                        donor_name = donation.donor.organization_name
+                    elif donation.donor.user:
+                        # Use email if organization name not set
+                        donor_name = donation.donor.user.email.split('@')[0]  # Use part before @ as name
             except Exception as e:
-                print(f"Error loading related data: {e}")
+                print(f"Error loading related data for donation {donation.id}: {e}")
             
             status_str = donation.status.value if hasattr(donation.status, 'value') else str(donation.status)
             

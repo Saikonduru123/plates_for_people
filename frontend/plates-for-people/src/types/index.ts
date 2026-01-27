@@ -68,6 +68,10 @@ export interface NGOProfile {
   verification_status: NGOVerificationStatus;
   verified_at: string | null;
   rejection_reason: string | null;
+  default_breakfast_capacity?: number;
+  default_lunch_capacity?: number;
+  default_snacks_capacity?: number;
+  default_dinner_capacity?: number;
 }
 
 export interface NGOLocation {

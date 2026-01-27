@@ -95,15 +95,22 @@ const NotificationBell: React.FC = () => {
         await fetchNotifications(); // Refresh to update count
       }
 
-      // Navigate to related entity based on type
-      const rolePrefix = user?.role === 'donor' ? 'donor' : 'ngo';
-
-      if (notification.notification_type === 'ngo_registration' && user?.role === 'admin') {
-        history.push('/admin/ngos/pending');
-      } else if (notification.notification_type === 'location_added' && user?.role === 'admin') {
-        history.push('/admin/ngos');
-      } else if (notification.related_entity_type === 'donation' && notification.related_entity_id) {
-        history.push(`/${rolePrefix}/donation/${notification.related_entity_id}`);
+      // Navigate to related entity based on role and notification type
+      if (user?.role === 'admin') {
+        // Admin NGO registration notification
+        if (notification.notification_type === 'ngo_registration') {
+          history.push('/admin/verify-ngos');
+        }
+        // Admin location added notification - navigate to notifications page to show location details
+        else if (notification.notification_type === 'location_added') {
+          history.push('/notifications');
+        }
+      } else {
+        // Donor/NGO notifications
+        const rolePrefix = user?.role === 'donor' ? 'donor' : 'ngo';
+        if (notification.related_entity_type === 'donation' && notification.related_entity_id) {
+          history.push(`/${rolePrefix}/donation/${notification.related_entity_id}`);
+        }
       }
 
       setShowPopover(false);

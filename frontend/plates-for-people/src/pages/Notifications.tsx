@@ -19,9 +19,14 @@ import {
   IonText,
   IonIcon,
   IonBadge,
+  IonModal,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent,
   RefresherEventDetail,
 } from '@ionic/react';
-import { trashOutline, checkmarkDone } from 'ionicons/icons';
+import { trashOutline, checkmarkDone, locationOutline } from 'ionicons/icons';
 import { notificationService } from '../services/notificationService';
 import { useHistory } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -49,6 +54,8 @@ const Notifications: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
   const [unreadCount, setUnreadCount] = useState(0);
+  const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
   const history = useHistory();
   const { user } = useAuth();
 
@@ -82,15 +89,27 @@ const Notifications: React.FC = () => {
         await fetchNotifications();
       }
 
-      // Navigate to related entity based on type
-      const rolePrefix = user?.role === 'donor' ? 'donor' : 'ngo';
+      // Show detail modal for location added notifications (admin only)
+      if (user?.role === 'admin' && notification.notification_type === 'location_added') {
+        setSelectedNotification(notification);
+        setShowDetailModal(true);
+        return;
+      }
 
-      if (notification.notification_type === 'ngo_registration' && user?.role === 'admin') {
-        history.push('/admin/ngos/pending');
-      } else if (notification.notification_type === 'location_added' && user?.role === 'admin') {
-        history.push('/admin/ngos');
-      } else if (notification.related_entity_type === 'donation' && notification.related_entity_id) {
-        history.push(`/${rolePrefix}/donation/${notification.related_entity_id}`);
+      // Navigate to related entity based on role and notification type
+      if (user?.role === 'admin') {
+        // Admin NGO registration notification
+        if (notification.notification_type === 'ngo_registration') {
+          history.push('/admin/verify-ngos');
+        }
+        // Admin location added notification - stays on notifications page to show details
+        // Already on the notifications page, so no navigation needed
+      } else {
+        // Donor/NGO notifications
+        const rolePrefix = user?.role === 'donor' ? 'donor' : 'ngo';
+        if (notification.related_entity_type === 'donation' && notification.related_entity_id) {
+          history.push(`/${rolePrefix}/donation/${notification.related_entity_id}`);
+        }
       }
     } catch (error) {
       console.error('Error handling notification click:', error);
@@ -255,6 +274,48 @@ const Notifications: React.FC = () => {
           </>
         )}
       </IonContent>
+
+      {/* Location Details Modal */}
+      <IonModal isOpen={showDetailModal} onDidDismiss={() => setShowDetailModal(false)}>
+        <IonHeader>
+          <IonToolbar>
+            <IonButtons slot="start">
+              <IonButton onClick={() => setShowDetailModal(false)}>Close</IonButton>
+            </IonButtons>
+            <IonTitle>Location Added</IonTitle>
+          </IonToolbar>
+        </IonHeader>
+        <IonContent>
+          {selectedNotification && (
+            <div style={{ padding: '16px' }}>
+              <IonCard>
+                <IonCardHeader>
+                  <IonCardTitle>
+                    <IonIcon icon={locationOutline} /> {selectedNotification.title}
+                  </IonCardTitle>
+                </IonCardHeader>
+                <IonCardContent>
+                  <p style={{ fontSize: '16px', marginBottom: '16px' }}>{selectedNotification.message}</p>
+                  <div style={{ marginTop: '16px' }}>
+                    <p style={{ color: '#a0aec0', fontSize: '14px' }}>Received {new Date(selectedNotification.created_at).toLocaleString()}</p>
+                  </div>
+                  <IonButton
+                    expand="block"
+                    color="primary"
+                    onClick={() => {
+                      setShowDetailModal(false);
+                      // Navigate to admin users page
+                      history.push('/admin/users');
+                    }}
+                    style={{ marginTop: '24px' }}>
+                    View NGO Profile
+                  </IonButton>
+                </IonCardContent>
+              </IonCard>
+            </div>
+          )}
+        </IonContent>
+      </IonModal>
     </IonPage>
   );
 };
