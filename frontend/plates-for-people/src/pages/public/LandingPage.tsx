@@ -1,24 +1,6 @@
 import React from 'react';
-import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonButton,
-  IonIcon,
-  IonCard,
-  IonCardContent,
-} from '@ionic/react';
-import {
-  heartOutline,
-  peopleOutline,
-  restaurantOutline,
-  statsChartOutline,
-  shieldCheckmarkOutline,
-  mapOutline,
-  arrowForward,
-} from 'ionicons/icons';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonIcon, IonCard, IonCardContent } from '@ionic/react';
+import { peopleOutline, restaurantOutline, statsChartOutline, shieldCheckmarkOutline, mapOutline, arrowForward } from 'ionicons/icons';
 import { useHistory } from 'react-router-dom';
 import './LandingPage.css';
 
@@ -44,9 +26,7 @@ const LandingPage: React.FC = () => {
             <IonButton fill="clear" onClick={handleLogin}>
               Login
             </IonButton>
-            <IonButton onClick={handleRegister}>
-              Get Started
-            </IonButton>
+            <IonButton onClick={handleRegister}>Get Started</IonButton>
           </div>
         </IonToolbar>
       </IonHeader>
@@ -90,9 +70,7 @@ const LandingPage: React.FC = () => {
         {/* Features Section */}
         <section className="features-section">
           <h2 className="section-title">How It Works</h2>
-          <p className="section-subtitle">
-            Our platform makes food donation simple, transparent, and impactful
-          </p>
+          <p className="section-subtitle">Our platform makes food donation simple, transparent, and impactful</p>
 
           <div className="features-grid">
             <IonCard className="feature-card">
@@ -102,7 +80,8 @@ const LandingPage: React.FC = () => {
                 </div>
                 <h3>Easy Donation</h3>
                 <p>
-                  Donors can quickly list surplus food with details about quantity, type, and pickup location. Our smart system matches you with the nearest NGOs.
+                  Donors can quickly list surplus food with details about quantity, type, and pickup location. Our smart system matches you with the
+                  nearest NGOs.
                 </p>
               </IonCardContent>
             </IonCard>
@@ -114,7 +93,8 @@ const LandingPage: React.FC = () => {
                 </div>
                 <h3>Smart Matching</h3>
                 <p>
-                  Our intelligent algorithm matches food donations with nearby NGOs based on location, capacity, and food preferences for maximum efficiency.
+                  Our intelligent algorithm matches food donations with nearby NGOs based on location, capacity, and food preferences for maximum
+                  efficiency.
                 </p>
               </IonCardContent>
             </IonCard>
@@ -126,7 +106,8 @@ const LandingPage: React.FC = () => {
                 </div>
                 <h3>Verified NGOs</h3>
                 <p>
-                  All NGO partners are thoroughly verified by our admin team. Every organization is vetted for authenticity and commitment to serving communities.
+                  All NGO partners are thoroughly verified by our admin team. Every organization is vetted for authenticity and commitment to serving
+                  communities.
                 </p>
               </IonCardContent>
             </IonCard>
@@ -137,20 +118,17 @@ const LandingPage: React.FC = () => {
                   <IonIcon icon={statsChartOutline} />
                 </div>
                 <h3>Real-time Tracking</h3>
-                <p>
-                  Track your donations from creation to completion. Get updates when NGOs accept, pick up, and distribute your food donations.
-                </p>
+                <p>Track your donations from creation to completion. Get updates when NGOs accept, pick up, and distribute your food donations.</p>
               </IonCardContent>
             </IonCard>
 
             <IonCard className="feature-card">
               <IonCardContent>
-                <div className="feature-icon" style={{ background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)' }}>
-                  <IonIcon icon={heartOutline} />
-                </div>
+                <div className="feature-icon" style={{ background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)' }}></div>
                 <h3>Impact Metrics</h3>
                 <p>
-                  See the difference you're making with detailed analytics. Track meals provided, people fed, and environmental impact of reducing food waste.
+                  See the difference you're making with detailed analytics. Track meals provided, people fed, and environmental impact of reducing
+                  food waste.
                 </p>
               </IonCardContent>
             </IonCard>
@@ -174,10 +152,13 @@ const LandingPage: React.FC = () => {
           <div className="mission-content">
             <h2 className="section-title">Our Mission</h2>
             <p className="mission-text">
-              Every day, tons of edible food goes to waste while millions go hungry. <strong>Plates for People</strong> is on a mission to change that. We've built a platform that makes it effortless for individuals, restaurants, and businesses to donate surplus food to verified NGOs who serve those in need.
+              Every day, tons of edible food goes to waste while millions go hungry. <strong>Plates for People</strong> is on a mission to change
+              that. We've built a platform that makes it effortless for individuals, restaurants, and businesses to donate surplus food to verified
+              NGOs who serve those in need.
             </p>
             <p className="mission-text">
-              We believe that food is a fundamental right, not a privilege. Through technology and community collaboration, we're creating a world where no one goes to bed hungry and no good food goes to waste.
+              We believe that food is a fundamental right, not a privilege. Through technology and community collaboration, we're creating a world
+              where no one goes to bed hungry and no good food goes to waste.
             </p>
             <div className="mission-values">
               <div className="value-item">
@@ -220,7 +201,9 @@ const LandingPage: React.FC = () => {
         <footer className="landing-footer">
           <div className="footer-content">
             <div className="footer-brand">
-              <h3><span className="logo-icon">🍽️</span> Plates for People</h3>
+              <h3>
+                <span className="logo-icon">🍽️</span> Plates for People
+              </h3>
               <p>Making every meal count</p>
             </div>
             <div className="footer-links">
@@ -262,4 +245,3 @@ const LandingPage: React.FC = () => {
 };
 
 export default LandingPage;
-
