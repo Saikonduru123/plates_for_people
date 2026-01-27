@@ -47,6 +47,7 @@
   max-height: 500px;
   display: flex;
   flex-direction: column;
+  background-color: #ffff;
 }
 
 .notification-header {
@@ -61,6 +62,7 @@
   margin: 0;
   font-size: 18px;
   font-weight: 600;
+  color: #000;
 }
 
 .notification-loading {

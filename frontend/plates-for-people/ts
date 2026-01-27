@@ -1,5 +1,0 @@
- id |           email           | role  | donor_profile_id | ngo_profile_id 
-----+---------------------------+-------+------------------+----------------
- 14 | admin@platesforpeople.org | ADMIN |                  |               
-(1 row)
-

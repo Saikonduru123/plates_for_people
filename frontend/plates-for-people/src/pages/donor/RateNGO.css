@@ -164,7 +164,7 @@
 /* Dark mode adjustments */
 @media (prefers-color-scheme: dark) {
   .rate-ngo-content {
-    --background: var(--ion-background-color, #121212);
+    --background: var(--ion-background-color, #ffffff);
   }
 
   .ngo-info-card {
