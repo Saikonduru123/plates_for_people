@@ -25,6 +25,7 @@ import ManageUsers from './pages/admin/ManageUsers';
 import EditNGO from './pages/admin/EditNGO';
 import AdminReports from './pages/admin/AdminReports';
 import AdminDonations from './pages/admin/AdminDonations';
+import LandinPage from './pages/public/LandingPage';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -94,6 +95,7 @@ const AppRoutes: React.FC = () => {
   return (
     <IonRouterOutlet>
       {/* Public Routes */}
+      <Route exact path="/home" component={LandinPage} />
       <Route exact path="/login" component={Login} />
       <Route exact path="/register" component={Register} />
 
