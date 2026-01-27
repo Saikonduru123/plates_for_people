@@ -56,6 +56,9 @@ const AdminReports: React.FC = () => {
   useEffect(() => {
     loadReport();
     loadDonations();
+    // Clear custom date range when period changes
+    setStartDate('');
+    setEndDate('');
   }, [selectedPeriod]);
 
   useEffect(() => {
@@ -65,10 +68,15 @@ const AdminReports: React.FC = () => {
   // When custom date range is set, reload report with new dates
   const handleDateChange = async (newStartDate?: string, newEndDate?: string) => {
     try {
-      const start = newStartDate || startDate;
-      const end = newEndDate || endDate;
+      const start = newStartDate !== undefined ? newStartDate : startDate;
+      const end = newEndDate !== undefined ? newEndDate : endDate;
 
-      if (start || end) {
+      if (start && end) {
+        // Both dates provided - use custom range
+        const data = await adminService.getSystemReport(start, end);
+        setReport(data);
+      } else if (start || end) {
+        // Only one date provided - use partial range
         const data = await adminService.getSystemReport(
           start || new Date('2020-01-01').toISOString().split('T')[0],
           end || new Date().toISOString().split('T')[0],
@@ -172,40 +180,79 @@ const AdminReports: React.FC = () => {
 
   const applyFilters = () => {
     if (!donations || !Array.isArray(donations)) {
+      console.log('No donations to filter');
       setFilteredDonations([]);
       return;
     }
+
+    console.log('Starting filter with:', {
+      totalDonations: donations.length,
+      selectedNGO,
+      selectedDonor,
+      startDate,
+      endDate,
+    });
 
     let filtered = [...donations];
 
     // Filter by NGO
     if (selectedNGO) {
+      console.log('Filtering by NGO:', selectedNGO);
+      const beforeNGOFilter = filtered.length;
       filtered = filtered.filter((d) => d.ngo_name === selectedNGO);
+      console.log(`NGO filter: ${beforeNGOFilter} -> ${filtered.length}`);
     }
 
     // Filter by Donor
     if (selectedDonor) {
+      console.log('Filtering by Donor:', selectedDonor);
+      const beforeDonorFilter = filtered.length;
       filtered = filtered.filter((d) => d.donor_name === selectedDonor);
+      console.log(`Donor filter: ${beforeDonorFilter} -> ${filtered.length}`);
     }
 
     // Filter by date range
     if (startDate) {
+      console.log('Filtering by start date:', startDate);
+      const beforeStartFilter = filtered.length;
       filtered = filtered.filter((d) => {
-        const donationDate = new Date(d.donation_date || d.created_at || '');
+        if (!d.donation_date && !d.created_at) return false;
+
+        const donationDateStr = d.donation_date || d.created_at || '';
+        const donationDate = new Date(donationDateStr);
         const filterStartDate = new Date(startDate);
-        return donationDate >= filterStartDate;
+
+        // Normalize to date only (remove time component)
+        donationDate.setHours(0, 0, 0, 0);
+        filterStartDate.setHours(0, 0, 0, 0);
+
+        const result = donationDate >= filterStartDate;
+        return result;
       });
+      console.log(`Start date filter: ${beforeStartFilter} -> ${filtered.length}`);
     }
 
     if (endDate) {
+      console.log('Filtering by end date:', endDate);
+      const beforeEndFilter = filtered.length;
       filtered = filtered.filter((d) => {
-        const donationDate = new Date(d.donation_date || d.created_at || '');
+        if (!d.donation_date && !d.created_at) return false;
+
+        const donationDateStr = d.donation_date || d.created_at || '';
+        const donationDate = new Date(donationDateStr);
         const filterEndDate = new Date(endDate);
+
+        // Normalize donation date to start of day, filter date to end of day
+        donationDate.setHours(0, 0, 0, 0);
         filterEndDate.setHours(23, 59, 59, 999);
-        return donationDate <= filterEndDate;
+
+        const result = donationDate <= filterEndDate;
+        return result;
       });
+      console.log(`End date filter: ${beforeEndFilter} -> ${filtered.length}`);
     }
 
+    console.log('Final filtered donations:', filtered.length);
     setFilteredDonations(filtered);
   };
 
@@ -519,7 +566,27 @@ const AdminReports: React.FC = () => {
 
           {/* Donations Table Section */}
           <div className="donations-table-section">
-            <h2 className="section-title">All Donations ({filteredDonations.length})</h2>
+            <h2 className="section-title">
+              All Donations ({filteredDonations.length})
+              <IonButton
+                size="small"
+                fill="clear"
+                onClick={() => {
+                  console.log('=== DEBUG INFO ===');
+                  console.log('Total donations:', donations.length);
+                  console.log('Filtered donations:', filteredDonations.length);
+                  console.log('Sample donation:', donations[0]);
+                  console.log('NGO List:', ngoList);
+                  console.log('Donor List:', donorList);
+                  console.log('Selected NGO:', selectedNGO);
+                  console.log('Selected Donor:', selectedDonor);
+                  console.log('Date Range:', { startDate, endDate });
+                  console.log('==================');
+                }}
+                style={{ marginLeft: '10px' }}>
+                🔍 Debug
+              </IonButton>
+            </h2>
 
             {filteredDonations.length === 0 ? (
               <div className="empty-state">

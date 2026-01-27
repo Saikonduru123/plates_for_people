@@ -20,6 +20,7 @@ import {
   IonBadge,
   IonToggle,
   useIonToast,
+  useIonViewWillEnter,
   RefresherEventDetail,
 } from '@ionic/react';
 import {
@@ -48,9 +49,15 @@ const ManageLocations: React.FC = () => {
   const [locationToDelete, setLocationToDelete] = useState<NGOLocation | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
+  // Load locations when component mounts
   useEffect(() => {
     loadLocations();
   }, []);
+
+  // Reload locations every time the page comes into view (handles back navigation)
+  useIonViewWillEnter(() => {
+    loadLocations();
+  });
 
   const loadLocations = async () => {
     try {
@@ -296,6 +303,7 @@ const ManageLocations: React.FC = () => {
           ) : (
             <>
               <div className="locations-header">
+                <h2 className="page-heading">My Locations</h2>
                 <p className="locations-count">
                   {locations.length} {locations.length === 1 ? 'Location' : 'Locations'}
                 </p>

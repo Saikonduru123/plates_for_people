@@ -74,7 +74,17 @@ const NotificationBell: React.FC = () => {
       fetchNotifications();
     }, 30000);
 
-    return () => clearInterval(interval);
+    // Listen for custom refresh event
+    const handleRefreshNotifications = () => {
+      console.log('Refreshing notifications from event');
+      fetchNotifications();
+    };
+    window.addEventListener('refreshNotifications', handleRefreshNotifications);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('refreshNotifications', handleRefreshNotifications);
+    };
   }, []);
 
   const handleNotificationClick = async (notification: Notification) => {

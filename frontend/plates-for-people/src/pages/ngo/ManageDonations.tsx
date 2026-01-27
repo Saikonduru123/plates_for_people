@@ -24,6 +24,7 @@ import {
   IonTextarea,
   IonModal,
   useIonToast,
+  useIonViewWillEnter,
   RefresherEventDetail,
 } from '@ionic/react';
 import {
@@ -64,6 +65,24 @@ const ManageDonations: React.FC = () => {
 
   useEffect(() => {
     loadDonations();
+  }, []);
+
+  // Reload donations every time the page comes into view (handles back navigation)
+  useIonViewWillEnter(() => {
+    loadDonations();
+  });
+
+  // Listen for donation refresh events (when new donations are created by donors)
+  useEffect(() => {
+    const handleRefreshDonations = () => {
+      console.log('[ManageDonations] Refresh event received, reloading donations...');
+      loadDonations();
+    };
+
+    window.addEventListener('refreshDonations', handleRefreshDonations);
+    return () => {
+      window.removeEventListener('refreshDonations', handleRefreshDonations);
+    };
   }, []);
 
   useEffect(() => {
@@ -109,11 +128,20 @@ const ManageDonations: React.FC = () => {
       console.log('[ManageDonations] Sample donation status:', donations[0].status);
       console.log('[ManageDonations] Sample donation food_type:', donations[0].food_type);
       console.log('[ManageDonations] Sample donation meal_type:', donations[0].meal_type);
+      // Log all statuses for debugging
+      const allStatuses = donations.map((d) => d.status);
+      console.log('[ManageDonations] All donation statuses:', allStatuses);
     }
 
     // Filter by status (handle case-insensitive comparison)
     if (selectedStatus !== 'all') {
-      filtered = filtered.filter((d) => d.status.toLowerCase() === selectedStatus.toLowerCase());
+      filtered = filtered.filter((d) => {
+        const matches = d.status.toLowerCase() === selectedStatus.toLowerCase();
+        if (!matches) {
+          console.log(`[ManageDonations] Status mismatch: "${d.status.toLowerCase()}" !== "${selectedStatus.toLowerCase()}"`);
+        }
+        return matches;
+      });
     }
 
     console.log('[ManageDonations] After status filter count:', filtered.length);
@@ -143,7 +171,7 @@ const ManageDonations: React.FC = () => {
 
   const getStatusCount = (status: string): number => {
     if (status === 'all') return donations.length;
-    return donations.filter((d) => d.status === status).length;
+    return donations.filter((d) => d.status.toLowerCase() === status.toLowerCase()).length;
   };
 
   const handleConfirmDonation = async () => {
@@ -273,8 +301,8 @@ const ManageDonations: React.FC = () => {
   };
 
   const renderDonationCard = (donation: Donation) => {
-    const canConfirm = donation.status === 'pending';
-    const canComplete = donation.status === 'confirmed';
+    const canConfirm = donation.status.toLowerCase() === 'pending';
+    const canComplete = donation.status.toLowerCase() === 'confirmed';
 
     return (
       <IonCard key={donation.id} className="donation-request-card">

@@ -21,8 +21,15 @@
 
 /* Locations Header */
 .locations-header {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   padding: 0 4px;
+}
+
+.page-heading {
+  margin: 0 0 8px 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--ion-color-primary, #3880ff);
 }
 
 .locations-count {

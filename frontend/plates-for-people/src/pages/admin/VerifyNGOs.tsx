@@ -35,7 +35,6 @@ import {
   personOutline,
   cardOutline,
   hourglassOutline,
-  downloadOutline,
 } from 'ionicons/icons';
 import { adminService } from '../../services/adminService';
 import type { NGOProfile } from '../../types';
@@ -103,7 +102,6 @@ const VerifyNGOs: React.FC = () => {
       ngo.contact_person,
       ngo.phone,
       ngo.verification_status.charAt(0).toUpperCase() + ngo.verification_status.slice(1),
-      ngo.created_at ? new Date(ngo.created_at).toLocaleDateString() : '',
     ]);
 
     const csvContent = [headers.join(','), ...rows.map((row) => row.map((cell) => `"${cell}"`).join(','))].join('\n');
@@ -130,6 +128,10 @@ const VerifyNGOs: React.FC = () => {
         duration: 3000,
         color: 'success',
       });
+
+      // Trigger notification refresh
+      window.dispatchEvent(new Event('refreshNotifications'));
+
       await loadAllNGOs();
     } catch (error: any) {
       present({
@@ -188,6 +190,9 @@ const VerifyNGOs: React.FC = () => {
         duration: 3000,
         color: 'success',
       });
+
+      // Trigger notification refresh
+      window.dispatchEvent(new Event('refreshNotifications'));
 
       // Close modal and refresh list
       setShowRejectModal(false);

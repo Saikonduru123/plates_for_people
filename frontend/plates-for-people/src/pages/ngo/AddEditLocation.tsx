@@ -368,6 +368,9 @@ const AddEditLocation: React.FC = () => {
       } else {
         await ngoService.createLocation(locationData);
         showToastMessage('Location created successfully!', 'success');
+
+        // Trigger notification refresh for admin
+        window.dispatchEvent(new Event('refreshNotifications'));
       }
 
       // Navigate back after a short delay

@@ -3,6 +3,7 @@ Notification service
 Helper functions to create notifications
 """
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from app.models import Notification
 
 
@@ -204,11 +205,11 @@ async def notify_admins_ngo_registration(
     ngo_id: int
 ):
     """Notify all admins when a new NGO registers"""
-    from app.models import User
+    from app.models import User, UserRole
     
     # Get all admin users
     result = await db.execute(
-        db.query(User).filter(User.role == 'admin')
+        select(User).where(User.role == UserRole.ADMIN)
     )
     admin_users = result.scalars().all()
     
@@ -236,11 +237,11 @@ async def notify_admins_location_added(
     ngo_id: int
 ):
     """Notify all admins when an NGO adds a new location"""
-    from app.models import User
+    from app.models import User, UserRole
     
     # Get all admin users
     result = await db.execute(
-        db.query(User).filter(User.role == 'admin')
+        select(User).where(User.role == UserRole.ADMIN)
     )
     admin_users = result.scalars().all()
     

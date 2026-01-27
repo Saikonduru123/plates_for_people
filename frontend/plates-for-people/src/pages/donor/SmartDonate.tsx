@@ -265,6 +265,12 @@ const SmartDonatePage: React.FC = () => {
         color: 'success',
       });
 
+      // Trigger notification refresh for donors
+      window.dispatchEvent(new Event('refreshNotifications'));
+
+      // Trigger donation list refresh for NGOs
+      window.dispatchEvent(new Event('refreshDonations'));
+
       // Navigate to donation details
       setTimeout(() => {
         history.push(`/donor/donation/${donation.id}`);
@@ -605,9 +611,9 @@ const SmartDonatePage: React.FC = () => {
         <IonToolbar>
           <IonButtons slot="start">
             {step === 1 ? (
-              <IonBackButton defaultHref="/donor/dashboard" />
+              <IonBackButton defaultHref="/donor/dashboard" className="large-back-button" />
             ) : (
-              <IonButton onClick={() => setStep((step - 1) as 1 | 2 | 3)}>
+              <IonButton onClick={() => setStep((step - 1) as 1 | 2 | 3)} className="large-back-button">
                 <IonIcon slot="icon-only" icon={arrowBack} />
               </IonButton>
             )}

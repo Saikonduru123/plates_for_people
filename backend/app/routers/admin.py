@@ -528,10 +528,10 @@ async def get_system_report(
     else:
         end = datetime.now()
     
-    # Get donation statistics
+    # Get donation statistics (filter by donation_date, not created_at)
     total_donations_result = await db.execute(
         select(func.count(DonationRequest.id)).where(
-            DonationRequest.created_at.between(start, end)
+            DonationRequest.donation_date.between(start, end)
         )
     )
     total_donations = total_donations_result.scalar() or 0
@@ -539,7 +539,7 @@ async def get_system_report(
     completed_donations_result = await db.execute(
         select(func.count(DonationRequest.id)).where(
             (DonationRequest.status == 'completed') &
-            (DonationRequest.created_at.between(start, end))
+            (DonationRequest.donation_date.between(start, end))
         )
     )
     completed_donations = completed_donations_result.scalar() or 0
@@ -547,7 +547,7 @@ async def get_system_report(
     pending_donations_result = await db.execute(
         select(func.count(DonationRequest.id)).where(
             (DonationRequest.status == 'pending') &
-            (DonationRequest.created_at.between(start, end))
+            (DonationRequest.donation_date.between(start, end))
         )
     )
     pending_donations = pending_donations_result.scalar() or 0
@@ -619,15 +619,27 @@ async def get_all_donations(
         # Convert to dict format
         donations_list = []
         for donation in donations:
-            # Get NGO location info
+            # Get NGO location info and donor info
             ngo_name = ""
             location_name = ""
+            donor_name = ""
             
             try:
                 if donation.ngo_location:
                     location_name = donation.ngo_location.location_name or ""
                     if donation.ngo_location.ngo:
                         ngo_name = donation.ngo_location.ngo.organization_name or ""
+                
+                # Get donor name
+                if donation.donor_id:
+                    donor_result = await db.execute(
+                        select(User).where(User.id == donation.donor_id)
+                    )
+                    donor_user = donor_result.scalar_one_or_none()
+                    if donor_user and donor_user.donor_profile:
+                        donor_name = donor_user.donor_profile.organization_name or donor_user.email
+                    elif donor_user:
+                        donor_name = donor_user.email
             except Exception as e:
                 print(f"Error loading related data: {e}")
             
@@ -653,6 +665,7 @@ async def get_all_donations(
                 "cancelled_at": donation.cancelled_at.isoformat() if donation.cancelled_at else None,
                 "ngo_name": ngo_name,
                 "location_name": location_name,
+                "donor_name": donor_name,
             })
         
         return donations_list

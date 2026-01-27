@@ -342,6 +342,9 @@ const CreateDonation: React.FC = () => {
         color: 'success',
       });
 
+      // Trigger notification refresh
+      window.dispatchEvent(new Event('refreshNotifications'));
+
       // Navigate to donation details
       router.push(`/donor/donation/${response.id}`, 'forward', 'replace');
     } catch (error: any) {
