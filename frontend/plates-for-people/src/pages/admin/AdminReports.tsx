@@ -103,6 +103,21 @@ const AdminReports: React.FC = () => {
       const start = newStartDate !== undefined ? newStartDate : startDate;
       const end = newEndDate !== undefined ? newEndDate : endDate;
 
+      // Validate date range
+      if (start && end) {
+        const startDateObj = new Date(start);
+        const endDateObj = new Date(end);
+
+        if (startDateObj > endDateObj) {
+          present({
+            message: 'Invalid date range. End date must be after or equal to start date.',
+            duration: 3000,
+            color: 'danger',
+          });
+          return;
+        }
+      }
+
       if (start && end) {
         // Both dates provided - use custom range
         const data = await adminService.getSystemReport(start, end);
@@ -226,6 +241,18 @@ const AdminReports: React.FC = () => {
       console.log('No donations to filter');
       setFilteredDonations([]);
       return;
+    }
+
+    // Validate date range before filtering
+    if (startDate && endDate) {
+      const startDateObj = new Date(startDate);
+      const endDateObj = new Date(endDate);
+
+      if (startDateObj > endDateObj) {
+        console.log('Invalid date range detected during filtering');
+        setFilteredDonations([]);
+        return;
+      }
     }
 
     console.log('Starting filter with:', {
