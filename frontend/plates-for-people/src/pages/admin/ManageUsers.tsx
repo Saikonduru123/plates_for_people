@@ -47,6 +47,7 @@ const ManageUsers: React.FC = () => {
   const [editFormData, setEditFormData] = useState<Partial<NGOProfile>>({});
   const [savingNgo, setSavingNgo] = useState(false);
   const [settingCapacityId, setSettingCapacityId] = useState<number | null>(null);
+  const [selectedLocationId, setSelectedLocationId] = useState<number | null>(null);
   const [capacityFormData, setCapacityFormData] = useState({
     breakfast: 0,
     lunch: 0,
@@ -247,42 +248,86 @@ const ManageUsers: React.FC = () => {
     setEditFormData({});
   };
 
-  const handleSetCapacity = (user: User) => {
+  const handleSetCapacity = (user: User, locationId?: number) => {
     const ngoProfile = ngoProfiles[user.id];
     if (ngoProfile && ngoProfile.id) {
       setSettingCapacityId(user.id);
-      // Initialize capacity form with existing values if present
-      setCapacityFormData({
-        breakfast: ngoProfile.default_breakfast_capacity || 0,
-        lunch: ngoProfile.default_lunch_capacity || 0,
-        snacks: ngoProfile.default_snacks_capacity || 0,
-        dinner: ngoProfile.default_dinner_capacity || 0,
-      });
+
+      // If locationId provided, use that location's capacity
+      if (locationId && ngoProfile.locations) {
+        const location = ngoProfile.locations.find((loc) => loc.id === locationId);
+        if (location) {
+          setSelectedLocationId(locationId);
+          setCapacityFormData({
+            breakfast: location.default_breakfast_capacity || 0,
+            lunch: location.default_lunch_capacity || 0,
+            snacks: location.default_snacks_capacity || 0,
+            dinner: location.default_dinner_capacity || 0,
+          });
+        }
+      } else {
+        // No specific location selected
+        setSelectedLocationId(null);
+        setCapacityFormData({
+          breakfast: 0,
+          lunch: 0,
+          snacks: 0,
+          dinner: 0,
+        });
+      }
     }
   };
 
   const handleSaveCapacity = async (user: User) => {
     try {
       setSavingCapacity(true);
-      // Save capacity to backend
-      await adminService.updateNGOCapacity(user.id, capacityFormData);
+
+      if (!selectedLocationId) {
+        present({
+          message: 'Please select a location first',
+          duration: 2000,
+          color: 'warning',
+        });
+        return;
+      }
+
+      // Save capacity to backend for specific location
+      await adminService.updateLocationCapacity(selectedLocationId, capacityFormData);
+
       present({
         message: 'Capacity updated successfully',
         duration: 2000,
         color: 'success',
       });
-      // Optimistically update local state so UI reflects immediately
-      setNgoProfiles((prev) => ({
-        ...prev,
-        [user.id]: {
-          ...prev[user.id],
-          default_breakfast_capacity: capacityFormData.breakfast,
-          default_lunch_capacity: capacityFormData.lunch,
-          default_snacks_capacity: capacityFormData.snacks,
-          default_dinner_capacity: capacityFormData.dinner,
-        },
-      }));
+
+      // Update local state to reflect changes
+      setNgoProfiles((prev) => {
+        const ngoProfile = prev[user.id];
+        if (ngoProfile && ngoProfile.locations) {
+          const updatedLocations = ngoProfile.locations.map((loc) =>
+            loc.id === selectedLocationId
+              ? {
+                  ...loc,
+                  default_breakfast_capacity: capacityFormData.breakfast,
+                  default_lunch_capacity: capacityFormData.lunch,
+                  default_snacks_capacity: capacityFormData.snacks,
+                  default_dinner_capacity: capacityFormData.dinner,
+                }
+              : loc,
+          );
+          return {
+            ...prev,
+            [user.id]: {
+              ...ngoProfile,
+              locations: updatedLocations,
+            },
+          };
+        }
+        return prev;
+      });
+
       setSettingCapacityId(null);
+      setSelectedLocationId(null);
     } catch (err: any) {
       const message = err.response?.data?.detail || 'Failed to update capacity';
       present({
@@ -297,6 +342,7 @@ const ManageUsers: React.FC = () => {
 
   const handleCancelCapacity = () => {
     setSettingCapacityId(null);
+    setSelectedLocationId(null);
     setCapacityFormData({ breakfast: 0, lunch: 0, snacks: 0, dinner: 0 });
   };
 
@@ -533,39 +579,162 @@ const ManageUsers: React.FC = () => {
                                 <div style={{ marginBottom: '12px' }}>
                                   <label style={{ fontSize: '12px', color: '#a0aec0', fontWeight: '600' }}>Phone</label>
                                   <div style={{ fontSize: '14px', marginTop: '4px' }}>{ngoProfiles[user.id].phone}</div>
-                                  <div style={{ marginBottom: '16px', paddingTop: '12px', borderTop: '1px solid #e2e8f0' }}>
-                                    <h4 style={{ fontSize: '12px', fontWeight: '600', marginBottom: '12px', color: '#64748b' }}>Meal Capacity</h4>
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                                      <div>
-                                        <label style={{ fontSize: '11px', color: '#a0aec0', fontWeight: '600' }}>Breakfast</label>
-                                        <div style={{ fontSize: '14px', marginTop: '4px', fontWeight: '500' }}>
-                                          {ngoProfiles[user.id].default_breakfast_capacity || 0}
+
+                                  {/* Locations Section */}
+                                  {ngoProfiles[user.id].locations && ngoProfiles[user.id].locations!.length > 0 && (
+                                    <div style={{ marginTop: '16px', paddingTop: '12px', borderTop: '1px solid #e2e8f0' }}>
+                                      <h4 style={{ fontSize: '12px', fontWeight: '600', marginBottom: '12px', color: '#64748b' }}>
+                                        Locations ({ngoProfiles[user.id].locations!.length})
+                                      </h4>
+                                      {ngoProfiles[user.id].locations!.map((location, idx) => (
+                                        <div
+                                          key={location.id}
+                                          style={{
+                                            marginBottom: '12px',
+                                            padding: '12px',
+                                            backgroundColor: selectedLocationId === location.id ? '#eff6ff' : '#f8fafc',
+                                            borderRadius: '8px',
+                                            border: selectedLocationId === location.id ? '2px solid #3b82f6' : '1px solid #e2e8f0',
+                                          }}>
+                                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '8px' }}>
+                                            <div style={{ flex: 1 }}>
+                                              <div style={{ fontSize: '13px', fontWeight: '600', color: '#1e293b', marginBottom: '4px' }}>
+                                                {location.location_name}
+                                              </div>
+                                              <div style={{ fontSize: '11px', color: '#64748b' }}>
+                                                {location.city}, {location.state}
+                                              </div>
+                                            </div>
+                                            {selectedLocationId === location.id ? (
+                                              <div style={{ display: 'flex', gap: '6px' }}>
+                                                <IonButton
+                                                  size="small"
+                                                  fill="solid"
+                                                  color="success"
+                                                  onClick={() => handleSaveCapacity(user)}
+                                                  disabled={savingCapacity}
+                                                  style={{ '--padding-start': '12px', '--padding-end': '12px', fontSize: '11px' }}>
+                                                  {savingCapacity ? <IonSpinner name="dots" /> : 'Confirm'}
+                                                </IonButton>
+                                                <IonButton
+                                                  size="small"
+                                                  fill="outline"
+                                                  color="medium"
+                                                  onClick={handleCancelCapacity}
+                                                  style={{ '--padding-start': '12px', '--padding-end': '12px', fontSize: '11px' }}>
+                                                  Cancel
+                                                </IonButton>
+                                              </div>
+                                            ) : (
+                                              <IonButton
+                                                size="small"
+                                                fill="outline"
+                                                color="primary"
+                                                onClick={() => handleSetCapacity(user, location.id)}
+                                                style={{ '--padding-start': '12px', '--padding-end': '12px', fontSize: '11px' }}>
+                                                Set Capacity
+                                              </IonButton>
+                                            )}
+                                          </div>
+                                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '8px' }}>
+                                            <div>
+                                              <label style={{ fontSize: '10px', color: '#a0aec0', fontWeight: '600' }}>Breakfast</label>
+                                              {selectedLocationId === location.id ? (
+                                                <IonInput
+                                                  type="number"
+                                                  value={capacityFormData.breakfast}
+                                                  onIonInput={(e) =>
+                                                    setCapacityFormData({ ...capacityFormData, breakfast: parseInt(e.detail.value || '0') })
+                                                  }
+                                                  style={{
+                                                    marginTop: '2px',
+                                                    fontSize: '12px',
+                                                    '--background': 'white',
+                                                    '--padding-start': '8px',
+                                                    '--padding-end': '8px',
+                                                  }}
+                                                />
+                                              ) : (
+                                                <div style={{ fontSize: '12px', marginTop: '2px', fontWeight: '500' }}>
+                                                  {location.default_breakfast_capacity || 0}
+                                                </div>
+                                              )}
+                                            </div>
+                                            <div>
+                                              <label style={{ fontSize: '10px', color: '#a0aec0', fontWeight: '600' }}>Lunch</label>
+                                              {selectedLocationId === location.id ? (
+                                                <IonInput
+                                                  type="number"
+                                                  value={capacityFormData.lunch}
+                                                  onIonInput={(e) =>
+                                                    setCapacityFormData({ ...capacityFormData, lunch: parseInt(e.detail.value || '0') })
+                                                  }
+                                                  style={{
+                                                    marginTop: '2px',
+                                                    fontSize: '12px',
+                                                    '--background': 'white',
+                                                    '--padding-start': '8px',
+                                                    '--padding-end': '8px',
+                                                  }}
+                                                />
+                                              ) : (
+                                                <div style={{ fontSize: '12px', marginTop: '2px', fontWeight: '500' }}>
+                                                  {location.default_lunch_capacity || 0}
+                                                </div>
+                                              )}
+                                            </div>
+                                            <div>
+                                              <label style={{ fontSize: '10px', color: '#a0aec0', fontWeight: '600' }}>Snacks</label>
+                                              {selectedLocationId === location.id ? (
+                                                <IonInput
+                                                  type="number"
+                                                  value={capacityFormData.snacks}
+                                                  onIonInput={(e) =>
+                                                    setCapacityFormData({ ...capacityFormData, snacks: parseInt(e.detail.value || '0') })
+                                                  }
+                                                  style={{
+                                                    marginTop: '2px',
+                                                    fontSize: '12px',
+                                                    '--background': 'white',
+                                                    '--padding-start': '8px',
+                                                    '--padding-end': '8px',
+                                                  }}
+                                                />
+                                              ) : (
+                                                <div style={{ fontSize: '12px', marginTop: '2px', fontWeight: '500' }}>
+                                                  {location.default_snacks_capacity || 0}
+                                                </div>
+                                              )}
+                                            </div>
+                                            <div>
+                                              <label style={{ fontSize: '10px', color: '#a0aec0', fontWeight: '600' }}>Dinner</label>
+                                              {selectedLocationId === location.id ? (
+                                                <IonInput
+                                                  type="number"
+                                                  value={capacityFormData.dinner}
+                                                  onIonInput={(e) =>
+                                                    setCapacityFormData({ ...capacityFormData, dinner: parseInt(e.detail.value || '0') })
+                                                  }
+                                                  style={{
+                                                    marginTop: '2px',
+                                                    fontSize: '12px',
+                                                    '--background': 'white',
+                                                    '--padding-start': '8px',
+                                                    '--padding-end': '8px',
+                                                  }}
+                                                />
+                                              ) : (
+                                                <div style={{ fontSize: '12px', marginTop: '2px', fontWeight: '500' }}>
+                                                  {location.default_dinner_capacity || 0}
+                                                </div>
+                                              )}
+                                            </div>
+                                          </div>
                                         </div>
-                                      </div>
-                                      <div>
-                                        <label style={{ fontSize: '11px', color: '#a0aec0', fontWeight: '600' }}>Lunch</label>
-                                        <div style={{ fontSize: '14px', marginTop: '4px', fontWeight: '500' }}>
-                                          {ngoProfiles[user.id].default_lunch_capacity || 0}
-                                        </div>
-                                      </div>
-                                      <div>
-                                        <label style={{ fontSize: '11px', color: '#a0aec0', fontWeight: '600' }}>Snacks</label>
-                                        <div style={{ fontSize: '14px', marginTop: '4px', fontWeight: '500' }}>
-                                          {ngoProfiles[user.id].default_snacks_capacity || 0}
-                                        </div>
-                                      </div>
-                                      <div>
-                                        <label style={{ fontSize: '11px', color: '#a0aec0', fontWeight: '600' }}>Dinner</label>
-                                        <div style={{ fontSize: '14px', marginTop: '4px', fontWeight: '500' }}>
-                                          {ngoProfiles[user.id].default_dinner_capacity || 0}
-                                        </div>
-                                      </div>
+                                      ))}
                                     </div>
-                                  </div>
+                                  )}
                                 </div>
-                                <IonButton expand="block" color="primary" style={{ marginTop: '12px' }} onClick={() => handleSetCapacity(user)}>
-                                  Set Capacity
-                                </IonButton>
                               </div>
                             )}
                           </div>
@@ -596,61 +765,6 @@ const ManageUsers: React.FC = () => {
                             </div>
                           </div>
                         ) : null}
-
-                        {/* Capacity Setting Form */}
-                        {settingCapacityId === user.id && user.role === 'ngo' && (
-                          <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #e2e8f0' }}>
-                            <h3 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '12px' }}>Set Meal Capacity</h3>
-                            <div style={{ marginBottom: '12px' }}>
-                              <label style={{ fontSize: '12px', color: '#a0aec0', fontWeight: '600' }}>Breakfast Capacity</label>
-                              <IonInput
-                                type="number"
-                                value={capacityFormData.breakfast || 0}
-                                onIonInput={(e) => setCapacityFormData({ ...capacityFormData, breakfast: parseInt(e.detail.value || '0') })}
-                                placeholder="Enter breakfast capacity"
-                                style={{ marginTop: '4px', fontSize: '14px' }}
-                              />
-                            </div>
-                            <div style={{ marginBottom: '12px' }}>
-                              <label style={{ fontSize: '12px', color: '#a0aec0', fontWeight: '600' }}>Lunch Capacity</label>
-                              <IonInput
-                                type="number"
-                                value={capacityFormData.lunch || 0}
-                                onIonInput={(e) => setCapacityFormData({ ...capacityFormData, lunch: parseInt(e.detail.value || '0') })}
-                                placeholder="Enter lunch capacity"
-                                style={{ marginTop: '4px', fontSize: '14px' }}
-                              />
-                            </div>
-                            <div style={{ marginBottom: '12px' }}>
-                              <label style={{ fontSize: '12px', color: '#a0aec0', fontWeight: '600' }}>Snacks Capacity</label>
-                              <IonInput
-                                type="number"
-                                value={capacityFormData.snacks || 0}
-                                onIonInput={(e) => setCapacityFormData({ ...capacityFormData, snacks: parseInt(e.detail.value || '0') })}
-                                placeholder="Enter snacks capacity"
-                                style={{ marginTop: '4px', fontSize: '14px' }}
-                              />
-                            </div>
-                            <div style={{ marginBottom: '12px' }}>
-                              <label style={{ fontSize: '12px', color: '#a0aec0', fontWeight: '600' }}>Dinner Capacity</label>
-                              <IonInput
-                                type="number"
-                                value={capacityFormData.dinner || 0}
-                                onIonInput={(e) => setCapacityFormData({ ...capacityFormData, dinner: parseInt(e.detail.value || '0') })}
-                                placeholder="Enter dinner capacity"
-                                style={{ marginTop: '4px', fontSize: '14px' }}
-                              />
-                            </div>
-                            <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-                              <IonButton expand="block" color="primary" onClick={() => handleSaveCapacity(user)} disabled={savingCapacity}>
-                                {savingCapacity ? <IonSpinner name="dots" /> : 'Save Capacity'}
-                              </IonButton>
-                              <IonButton expand="block" color="medium" fill="outline" onClick={handleCancelCapacity}>
-                                Cancel
-                              </IonButton>
-                            </div>
-                          </div>
-                        )}
                       </div>
                     )}
                   </IonCardContent>

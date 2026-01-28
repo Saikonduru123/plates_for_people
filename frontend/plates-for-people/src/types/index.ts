@@ -72,6 +72,7 @@ export interface NGOProfile {
   default_lunch_capacity?: number;
   default_snacks_capacity?: number;
   default_dinner_capacity?: number;
+  locations?: NGOLocation[];
 }
 
 export interface NGOLocation {

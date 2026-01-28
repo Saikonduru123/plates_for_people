@@ -104,9 +104,8 @@ async def get_all_ngos(
     db: AsyncSession = Depends(get_db)
 ):
     """
-    Get all NGOs, optionally filtered by verification status.
-    Includes aggregated default capacities across all NGO locations
-    (sums of default_* capacity columns per meal type).
+    Get all NGOs with their locations, optionally filtered by verification status.
+    Each location includes its specific meal capacities.
     """
     query = select(NGOProfile)
     
@@ -123,27 +122,39 @@ async def get_all_ngos(
     result = await db.execute(query.order_by(NGOProfile.created_at.desc()))
     ngos = result.scalars().all()
 
-    # Pre-compute capacity sums for all NGOs in one query
+    # Get all locations for these NGOs
     ngo_ids = [ngo.id for ngo in ngos]
-    capacity_totals = {}
+    locations_by_ngo = {}
+    
     if ngo_ids:
-        capacity_rows = await db.execute(
-            select(
-                NGOLocation.ngo_id,
-                func.coalesce(func.sum(NGOLocation.default_breakfast_capacity), 0).label("breakfast"),
-                func.coalesce(func.sum(NGOLocation.default_lunch_capacity), 0).label("lunch"),
-                func.coalesce(func.sum(NGOLocation.default_snacks_capacity), 0).label("snacks"),
-                func.coalesce(func.sum(NGOLocation.default_dinner_capacity), 0).label("dinner"),
-            ).where(NGOLocation.ngo_id.in_(ngo_ids))
-            .group_by(NGOLocation.ngo_id)
+        locations_result = await db.execute(
+            select(NGOLocation)
+            .where(NGOLocation.ngo_id.in_(ngo_ids))
+            .order_by(NGOLocation.location_name)
         )
-        for row in capacity_rows:
-            capacity_totals[row.ngo_id] = {
-                "breakfast": row.breakfast,
-                "lunch": row.lunch,
-                "snacks": row.snacks,
-                "dinner": row.dinner,
-            }
+        all_locations = locations_result.scalars().all()
+        
+        # Group locations by NGO
+        for location in all_locations:
+            if location.ngo_id not in locations_by_ngo:
+                locations_by_ngo[location.ngo_id] = []
+            locations_by_ngo[location.ngo_id].append({
+                "id": location.id,
+                "location_name": location.location_name,
+                "address_line1": location.address_line1,
+                "address_line2": location.address_line2,
+                "city": location.city,
+                "state": location.state,
+                "zip_code": location.zip_code,
+                "country": location.country,
+                "latitude": location.latitude,
+                "longitude": location.longitude,
+                "is_active": location.is_active,
+                "default_breakfast_capacity": location.default_breakfast_capacity,
+                "default_lunch_capacity": location.default_lunch_capacity,
+                "default_snacks_capacity": location.default_snacks_capacity,
+                "default_dinner_capacity": location.default_dinner_capacity,
+            })
 
     return [
         {
@@ -156,10 +167,7 @@ async def get_all_ngos(
             "verification_status": ngo.verification_status.value,
             "created_at": ngo.created_at.isoformat() if ngo.created_at else None,
             "verified_at": ngo.verified_at.isoformat() if ngo.verified_at else None,
-            "default_breakfast_capacity": capacity_totals.get(ngo.id, {}).get("breakfast", 0),
-            "default_lunch_capacity": capacity_totals.get(ngo.id, {}).get("lunch", 0),
-            "default_snacks_capacity": capacity_totals.get(ngo.id, {}).get("snacks", 0),
-            "default_dinner_capacity": capacity_totals.get(ngo.id, {}).get("dinner", 0),
+            "locations": locations_by_ngo.get(ngo.id, []),
         }
         for ngo in ngos
     ]
@@ -555,6 +563,8 @@ async def update_ngo_capacity(
     db: AsyncSession = Depends(get_db)
 ):
     """
+    DEPRECATED: Use /locations/{location_id}/capacity instead.
+    This endpoint updates ALL locations for an NGO with the same capacity.
     Update NGO meal capacity for all locations (sets default_* capacities per location)
     """
     # Get the NGO profile for this user
@@ -590,7 +600,51 @@ async def update_ngo_capacity(
         "lunch": capacity_data.lunch,
         "snacks": capacity_data.snacks,
         "dinner": capacity_data.dinner,
-        "message": "Capacity updated successfully"
+        "message": "Capacity updated successfully for all locations"
+    }
+
+
+@router.put("/locations/{location_id}/capacity")
+async def update_location_capacity(
+    location_id: int,
+    capacity_data: UpdateCapacityRequest,
+    current_user: User = Depends(require_admin),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Update capacity for a specific NGO location.
+    This is the preferred method for setting capacity at the location level.
+    """
+    # Get the location
+    result = await db.execute(
+        select(NGOLocation).where(NGOLocation.id == location_id)
+    )
+    location = result.scalar_one_or_none()
+    
+    if not location:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Location not found"
+        )
+    
+    # Update location capacity
+    location.default_breakfast_capacity = capacity_data.breakfast
+    location.default_lunch_capacity = capacity_data.lunch
+    location.default_snacks_capacity = capacity_data.snacks
+    location.default_dinner_capacity = capacity_data.dinner
+    location.updated_at = datetime.utcnow()
+    
+    await db.commit()
+    await db.refresh(location)
+
+    return {
+        "location_id": location.id,
+        "location_name": location.location_name,
+        "breakfast": location.default_breakfast_capacity,
+        "lunch": location.default_lunch_capacity,
+        "snacks": location.default_snacks_capacity,
+        "dinner": location.default_dinner_capacity,
+        "message": "Location capacity updated successfully"
     }
 
 

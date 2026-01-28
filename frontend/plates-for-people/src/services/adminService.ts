@@ -109,4 +109,18 @@ export const adminService = {
     const response = await api.put<any>(`/admin/users/${userId}/capacity`, data);
     return response.data;
   },
+
+  // Update capacity for a specific location
+  async updateLocationCapacity(
+    locationId: number,
+    data: {
+      breakfast: number;
+      lunch: number;
+      snacks: number;
+      dinner: number;
+    },
+  ): Promise<any> {
+    const response = await api.put<any>(`/admin/locations/${locationId}/capacity`, data);
+    return response.data;
+  },
 };
