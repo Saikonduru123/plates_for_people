@@ -401,12 +401,35 @@
     font-size: 20px;
   }
 
+  .stats-grid {
+    padding: 8px;
+  }
+
+  .stats-grid ion-row {
+    gap: 12px;
+  }
+
+  .stat-card {
+    height: 160px;
+    min-height: 160px;
+  }
+
+  .stat-card ion-card-content {
+    padding: 16px 12px;
+    gap: 6px;
+  }
+
   .stat-value {
     font-size: 28px;
   }
 
   .stat-icon {
     font-size: 28px;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-size: 11px;
   }
 
   .rating-value {
@@ -443,5 +466,37 @@
 
   .verification-badge {
     align-self: flex-start;
+  }
+
+  .stats-grid {
+    padding: 6px;
+  }
+
+  .stats-grid ion-row {
+    gap: 10px;
+  }
+
+  .stat-card {
+    height: 140px;
+    min-height: 140px;
+  }
+
+  .stat-card ion-card-content {
+    padding: 12px 8px;
+    gap: 4px;
+  }
+
+  .stat-value {
+    font-size: 24px;
+  }
+
+  .stat-icon {
+    font-size: 24px;
+    margin-bottom: 2px;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    letter-spacing: 0.3px;
   }
 }

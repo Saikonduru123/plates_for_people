@@ -207,7 +207,7 @@ const NGODashboard: React.FC = () => {
           {/* Quick Stats Grid */}
           <IonGrid className="stats-grid">
             <IonRow>
-              <IonCol size="6" sizeMd="3">
+              <IonCol size="12" sizeSm="6" sizeMd="3">
                 <IonCard className="stat-card primary">
                   <IonCardContent>
                     <div className="stat-icon">
@@ -219,7 +219,7 @@ const NGODashboard: React.FC = () => {
                 </IonCard>
               </IonCol>
 
-              <IonCol size="6" sizeMd="3">
+              <IonCol size="12" sizeSm="6" sizeMd="3">
                 <IonCard className="stat-card warning">
                   <IonCardContent>
                     <div className="stat-icon">
@@ -231,7 +231,7 @@ const NGODashboard: React.FC = () => {
                 </IonCard>
               </IonCol>
 
-              <IonCol size="6" sizeMd="3">
+              <IonCol size="12" sizeSm="6" sizeMd="3">
                 <IonCard className="stat-card success">
                   <IonCardContent>
                     <div className="stat-icon">
@@ -243,7 +243,7 @@ const NGODashboard: React.FC = () => {
                 </IonCard>
               </IonCol>
 
-              <IonCol size="6" sizeMd="3">
+              <IonCol size="12" sizeSm="6" sizeMd="3">
                 <IonCard className="stat-card info">
                   <IonCardContent>
                     <div className="stat-icon">
