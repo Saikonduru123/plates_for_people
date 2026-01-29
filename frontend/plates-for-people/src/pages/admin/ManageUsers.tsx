@@ -69,6 +69,24 @@ const ManageUsers: React.FC = () => {
       setLoading(true);
       const data = await adminService.getAllUsers();
       setUsers(data);
+
+      // Preload all NGO and donor profiles for displaying contact persons
+      const [ngos, donors] = await Promise.all([adminService.getAllNGOs().catch(() => []), adminService.getAllDonors().catch(() => [])]);
+
+      // Map profiles by user_id
+      const ngoProfilesMap: { [key: number]: any } = {};
+      const donorProfilesMap: { [key: number]: any } = {};
+
+      ngos.forEach((ngo) => {
+        ngoProfilesMap[ngo.user_id] = ngo;
+      });
+
+      donors.forEach((donor) => {
+        donorProfilesMap[donor.user_id] = donor;
+      });
+
+      setNgoProfiles(ngoProfilesMap);
+      setDonorProfiles(donorProfilesMap);
     } catch (err: any) {
       const message = err.response?.data?.detail || 'Failed to load users';
       present({
@@ -83,6 +101,18 @@ const ManageUsers: React.FC = () => {
 
   const filterUsers = () => {
     let filtered = [...users];
+
+    // Filter out rejected NGOs
+    filtered = filtered.filter((user) => {
+      if (user.role === 'ngo') {
+        const ngoProfile = ngoProfiles[user.id];
+        // Only show pending and verified NGOs, hide rejected ones
+        if (ngoProfile && ngoProfile.verification_status === 'rejected') {
+          return false;
+        }
+      }
+      return true;
+    });
 
     // Filter by role
     if (selectedRole !== 'all') {
@@ -406,7 +436,7 @@ const ManageUsers: React.FC = () => {
             <IonSearchbar
               value={searchText}
               onIonInput={(e) => setSearchText(e.detail.value || '')}
-              placeholder="Search by email or role..."
+              placeholder="Search by name or role..."
               className="search-bar"
             />
 
@@ -443,7 +473,13 @@ const ManageUsers: React.FC = () => {
                           <span style={{ fontSize: '24px' }}>{getRoleIcon(user.role)}</span>
                         </div>
                         <div className="user-details">
-                          <div className="user-email">{user.email}</div>
+                          <div className="user-email">
+                            {user.role === 'ngo' && ngoProfiles[user.id]
+                              ? ngoProfiles[user.id].contact_person
+                              : user.role === 'donor' && donorProfiles[user.id]
+                                ? donorProfiles[user.id].contact_person
+                                : user.email}
+                          </div>
                           <div className="user-meta">
                             <IonBadge color={getRoleColor(user.role)}>{user.role.toUpperCase()}</IonBadge>
                             <span className="status-badge" style={{ marginLeft: '8px' }}>
@@ -575,6 +611,10 @@ const ManageUsers: React.FC = () => {
                                 <div style={{ marginBottom: '12px' }}>
                                   <label style={{ fontSize: '12px', color: '#a0aec0', fontWeight: '600' }}>Contact Person</label>
                                   <div style={{ fontSize: '14px', marginTop: '4px' }}>{ngoProfiles[user.id].contact_person}</div>
+                                </div>
+                                <div style={{ marginBottom: '12px' }}>
+                                  <label style={{ fontSize: '12px', color: '#a0aec0', fontWeight: '600' }}>Email</label>
+                                  <div style={{ fontSize: '14px', marginTop: '4px' }}>{user.email}</div>
                                 </div>
                                 <div style={{ marginBottom: '12px' }}>
                                   <label style={{ fontSize: '12px', color: '#a0aec0', fontWeight: '600' }}>Phone</label>
@@ -747,6 +787,10 @@ const ManageUsers: React.FC = () => {
                             <div style={{ marginBottom: '12px' }}>
                               <label style={{ fontSize: '12px', color: '#a0aec0', fontWeight: '600' }}>Contact Person</label>
                               <div style={{ fontSize: '14px', marginTop: '4px' }}>{donorProfiles[user.id].contact_person}</div>
+                            </div>
+                            <div style={{ marginBottom: '12px' }}>
+                              <label style={{ fontSize: '12px', color: '#a0aec0', fontWeight: '600' }}>Email</label>
+                              <div style={{ fontSize: '14px', marginTop: '4px' }}>{user.email}</div>
                             </div>
                             <div style={{ marginBottom: '12px' }}>
                               <label style={{ fontSize: '12px', color: '#a0aec0', fontWeight: '600' }}>Phone</label>

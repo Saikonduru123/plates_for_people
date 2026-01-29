@@ -183,7 +183,17 @@ async def login(credentials: UserLogin, db: AsyncSession = Depends(get_db)):
                 )
             
             # Check if NGO is verified/approved
-            if verification_status != NGOVerificationStatus.VERIFIED:
+            if verification_status == NGOVerificationStatus.REJECTED:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Your account has been rejected so you can't login"
+                )
+            elif verification_status == NGOVerificationStatus.PENDING:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Your account is pending verification so you can't login"
+                )
+            elif verification_status != NGOVerificationStatus.VERIFIED:
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail=f"Your NGO account is {verification_status.value}. Please wait for admin approval."
